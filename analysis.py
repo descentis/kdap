@@ -562,8 +562,9 @@ class knolAnalysis(object):
 
 
         
-        
-    def wikiRetrieval(self,file_name,n):
+    
+    @classmethod
+    def wikiRetrieval(cls,file_name,n):
         tree = ET.parse(file_name)
         r = tree.getroot()
         revisionsDict = {}
@@ -674,8 +675,9 @@ class knolAnalysis(object):
        
         return revisionList
         
-        
-    def getAllRevisions(self,file_name):
+   
+    @classmethod     
+    def getAllRevisions(cls,file_name):
         tree = ET.parse(file_name)
         root = tree.getroot()
         
@@ -684,7 +686,7 @@ class knolAnalysis(object):
             if('KnowledgeData' in child.tag):
                 #print(child.attrib['Type'])
                 if('Wiki' in child.attrib['Type']):
-                    revisionsList = self.allRevisions(file_name,root,tree)
+                    revisionsList = cls.allRevisions(cls,file_name,root,tree)
                 elif('QA' in child.attrib['Type']):
                     revisionsList = child
                 

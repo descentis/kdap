@@ -352,7 +352,7 @@ class wikiConverter(object):
     
     
     @staticmethod
-    def convert(*args, **kwargs):
+    def wikiConvert(*args, **kwargs):
 
         if(kwargs.get('output_dir')!=None):
             output_dir = kwargs['output_dir']        
@@ -409,7 +409,7 @@ class wikiConverter(object):
         else:
             pNum = c_num
         for i in range(pNum):
-            processDict[i+1] = Process(target=wikiConverter.convert,kwargs={'output_dir':output_dir,'file_list': fileList[i],'l': l})
+            processDict[i+1] = Process(target=wikiConverter.wikiConvert,kwargs={'output_dir':output_dir,'file_list': fileList[i],'l': l})
         
         for i in range(pNum):
             processDict[i+1].start()
