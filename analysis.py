@@ -24,12 +24,13 @@ import copy
 
 class knolAnalysis(object):
     
-    def get_process_memory(self):
+    @staticmethod
+    def get_process_memory():
         process = psutil.Process(os.getpid())
         return process.memory_info().rss
 
-    
-    def getRevision(self,file_name,n):
+    @staticmethod
+    def getRevision(file_name,n):
         tree = ET.parse(file_name)
         r = tree.getroot()
         revisionsDict = {}
@@ -106,7 +107,8 @@ class knolAnalysis(object):
         
         return result
 
-    def dropSpans(self, spans, text):
+    @staticmethod
+    def dropSpans(spans, text):
         """
         Drop from text the blocks identified in :param spans:, possibly nested.
         """
@@ -121,7 +123,8 @@ class knolAnalysis(object):
         res += text[offset:]
         return res
 
-    def dropNested(self,text, openDelim, closeDelim):
+    @staticmethod
+    def dropNested(text, openDelim, closeDelim):
         """
         A matching function for nested expressions, e.g. namespaces and tables.
         """
@@ -171,10 +174,10 @@ class knolAnalysis(object):
                 # { { }
                 nest += 1
         # collect text outside partitions
-        return self.dropSpans(spans, text)
+        return knolAnalysis.dropSpans(spans, text)
 
-
-    def transform(self, wikitext):
+    @staticmethod
+    def transform(wikitext):
         """
         Transforms wiki markup.
         @see https://www.mediawiki.org/wiki/Help:Formatting
@@ -184,22 +187,25 @@ class knolAnalysis(object):
         res = ''
         cur = 0
         for m in nowiki.finditer(wikitext, cur):
-            res += self.transform1(wikitext[cur:m.start()]) + wikitext[m.start():m.end()]
+            res += knolAnalysis.transform1(wikitext[cur:m.start()]) + wikitext[m.start():m.end()]
             cur = m.end()
         # leftover
-        res += self.transform1(wikitext[cur:])
+        res += knolAnalysis.transform1(wikitext[cur:])
         return res
 
-    def transform1(self, text):
+    @staticmethod
+    def transform1(text):
         """Transform text not containing <nowiki>"""
 
-        return self.dropNested(text, r'{{', r'}}')
+        return knolAnalysis.dropNested(text, r'{{', r'}}')
 
-    def makeExternalImage(self,url, alt=''):
+    @staticmethod
+    def makeExternalImage(url, alt=''):
 
         return alt
 
-    def replaceExternalLinks(self,text):
+    @staticmethod
+    def replaceExternalLinks(text):
         """
         https://www.mediawiki.org/wiki/Help:Links#External_links
         [URL anchor text]
@@ -242,7 +248,7 @@ class knolAnalysis(object):
             # This happened by accident in the original parser, but some people used it extensively
             m = EXT_IMAGE_REGEX.match(label)
             if m:
-                label = self.makeExternalImage(label)
+                label = knolAnalysis.makeExternalImage(label)
     
             # Use the encoded URL
             # This means that users can paste URLs directly into the text
@@ -252,7 +258,8 @@ class knolAnalysis(object):
     
         return s + text[cur:]
 
-    def unescape(self, text):
+    @staticmethod
+    def unescape(text):
         """
         Removes HTML or XML character references and entities from a text string.
         :param text The HTML (or XML) source text.
@@ -275,7 +282,8 @@ class knolAnalysis(object):
     
         return re.sub("&#?(\w+);", fixup, text)
 
-    def wiki2text(self, text):
+    @staticmethod
+    def wiki2text(text):
         #
         # final part of internalParse().)
         #
@@ -296,8 +304,8 @@ class knolAnalysis(object):
         
         # Drop tables
         # first drop residual templates, or else empty parameter |} might look like end of table.      
-        text = self.dropNested(text, r'{{', r'}}')
-        text = self.dropNested(text, r'{\|', r'\|}')
+        text = knolAnalysis.dropNested(text, r'{{', r'}}')
+        text = knolAnalysis.dropNested(text, r'{\|', r'\|}')
 
         switches = (
             '__NOTOC__',
@@ -340,10 +348,10 @@ class knolAnalysis(object):
         text = text.replace("'''", '').replace("''", '"')
 
         # replace internal links
-        text = self.replaceInternalLinks(text)
+        text = knolAnalysis.replaceInternalLinks(text)
 
         # replace external links
-        text = self.replaceExternalLinks(text)
+        text = knolAnalysis.replaceExternalLinks(text)
 
         # drop MagicWords behavioral switches
         text = magicWordsRE.sub('', text)
@@ -354,13 +362,13 @@ class knolAnalysis(object):
         res = ''
         cur = 0
         for m in syntaxhighlight.finditer(text):
-            res += self.unescape(text[cur:m.start()]) + m.group(1)
+            res += knolAnalysis.unescape(text[cur:m.start()]) + m.group(1)
             cur = m.end()
-        text = res + self.unescape(text[cur:])
+        text = res + knolAnalysis.unescape(text[cur:])
         return text
 
-
-    def clean(self, text):
+    @staticmethod
+    def clean(text):
         """
         Removes irrelevant parts from :param: text.
         """
@@ -410,14 +418,14 @@ class knolAnalysis(object):
         '''
 
         # Bulk remove all spans
-        text = self.dropSpans(spans, text)
+        text = knolAnalysis.dropSpans(spans, text)
 
         # Drop discarded elements
         for tag in discardElements:
-            text = self.dropNested(text, r'<\s*%s\b[^>/]*>' % tag, r'<\s*/\s*%s>' % tag)
+            text = knolAnalysis.dropNested(text, r'<\s*%s\b[^>/]*>' % tag, r'<\s*/\s*%s>' % tag)
 
 
-        text = self.unescape(text)
+        text = knolAnalysis.unescape(text)
 
         # Expand placeholders
         for pattern, placeholder in placeholder_tag_patterns:
@@ -454,15 +462,16 @@ class knolAnalysis(object):
         '''
         return text
 
-    def getCleanText(self,text):
-        text = self.transform(text)
-        text = self.wiki2text(text)
-        text = self.clean(text)
+    @staticmethod
+    def getCleanText(text):
+        text = knolAnalysis.transform(text)
+        text = knolAnalysis.wiki2text(text)
+        text = knolAnalysis.clean(text)
 
         return text        
 
-
-    def findBalanced(self, text, openDelim=['[['], closeDelim=[']]']):
+    @staticmethod
+    def findBalanced(text, openDelim=['[['], closeDelim=[']]']):
         """
         Assuming that text contains a properly balanced expression using
         :param openDelim: as opening delimiters and
@@ -503,8 +512,9 @@ class knolAnalysis(object):
                     startSet = False
             cur = next.end()
 
-
-    def makeInternalLink(self, title, label):
+    
+    @staticmethod
+    def makeInternalLink(title, label):
         colon = title.find(':')
         keepLinks = False
         acceptedNamespaces = ['w', 'wiktionary', 'wikt']
@@ -520,7 +530,9 @@ class knolAnalysis(object):
         else:
             return label
 
-    def replaceInternalLinks(self, text):
+
+    @staticmethod
+    def replaceInternalLinks(text):
         """
         Replaces internal links of the form:
         [[title |...|label]]trail
@@ -532,7 +544,7 @@ class knolAnalysis(object):
         tailRE = re.compile('\w+')
         cur = 0
         res = ''
-        for s, e in self.findBalanced(text):
+        for s, e in knolAnalysis.findBalanced(text):
             m = tailRE.match(text, e)
             if m:
                 trail = m.group(0)
@@ -550,13 +562,13 @@ class knolAnalysis(object):
                 title = inner[:pipe].rstrip()
                 # find last |
                 curp = pipe + 1
-                for s1, e1 in self.findBalanced(inner):
+                for s1, e1 in knolAnalysis.findBalanced(inner):
                     last = inner.rfind('|', curp, s1)
                     if last >= 0:
                         pipe = last  # advance
                     curp = e1
                 label = inner[pipe + 1:].strip()
-            res += text[cur:s] + self.makeInternalLink(title, label) + trail
+            res += text[cur:s] + knolAnalysis.makeInternalLink(title, label) + trail
             cur = end
         return res + text[cur:]
 
@@ -1522,7 +1534,8 @@ class knolAnalysis(object):
         return Images
 
 
-    def gini(self, array):
+    @staticmethod
+    def gini(array):
         array = array.flatten()
         if np.amin(array) < 0:
             array -= np.amin(array)
@@ -1534,7 +1547,8 @@ class knolAnalysis(object):
         return ((np.sum((2 * index - n  - 1) * array)) / (n * np.sum(array)))
 
 
-    def getContributions(self, file_name):
+    @staticmethod
+    def getContributions(file_name):
         tree = ET.parse(file_name)
         root = tree.getroot()
 
@@ -1640,7 +1654,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.giniCoefficient, kwargs={'file_name':fileList[i],'GiniValues': GiniValues,'l': l})
+            processDict[i+1] = Process(target=knolAnalysis.localGiniCoefficient, kwargs={'file_name':fileList[i],'GiniValues': GiniValues,'l': l})
 
         for i in range(pNum):
             processDict[i+1].start()
@@ -1773,7 +1787,8 @@ class knolAnalysis(object):
         giniValue = knolAnalysis.gini(p)
         return giniValue
  
-    def revisionEdits(self, file_name, slab):
+    @staticmethod
+    def revisionEdits(file_name, slab):
         tree = ET.parse(file_name)
         root = tree.getroot()
 
@@ -1797,9 +1812,9 @@ class knolAnalysis(object):
             count = 1
             slabNo = 1 
             slabs = {}
-            revisionList = self.getAllRevisions(file_name)
+            revisionList = knolAnalysis.getAllRevisions(file_name)
             for rev in revisionList:
-                revisions = self.wikiRetrieval(file_name,rev)
+                revisions = knolAnalysis.wikiRetrieval(file_name,rev)
                 for revision in revisions:
                     currRevision = revision
 
