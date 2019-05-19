@@ -9,7 +9,6 @@ Created on Tue Dec 11 21:29:07 2018
 import xml.etree.cElementTree as ET
 import textwrap
 import html
-from get_postType import getPostType
 import os.path
 from datetime import datetime
 import glob
@@ -20,14 +19,46 @@ from internetarchive import download
 
 class qaConverter(object):
     
-    def make_path(self,path):
+    @staticmethod
+    def getPostType(name):
+        # To get an iterable
+        n1 = name.split('/')
+        postFile = n1[0]+'/Posts.xml'
+        context_post = ET.iterparse(postFile, events=("start", "end"))
+        # turning it into an iterator
+        context_post = iter(context_post)
+        
+        # get the root element
+        event_posts, root_posts = next(context_post)
+        
+        postType = {}
+        for event, elem in context_post:
+            if event == "end" and elem.tag == "row":
+                li = []
+                if(elem.attrib.get('ParentId')!=None):
+                    
+                    li.append(elem.attrib['PostTypeId'])
+                    li.append(elem.attrib['ParentId'])
+                    postType[elem.attrib['Id']] = li
+                else:
+                    li.append(elem.attrib['PostTypeId'])
+                    postType[elem.attrib['Id']] = li
+           
+                elem.clear()     
+                root_posts.clear()
+        
+        return postType    
+    
+    @staticmethod
+    def make_path(path):
         try:
             os.makedirs(path)
         except OSError as exception:
             if exception.errno != errno.EEXIST:
                 raise    
 
-    def indent(self,elem, level=0):
+    @staticmethod
+    def indent(elem, level=0):
         i = "\n" + level*"  "
         if len(elem):
             if not elem.text or not elem.text.strip():
@@ -35,14 +66,15 @@ class qaConverter(object):
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
             for elem in elem:
-                self.indent(elem, level+1)
+                qaConverter.indent(elem, level+1)
             if not elem.tail or not elem.tail.strip():
                 elem.tail = i
         else:
             if level and (not elem.tail or not elem.tail.strip()):
                 elem.tail = i
     
-    def tag_remover(self,body):
+    @staticmethod
+    def tag_remover(body):
         for i in body:
             if(i=='<'):
                 body = body.replace(i,"")
@@ -51,7 +83,8 @@ class qaConverter(object):
         return body
     
     
-    def writeHistoryData(self,elem,post_id,instanceId,HistoryType,postType,val,name):
+    @staticmethod
+    def writeHistoryData(elem,post_id,instanceId,HistoryType,postType,val,name):
         filePath = name+'/'
         if(val==1 and postType[0]!='2'):
             filePath = filePath+"Post"+str(post_id)+".knolml"
@@ -148,7 +181,7 @@ class qaConverter(object):
                         myFile.write(text_field)
                         if(elem.attrib['PostHistoryTypeId']=="3" or elem.attrib['PostHistoryTypeId']=="6"):            
                             body_text = elem.attrib['Text']
-                            body_text = self.tag_remover(body_text)
+                            body_text = qaConverter.tag_remover(body_text)
                             text_body = textwrap.indent(text=body_text, prefix=t+t+t+t+t)
                             text_body = html.escape(text_body)
                         else:
@@ -240,7 +273,7 @@ class qaConverter(object):
                         myFile.write(text_field)
                         if(elem.attrib['PostHistoryTypeId']=="3" or elem.attrib['PostHistoryTypeId']=="6"):            
                             body_text = elem.attrib['Text']
-                            body_text = self.tag_remover(body_text)
+                            body_text = qaConverter.tag_remover(body_text)
                             text_body = textwrap.indent(text=body_text, prefix=t+t+t+t+t)
                             text_body = html.escape(text_body)
                         else:
@@ -283,7 +316,8 @@ class qaConverter(object):
                     myFile.write(Instance)
     
     
-    def postHistoryConversion(self,name):
+    @staticmethod
+    def postHistoryConversion(name):
     
         # To get an iterable
         n1 = name.split('/')
@@ -302,7 +336,7 @@ class qaConverter(object):
                        22:'Question Unmerged'}
         
         postIdBuffer = {}
-        postType = getPostType(name)
+        postType = qaConverter.getPostType(name)
         
         instanceId = 1
         for event, elem in context_postHistory:
@@ -312,31 +346,31 @@ class qaConverter(object):
                 if(postType[post_id][0]=='1'):
                     if(postIdBuffer.get(post_id)==None):
                         postIdBuffer[post_id] = 1
-                        self.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],1,name)
+                        qaConverter.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],1,name)
                     else:
                         postIdBuffer[post_id]+=1
-                        self.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],2,name)
+                        qaConverter.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],2,name)
                     
                     instanceId+=1
                 elif(postType[post_id][0]=='2'):
                     if(postIdBuffer.get(post_id)==None):
                         if(postIdBuffer.get(postType[post_id][1])!=None):
                             postIdBuffer[postType[post_id][1]] += 1
-                            self.writeHistoryData(elem,post_id,postIdBuffer[postType[post_id][1]],HistoryType,postType[post_id],1,name)
+                            qaConverter.writeHistoryData(elem,post_id,postIdBuffer[postType[post_id][1]],HistoryType,postType[post_id],1,name)
                         
                     else:
                         if(postIdBuffer.get(postType[post_id][1])!=None):
                             postIdBuffer[postType[post_id][1]]+=1
-                            self.writeHistoryData(elem,post_id,postIdBuffer[postType[post_id][1]],HistoryType,postType[post_id],2,name)
+                            qaConverter.writeHistoryData(elem,post_id,postIdBuffer[postType[post_id][1]],HistoryType,postType[post_id],2,name)
                     instanceId+=1
                     
                 else:
                     if(postIdBuffer.get(post_id)==None):
                         postIdBuffer[post_id] = 1
-                        self.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],1,name)
+                        qaConverter.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],1,name)
                     else:
                         postIdBuffer[post_id]+=1
-                        self.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],2,name)
+                        qaConverter.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],2,name)
                     
                     instanceId+=1                    
 
@@ -363,7 +397,8 @@ class qaConverter(object):
     Writing the data for posts
     '''
 
-    def writePostData(self,elem,post_id,instanceId,postType,val,name):
+    @staticmethod
+    def writePostData(elem,post_id,instanceId,postType,val,name):
         filePath = name+'/'
         if(val==1 and postType[0]!='2'):
             filePath = filePath+"Post"+str(post_id)+".knolml"
@@ -669,7 +704,8 @@ class qaConverter(object):
     This function converts the Post.xml file into KML
     '''
     
-    def postConversion(self,name):
+    @staticmethod
+    def postConversion(name):
         
         # To get an iterable
         n1 = name.split('/')
@@ -693,11 +729,11 @@ class qaConverter(object):
                     postType = [elem.attrib['PostTypeId']]
                     if(postIdBuffer.get(post_id)==None):
                         postIdBuffer[post_id] = 1
-                        self.writePostData(elem,post_id,postIdBuffer[post_id],postType,1,name)
+                        qaConverter.writePostData(elem,post_id,postIdBuffer[post_id],postType,1,name)
                     else:
                         
                         postIdBuffer[post_id]+=1
-                        self.writePostData(elem,post_id,postIdBuffer[post_id],postType,2,name)
+                        qaConverter.writePostData(elem,post_id,postIdBuffer[post_id],postType,2,name)
                     
                     instanceId+=1
                 elif(elem.attrib['PostTypeId']=='2'):
@@ -705,23 +741,23 @@ class qaConverter(object):
                     if(postIdBuffer.get(post_id)==None):
                         if(postIdBuffer.get(postType[1])!=None):
                             postIdBuffer[postType[1]] += 1
-                            self.writePostData(elem,post_id,postIdBuffer[postType[1]],postType,1,name)
+                            qaConverter.writePostData(elem,post_id,postIdBuffer[postType[1]],postType,1,name)
                         
                     else:
                         if(postIdBuffer.get(postType[1])!=None):
                             postIdBuffer[postType[1]] += 1
-                            self.writePostData(elem,post_id,postIdBuffer[postType[1]],postType,2,name)
+                            qaConverter.writePostData(elem,post_id,postIdBuffer[postType[1]],postType,2,name)
                     instanceId+=1
                     
                 else:
                     postType = [elem.attrib['PostTypeId']]
                     if(postIdBuffer.get(post_id)==None):
                         postIdBuffer[post_id] = 1
-                        self.writePostData(elem,post_id,postIdBuffer[post_id],postType,1,name)
+                        qaConverter.writePostData(elem,post_id,postIdBuffer[post_id],postType,1,name)
                     else:
                         
                         postIdBuffer[post_id]+=1
-                        self.writePostData(elem,post_id,postIdBuffer[post_id],postType,2,name)
+                        qaConverter.writePostData(elem,post_id,postIdBuffer[post_id],postType,2,name)
                     
                     instanceId+=1
                     
@@ -738,14 +774,14 @@ class qaConverter(object):
         '''
         return postType        
 
-    
-    def commentsConversion(self,name,p):
+    @staticmethod
+    def commentsConversion(name,p):
         if(p==0):
-            postType = self.postHistoryConversion(name)
+            postType = qaConverter.postHistoryConversion(name)
             #self.postConversion(name)
         else:
-            postType = getPostType(name)
-            self.postConversion(name)
+            postType = qaConverter.getPostType(name)
+            qaConverter.postConversion(name)
             
 
         # To get an iterable
@@ -1020,8 +1056,9 @@ class qaConverter(object):
                     myFile.write("\t</KnowledgeData>\n")
                     myFile.write("</KnolML>\n")                 
                 
-                
-    def convert(self,name, *args, **kwargs):
+    
+    @staticmethod            
+    def convert(name, *args, **kwargs):
         name = name.lower()
         if(kwargs.get('download')!=None):             
             down = kwargs['download']
@@ -1034,7 +1071,7 @@ class qaConverter(object):
                             siteName = line[:-1]
                 print("Downloading the "+name+" Stack Exchange data dump")
                 download('stackexchange', verbose=True, glob_pattern=siteName)
-                self.make_path(name)
+                qaConverter.make_path(name)
                 call(["7z","x",'stackexchange/'+siteName,'-o'+name])
                 
                 '''
@@ -1045,17 +1082,17 @@ class qaConverter(object):
                     ph = kwargs['posthistory']
                     if(ph):
                         print("Converting PostHistory of "+name+" Stack Exchange into knolml")
-                        self.make_path(name+"/PostHistory")
+                        qaConverter.make_path(name+"/PostHistory")
                         namePh = name+"/PostHistory"
-                        self.commentsConversion(namePh,0)
+                        qaConverter.commentsConversion(namePh,0)
                         print("PostHistory conversion completed for "+name+" Stack Exchange")
                 if(kwargs.get('post')!=None):
                     p = kwargs['post']
                     if(p):
                         print("Converting Posts of "+name+" Stack Exchange into knolml")
-                        self.make_path(name+"/Posts")
+                        qaConverter.make_path(name+"/Posts")
                         nameP = name+"/Posts"
-                        self.commentsConversion(nameP,1)
+                        qaConverter.commentsConversion(nameP,1)
                         print("Posts conversion completed for "+name+" Stack Exchange")
                 
             else:
@@ -1073,17 +1110,17 @@ class qaConverter(object):
                     ph = kwargs['posthistory']
                     if(ph):
                         print("Converting PostHistory of "+name+" Stack Exchange into knolml")
-                        self.make_path(name+"/PostHistory")
+                        qaConverter.make_path(name+"/PostHistory")
                         namePh = name+"/PostHistory"
-                        self.commentsConversion(namePh,0)
+                        qaConverter.commentsConversion(namePh,0)
                         print("PostHistory conversion completed for "+name+" Stack Exchange")
 
                 if(kwargs.get('post')!=None):
                     p = kwargs['post']
                     if(p):
                         print("Converting Posts of "+name+" Stack Exchange into knolml")
-                        self.make_path(name+"/Posts")
+                        qaConverter.make_path(name+"/Posts")
                         nameP = name+"/Posts"
-                        self.commentsConversion(nameP,1)
+                        qaConverter.commentsConversion(nameP,1)
                         print("Posts conversion completed for "+name+" Stack Exchange")
                 

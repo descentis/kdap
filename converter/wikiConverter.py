@@ -16,7 +16,8 @@ import xml.etree.ElementTree as ET
 import math
 import textwrap
 import html
-
+import requests
+import io
 
 class wikiConverter(object):
 
@@ -39,7 +40,8 @@ class wikiConverter(object):
             if level and (not elem.tail or not elem.tail.strip()):
                 elem.tail = i
     
-    def wiki_file_writer(self,elem,myFile,prefix):
+    @staticmethod
+    def wiki_file_writer(elem,myFile,prefix):
         global instance_id
         t = '\t'
     
@@ -49,7 +51,7 @@ class wikiConverter(object):
         for ch_elem in elem:        
                         
             if(('id' in ch_elem.tag) and ('parentid' not in ch_elem.tag)):             
-                Instance = Instance+ "Id="+'"'+str(instance_id)+'"'+" InstanceType="+'"'+"Revision/Wiki"+'"'+" RevisionId="+ '"'+str(ch_elem.text)+'"'+">\n"
+                Instance = Instance+ "Id="+'"'+str(wikiConverter.instance_id)+'"'+" InstanceType="+'"'+"Revision/Wiki"+'"'+" RevisionId="+ '"'+str(ch_elem.text)+'"'+">\n"
                 myFile.write(Instance)
                 
                 '''
@@ -162,10 +164,11 @@ class wikiConverter(object):
                 
         Instance = t+t+"</Instance>\n"
         myFile.write(Instance)  
-        instance_id+=1             
-    
-    def wiki_knml_converter(self,name):
-        global instance_id
+        wikiConverter.instance_id+=1             
+ 
+    @staticmethod
+    def wiki_knml_converter(name):
+        #global instance_id
         #Creating a meta file for the wiki article
         
         
@@ -208,7 +211,7 @@ class wikiConverter(object):
             if event == "end" and 'revision' in elem.tag:
          
                 with open(file_path,"a",encoding='utf-8') as myFile:
-                    self.wiki_file_writer(elem,myFile,prefix)
+                    wikiConverter.wiki_file_writer(elem,myFile,prefix)
                     
                     
                 elem.clear()
@@ -218,18 +221,19 @@ class wikiConverter(object):
             myFile.write("\t</KnowledgeData>\n")
             myFile.write("</KnolML>\n") 
     
-        instance_id = 1
+        wikiConverter.instance_id = 1
 
 
-    
-    def is_number(self,s):
+    @staticmethod
+    def is_number(s):
         try:
             int(s)
             return True
         except ValueError:
             return False
     
-    def encode(self,str1, str2):
+    @staticmethod
+    def encode(str1, str2):
     	output = ""
     	s = [x.replace("\n", "`").replace("-", "^") for x in str1.split(" ")]
     
@@ -277,7 +281,7 @@ class wikiConverter(object):
     			if neg != 0:
     				output += "-"+str(neg)+" "
     				neg = 0
-    			if is_number(x[2:]):
+    			if wikiConverter.is_number(x[2:]):
     				output += "'"+x[2:]+"' "
     			else:			
     				output += x[2:]+" "
@@ -422,6 +426,44 @@ class wikiConverter(object):
         
         print("All process done with time: ",str(t2-t1))
         
+        
+    @staticmethod    
+    def getArticle(*args, **kwargs):
+    	# articleName = raw_input()
+    	# articleName = articleName.replace(' ', '_')
+        featuredArticleList = []
+        if(kwargs.get('file_name')!=None):
+            featuredArticleList.append(kwargs['file_name'])            
+       
+        if(kwargs.get('file_list')!=None):
+            featuredArticleList = kwargs['file_list']
+            
+        if(kwargs.get('output_dir')!=None):
+            output_dir = kwargs['output_dir']+'/'
+        else:
+            output_dir = ''
+    
+        for each in featuredArticleList:
+        		articleName = each
+        
+        		file_handler = io.open(output_dir+articleName+'.xml', mode='w+', encoding='utf-8')
+        
+        		url = 'https://en.m.wikipedia.org/w/index.php?title=Special:Export&pages=' + articleName + '&history=1&action=submit'
+        		headers = {
+        			'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Mobile Safari/537.36'
+        		}
+        		print('Downloading ' + articleName + '...') 
+        		r = requests.get(url, headers=headers)
+        		if r.status_code == 200:
+        			xml = r.text
+        			file_handler.write(xml)
+        			print(articleName,'Completed!')
+        		else:
+        			print('Something went wrong! ' + articleName + '\n' + '\n')
+        
+        		file_handler.close()
+    
+    @staticmethod    
     def serialCompress(self,dir_path, *args, **kwargs):
         t1 = time.time()
         file_list = os.listdir(dir_path)
