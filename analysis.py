@@ -1998,7 +1998,11 @@ class knolAnalysis(object):
     
     
     @staticmethod
-    def findTags(list_tags, *args, **kwargs):
+    def findTags(*args, **kwargs):
+        #print(list_tags)
+        if(kwargs.get('list_tags')!=None):
+            list_tags = kwargs['list_tags']
+        #print(list_tags)        
         if(kwargs.get('file_path')!=None):
             file_name = kwargs['file_path']            
             tree = ET.parse(file_name)            
@@ -2025,7 +2029,6 @@ class knolAnalysis(object):
                 tree = ET.parse(f)            
                 root = tree.getroot()
                 postList = []
-                
                 for child in root:
                     if('KnowledgeData' in child.tag):
                         for ch in child:
@@ -2039,22 +2042,29 @@ class knolAnalysis(object):
                                     if('Tags' in newch.tag):
                                         
                                         if(list_tags in newch.text):
-                                                continue
+                                            print(f +': '+ list_tags)
+                                            if(kwargs.get('tagPosts')!=None):
+                                                kwargs['tagPosts'][f] = []
+                                            continue
                                         else:
                                             postList = []
-                                            print(f)
+                                            
                                             
                                             
     
     
                 if(kwargs.get('tagPosts')!=None):
-                    kwargs['tagPosts'][f] = postList
+                    if(kwargs['tagPosts'].get(f)!=None):
+                        kwargs['tagPosts'][f] = postList
                     #print(kwargs['revisionLength'])
         else:
             print("No arguments provided")    
     
-    def findAllTags(list_tags, *args, **kwargs):
+    @staticmethod
+    def findAllTags(list_tags,*args, **kwargs):
         #t1 = time.time()
+        
+        
         if(kwargs.get('file_list')!=None):
             file_list = kwargs['file_list']
             
@@ -2097,7 +2107,8 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.findTags, args=(list_tags), kwargs={'file_name':fileList[i],'tagPosts':tagPosts,'l': l})
+            processDict[i+1] = Process(target=knolAnalysis.findTags, kwargs={'list_tags':list_tags,'file_name':fileList[i],'tagPosts':tagPosts,'l': l})
+            
             #processDict[i+1] = Process(target=self.countWords, kwargs={'file_name':fileList[i], 'lastRev':lastRev,'l': l})
         for i in range(pNum):
             processDict[i+1].start()
@@ -2109,4 +2120,4 @@ class knolAnalysis(object):
         t2 = time.time()
         print(t2-t1)
         '''
-        return tagPosts     
+        return tagPosts 
