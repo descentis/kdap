@@ -2002,6 +2002,11 @@ class knolAnalysis(object):
         #print(list_tags)
         if(kwargs.get('list_tags')!=None):
             list_tags = kwargs['list_tags']
+
+        if(kwargs.get('l')!=None):
+            lock = kwargs['l']            
+
+            
         #print(list_tags)        
         if(kwargs.get('file_path')!=None):
             file_name = kwargs['file_path']            
@@ -2054,9 +2059,20 @@ class knolAnalysis(object):
     
     
                 if(kwargs.get('tagPosts')!=None):
+                    '''
                     if(kwargs['tagPosts'].get(f)!=None):
                         kwargs['tagPosts'][f] = postList
-                    #print(kwargs['revisionLength'])
+                    '''
+                    if(kwargs['tagPosts'].get(f)!=None):
+                        lock.acquire()
+                        with open(list_tags+'.txt', 'a') as newFile:
+                            newFile.write(f +': ')
+                            newFile.write(str(postList))
+                            newFile.write('\n')
+                            postList = []
+                        lock.release()                    
+
+
         else:
             print("No arguments provided")    
     
