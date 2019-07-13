@@ -184,7 +184,6 @@ class knolAnalysis(object):
         """
         # look for matching <nowiki>...</nowiki>
         nowiki = re.compile(r'<nowiki>.*?</nowiki>')
-        nowiki = str(nowiki)
         res = ''
         cur = 0
         for m in nowiki.finditer(wikitext, cur):
