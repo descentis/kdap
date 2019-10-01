@@ -1700,36 +1700,45 @@ class knolAnalysis(object):
                                     
                     if(kwargs.get('contributors')!=None):
                         if kwargs['contributors'].get(editor)==None:
-                            #kwargs['contributors'][editor] = editLength
-                            x = 0
+                            l.acquire()
+                            kwargs['contributors'][editor] = editLength
+                            l.release()
+                            #x = 0
                         else:
-                            #kwargs['contributors'][editor] += editLength
-                            x=1
+                            l.acquire()
+                            kwargs['contributors'][editor] += editLength
+                            l.release()
+                            #x=1
                     
                     else:
                         if contributors.get(editor)==None:
+                            l.acquire()
                             contributors[editor] = editLength
+                            l.release()
                         else:
+                            l.acquire()
                             contributors[editor] += editLength
+                            l.release()
                             
         
         
         
      
         #print(t2-t1)
-        
+        '''
         if(kwargs.get('contributors')==None):
             s = []
             for each in contributors:
                 s.append(float(contributors[each]))
     
             p = np.array(s)
-            giniValue = self.gini(p)
+            giniValue = knolAnalysis.gini(p)
             return giniValue            
-    
+        '''
     @staticmethod    
-    def globalGiniCoefficient(*args, **kwargs):
+    def getGlobalGiniCoefficient(*args, **kwargs):
         
+        t1 = time.time()
         if(kwargs.get('file_list')!=None):
             file_list = kwargs['file_list']
 
@@ -1785,6 +1794,9 @@ class knolAnalysis(object):
 
         p = np.array(s)
         giniValue = knolAnalysis.gini(p)
+        
+        t2 = time.time()
+        print(t2-t1)
         return giniValue
  
     @staticmethod

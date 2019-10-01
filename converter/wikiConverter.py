@@ -157,7 +157,7 @@ class wikiConverter(object):
             if('sha1' in ch_elem.tag):
                 sha = ch_elem.text
                 if(type(sha)!=type(None)):
-                    shaText = t+t+t+'<data key="sha">'+sha+'</data>\n'
+                    shaText = t+t+t+'<Knowl key="sha">'+sha+'</Knowl>\n'
                     myFile.write(shaText)
                 else:
                     shaText = ''
@@ -186,7 +186,7 @@ class wikiConverter(object):
         with open(file_path,"w",encoding='utf-8') as myFile:
             myFile.write("<?xml version='1.0' encoding='utf-8'?>\n")
             myFile.write("<KnolML>\n")
-            myFile.write('<key attr.name="sha" attrib.type="string" for="Instance" id="sha"/>\n')
+            myFile.write('<Def attr.name="sha" attrib.type="string" for="Instance" id="sha"/>\n')
            
         prefix = '{http://www.mediawiki.org/xml/export-0.10/}'    #In case of Wikipedia, prefic is required
         f = 0
@@ -381,6 +381,8 @@ class wikiConverter(object):
     def returnList(self, l, n):
         for i in range(0,len(l),n):
             yield l[i:i+n]
+
+    
      
     @staticmethod
     def compressAll(dir_path, *args, **kwargs):
@@ -444,24 +446,24 @@ class wikiConverter(object):
             output_dir = ''
     
         for each in featuredArticleList:
-        		articleName = each
-        
-        		file_handler = io.open(output_dir+articleName+'.xml', mode='w+', encoding='utf-8')
-        
-        		url = 'https://en.m.wikipedia.org/w/index.php?title=Special:Export&pages=' + articleName + '&history=1&action=submit'
-        		headers = {
-        			'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Mobile Safari/537.36'
-        		}
-        		print('Downloading ' + articleName + '...') 
-        		r = requests.get(url, headers=headers)
-        		if r.status_code == 200:
-        			xml = r.text
-        			file_handler.write(xml)
-        			print(articleName,'Completed!')
-        		else:
-        			print('Something went wrong! ' + articleName + '\n' + '\n')
-        
-        		file_handler.close()
+            articleName = each
+
+            file_handler = io.open(output_dir+articleName+'.xml', mode='w+', encoding='utf-8')
+            url = 'https://en.m.wikipedia.org/w/index.php?title=Special:Export&pages=' + articleName + '&history=1&action=submit'
+            headers = {
+			'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Mobile Safari/537.36'
+            }
+            print('Downloading ' + articleName + '...') 
+            r = requests.get(url, headers=headers)
+            if r.status_code == 200:
+                xml = r.text
+                file_handler.write(xml)
+                print(articleName,'Completed!')
+            else:
+                print('Something went wrong! ' + articleName + '\n' + '\n')
+            
+            file_handler.close()
+            wikiConverter.wiki_knml_converter(output_dir+articleName+'.xml')    
     
     @staticmethod    
     def serialCompress(self,dir_path, *args, **kwargs):
