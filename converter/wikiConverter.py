@@ -442,6 +442,8 @@ class wikiConverter(object):
             
         if(kwargs.get('output_dir')!=None):
             output_dir = kwargs['output_dir']+'/'
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
         else:
             output_dir = ''
     
