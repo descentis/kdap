@@ -21,20 +21,25 @@ class wikiStats :
     #GENERAL STATISTICS
     def __init__(self, article) :
         
-        f = open("botList.txt",'r')
+        f = open("botList.txt",'r',errors='ignore')
         self.bots = [ x.rstrip('\n') for x in list(f.readlines())]
         
-        self.di = xmltodict.parse(open('./wiki/'+article+'.xml',"r").read())
-        self.revisions = [x for x in self.di['mediawiki']['page']['revision']] 
+        self.di = xmltodict.parse(open(article+'.knolml',"r",errors='ignore').read())
+        #print(self.di)
+        self.revisions = [x for x in self.di['KnolML']['KnowledgeData']['Instance']] 
         
         self.editors = {}
         self.botEditors = {}
         self.originals = {}
         
         for x in self.revisions :
-            if x['sha1'] not in self.originals :
+            if(x['Knowl']['@key']=='sha' and self.originals.get(x['Knowl']['#text'])==None):
+               self.originals[x['Knowl']['#text']] = x['TimeStamp']['CreationDate']
+            '''                  
+            if x['Knowl'] not in self.originals :
                 self.originals[x['sha1']] = x['timestamp']
-            username = x['contributor']['username'] if 'username' in x['contributor'] else x['contributor']['ip']
+            '''
+            username = x['Contributors']['OwnerUserName']
             if username not in self.bots:
                 if username in self.editors :
                     self.editors[username] += 1
@@ -47,10 +52,10 @@ class wikiStats :
                     self.botEditors[username] = 1 
     
     def isOriginalRevision(self, revision) :
-        return True if self.originals[revision['sha1']] == revision['timestamp'] else False
+        return True if self.originals[revision['Knowl']['#text']] == revision['TimeStamp']['CreationDate'] else False
     
     def getID(self) :
-        return self.di['mediawiki']['page']['id']
+        return self.di['KnolML']['KnowledgeData']['@Id']
             
     def getRevertedEdits(self) :
         i = 0
@@ -65,14 +70,15 @@ class wikiStats :
     def getMinorEdits(self) :
         i = 0
         for x in self.revisions :
-            if 'minor' in x :
-                i += 1
+            if(x.get('EditDetails')!=None):
+                if 'minor' in x['EditDetails']['EditType'] :
+                    i += 1
         return i
     
     def getIPEdits(self) :
         i = 0
         for x in self.revisions :
-            if 'ip' in x['contributor'] :
+            if(x['Contributors'].get('OwnerUserId')==None) :
                 i += 1
         return i
     
@@ -86,35 +92,35 @@ class wikiStats :
         return len(self.editors) + len(self.botEditors)
     
     def getPageSize(self) :
-        return self.revisions[-1]['text']['@bytes']
+        return self.revisions[-1]['Body']['Text']['@Bytes']
     
     def getFirstEdit(self) :
         di = {}
-        di['user'] = self.revisions[0]['contributor']['username'] if 'username' in self.revisions[0]['contributor'] else self.revisions[0]['contributor']['ip']
-        di['time'] = self.revisions[0]['timestamp']
-        di['text added'] = self.revisions[0]['text']['@bytes']
+        di['user'] = self.revisions[0]['Contributors']['OwnerUserName']
+        di['time'] = self.revisions[0]['TimeStamp']['CreationDate']
+        di['text added'] = self.revisions[0]['Body']['Text']['@Bytes']
         return di
     
     def getLatestEdit(self) :
         di = {}
-        di['user'] = self.revisions[-1]['contributor']['username'] if 'username' in self.revisions[-1]['contributor'] else self.revisions[-1]['contributor']['ip']
-        di['time'] = self.revisions[-1]['timestamp']
+        di['user'] = self.revisions[-1]['Contributors']['OwnerUserName']
+        di['time'] = self.revisions[-1]['TimeStamp']['CreationDate']
         try :
-            di['text added'] = int(self.revisions[-1]['text']['@bytes']) - int(self.revisions[-2]['text']['@bytes'])
+            di['text added'] = int(self.revisions[-1]['Body']['Text']['@Bytes']) - int(self.revisions[-2]['Body']['Text']['@Bytes'])
         except :
-            di['text added'] = self.revisions[0]['text']['@bytes']
+            di['text added'] = self.revisions[0]['Body']['Text']['@Bytes']
         return di
     
     def getMaxTextAdded(self) :
         di = {}
-        di['user'] = self.revisions[0]['contributor']['username'] if 'username' in self.revisions[0]['contributor'] else self.revisions[0]['contributor']['ip']
-        di['time'] = self.revisions[0]['timestamp']
-        di['text added'] = int(self.revisions[0]['text']['@bytes'])
+        di['user'] = self.revisions[0]['Contributors']['OwnerUserName']
+        di['time'] = self.revisions[0]['TimeStamp']['CreationDate']
+        di['text added'] = int(self.revisions[0]['Body']['Text']['@Bytes'])
         for i in range(1, len(self.revisions)) :
-            temp = int(self.revisions[i]['text']['@bytes']) - int(self.revisions[i-1]['text']['@bytes'])
+            temp = int(self.revisions[i]['Body']['Text']['@Bytes']) - int(self.revisions[i-1]['Body']['Text']['@Bytes'])
             if self.isOriginalRevision(self.revisions[i]) and temp > di['text added'] :
-                di['user'] = self.revisions[i]['contributor']['username'] if 'username' in self.revisions[i]['contributor'] else self.revisions[i]['contributor']['ip']
-                di['time'] = self.revisions[i]['timestamp']  
+                di['user'] = self.revisions[i]['Contributors']['OwnerUserName']
+                di['time'] = self.revisions[i]['TimeStamp']['CreationDate']
                 di['text added'] = temp
         return di
     
@@ -124,10 +130,10 @@ class wikiStats :
         di['time'] = None
         di['text deleted'] = 0
         for i in range(1, len(self.revisions)) :
-            temp = int(self.revisions[i]['text']['@bytes']) - int(self.revisions[i-1]['text']['@bytes'])
+            temp = int(self.revisions[i]['Body']['Text']['@Bytes']) - int(self.revisions[i-1]['Body']['Text']['@Bytes'])
             if temp < di['text deleted'] :
-                di['user'] = self.revisions[i]['contributor']['username'] if 'username' in self.revisions[i]['contributor'] else self.revisions[i]['contributor']['ip']
-                di['time'] = self.revisions[i]['timestamp']  
+                di['user'] = self.revisions[i]['Contributors']['OwnerUserName']
+                di['time'] = self.revisions[i]['TimeStamp']['CreationDate']
                 di['text deleted'] = temp
         return di
     
@@ -136,7 +142,7 @@ class wikiStats :
         return self.getTotalEdits()/self.getEditors()
     
     def getAverageTimeBetweenEdits(self) :
-        timestamps = [ self.di['mediawiki']['page']['revision'][i]['timestamp'] for i in range(len(self.di['mediawiki']['page']['revision']))]
+        timestamps = [ self.di['KnolML']['KnowledgeData']['Instance'][i]['TimeStamp']['CreationDate'] for i in range(len(self.di['KnolML']['KnowledgeData']['Instance']))]
         times = [date(year = int(timestamps[i][:4]), month = int(timestamps[i][5:7]), day = int(timestamps[i][8:10])) for i in range(len(timestamps))]
         timeDiff = date(1, 1, 1) - date(1, 1, 1)
         for i in range(len(times)-1) :
@@ -156,7 +162,7 @@ class wikiStats :
         return 365*self.getAverageEditsPerDay()
     
     def getEditsInPastXDays(self, x) :
-        timestamps = [ self.di['mediawiki']['page']['revision'][i]['timestamp'] for i in range(len(self.di['mediawiki']['page']['revision']))]
+        timestamps = [ self.di['KnolML']['KnowledgeData']['Instance'][i]['TimeStamp']['CreationDate'] for i in range(len(self.di['KnolML']['KnowledgeData']['Instance']))]
         times = [date(year = int(timestamps[i][:4]), month = int(timestamps[i][5:7]), day = int(timestamps[i][8:10])) for i in range(len(timestamps))]
         t0 = datetime.date.today()
         count = 0
@@ -196,7 +202,7 @@ class wikiStats :
     
     def printGeneralStats(self) :
         print("              ID :", self.getID())
-        print("       Page Size :", self.getPageSize())
+        #print("       Page Size :", self.getPageSize())
         print("     Total Edits :", self.getTotalEdits())
         print("         Editors :", self.getEditors())
         print()
@@ -295,19 +301,19 @@ class wikiStats :
         
         for i in range(len(self.revisions)) :
             x = self.revisions[i]
-            username = x['contributor']['username'] if 'username' in x['contributor'] else x['contributor']['ip']
+            username = x['Contributors']['OwnerUserName']
             for editor in editorsArray :
                 if editor["username"] == username :
                     editor["total edits"] += 1
                     editor["minor edits"] += 1 if 'minor' in x else 0
                     if editor["first edit"] == None :
-                        editor["first edit"] = x['timestamp'][:-1].replace('T', ' ')
+                        editor["first edit"] = x['TimeStamp']['CreationDate'].replace('T', ' ')
                         
-                    editor["latest edit"] = x['timestamp'][:-1].replace('T', ' ')
+                    editor["latest edit"] = x['TimeStamp']['CreationDate'][:-1].replace('T', ' ')
                     if i != 0 and self.isOriginalRevision(x):
-                        editor["bytes added"] += max(0, int(self.revisions[i]['text']['@bytes']) - int(self.revisions[i-1]['text']['@bytes']))
+                        editor["bytes added"] += max(0, int(self.revisions[i]['Body']['Text']['@Bytes']) - int(self.revisions[i-1]['Body']['Text']['@Bytes']))
                     if i == 0 :
-                        editor["bytes added"] += int(x['text']['@bytes'])
+                        editor["bytes added"] += int(x['Body']['Text']['@Bytes'])
         editorsArray.sort(key = lambda x: x["first edit"], reverse = True)
         editorsArray.sort(key = lambda x: x["minor edits"], reverse = True)
         editorsArray.sort(key = lambda x: x["total edits"], reverse = True)
