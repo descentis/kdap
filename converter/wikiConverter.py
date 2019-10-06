@@ -330,7 +330,7 @@ class wikiConverter(object):
                 m = m - 1
                 continue
     
-        print("KNML file created")
+        print("KnolML file created")
     	
         # Creating directory 
         if not os.path.exists(directory):
@@ -345,12 +345,12 @@ class wikiConverter(object):
         file_name = separator.join(file_name)
         '''
     
-        tree.write(file_name[:-7]+'Compressed.knolml')
-        f = open(file_name[:-7]+'Compressed.knolml')
+        tree.write(file_name[:-7]+'.knolml')
+        f = open(file_name[:-7]+'.knolml')
         f_str = f.read()
         f.close()
     
-        f2 = open(file_name[:-7]+'Compressed.knolml', "w")
+        f2 = open(file_name[:-7]+'.knolml', "w")
         f2.write("<?xml version='1.0' encoding='utf-8'?>\n"+f_str)
         f2.close()
     
