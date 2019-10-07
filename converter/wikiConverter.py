@@ -167,7 +167,7 @@ class wikiConverter(object):
         wikiConverter.instance_id+=1             
  
     @staticmethod
-    def wiki_knml_converter(name):
+    def wiki_knolml_converter(name):
         #global instance_id
         #Creating a meta file for the wiki article
         
@@ -301,6 +301,7 @@ class wikiConverter(object):
         r = tree.getroot()
         for child in r:
             if('KnowledgeData' in child.tag):
+                child.attrib['Type'] = 'Wiki/text/revision/compressed'
                 root = child
                 
         last_rev = ""
@@ -362,7 +363,7 @@ class wikiConverter(object):
             output_dir = kwargs['output_dir']        
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
-            wikiConverter.wiki_knml_converter(file_name)
+            wikiConverter.wiki_knolml_converter(file_name)
             file_name = file_name[:-4] + '.knolml'
             wikiConverter.compress(file_name,output_dir)
             os.remove(file_name)            
@@ -370,7 +371,7 @@ class wikiConverter(object):
         if(kwargs.get('file_list')!=None):
             path_list = kwargs['file_list']
             for file_name in path_list:            
-                wikiConverter.wiki_knml_converter(file_name)
+                wikiConverter.wiki_knolml_converter(file_name)
                 file_name = file_name[:-4] + '.knolml'
                 wikiConverter.compress(file_name,output_dir)
                 os.remove(file_name)
@@ -465,7 +466,7 @@ class wikiConverter(object):
                 print('Something went wrong! ' + articleName + '\n' + '\n')
             
             file_handler.close()
-            wikiConverter.wiki_knml_converter(output_dir+articleName+'.xml')    
+            wikiConverter.wiki_knolml_converter(output_dir+articleName+'.xml')    
     
     @staticmethod    
     def serialCompress(self,dir_path, *args, **kwargs):

@@ -718,11 +718,11 @@ class knolAnalysis(object):
             for revision in revisions:
                 # write your analysis for each revision
                 x = 0
-                '''
+                
                 with open('dummy.txt','a') as myFile:
                     myFile.write(revision+'\n')
                     myFile.write(str(cRev)+'\n')
-                '''
+                
                 cRev+=1
 
      
@@ -1146,26 +1146,46 @@ class knolAnalysis(object):
             file_name = kwargs['file_path']            
             tree = ET.parse(file_name)            
             root = tree.getroot()    
-            wordCount = 0
+            wordCount = []
             for child in root:
                 if('KnowledgeData' in child.tag):
                     if('Wiki' in child.attrib['Type']):
-                        if(lastRev):
-                            length = len(child.findall('Instance'))
-                            revision = knolAnalysis.getRevision(file_name,length)
-                            Text = knolAnalysis.getCleanText(revision)
-                            wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
-                            wordCount+=wordNum                        
+                        if('compressed' in child.attrib['Type']):
+                            if(lastRev):
+                                length = len(child.findall('Instance'))
+                                revision = knolAnalysis.getRevision(file_name,length)
+                                Text = knolAnalysis.getCleanText(revision)
+                                wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                                wordCount.append(wordNum)                        
+                            else:
+                                revisionList = knolAnalysis.getAllRevisions(file_name)
+                                for rev in revisionList:
+                                    revisions = knolAnalysis.wikiRetrieval(file_name,rev)
+                                    for revision in revisions:
+                                        Text = knolAnalysis.getCleanText(revision)
+                                        wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                                        wordCount.append(wordNum)
+
                         else:
-                            revisionList = knolAnalysis.getAllRevisions(file_name)
-                            for rev in revisionList:
-                                revisions = knolAnalysis.wikiRetrieval(file_name,rev)
-                                for revision in revisions:
-                                    Text = knolAnalysis.getCleanText(revision)
-                                    wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
-                                    wordCount+=wordNum
-                                #print(len(revisions))
-                                #for revision in revisions:
+                            context_wiki = ET.iterparse(file_name, events=("start","end"))
+                            # Turning it into an iterator
+                            context_wiki = iter(context_wiki)
+                            
+                            # getting the root element
+                            event_wiki, root_wiki = next(context_wiki)
+                            
+                            for event, elem in context_wiki:
+                                if event == "end" and 'Instance' in elem.tag:
+                                    for body in elem:
+                                        if('Body' in body.tag):
+                                            for textt in body:
+                                                if('Text' in textt.tag):
+                                                    wordNum = len(re.sub('['+string.punctuation+']', '', textt.text).split())
+                                                    wordCount.append(wordNum)
+                                    elem.clear()
+                                    root_wiki.clear() 
+
+
                     elif('QA' in child.attrib['Type']):
                         print('yes')
                         if(lastRev):
@@ -1194,29 +1214,48 @@ class knolAnalysis(object):
         elif(kwargs.get('file_name')!=None):
             #print('yes')
             file_name = kwargs['file_name']
+            #print('file name is: ',file_name)
             for f in file_name:
                 tree = ET.parse(f)            
                 root = tree.getroot()                                                    
-                wordCount = 0
+                wordCount = []
                 for child in root:
                     if('KnowledgeData' in child.tag):
                         if('Wiki' in child.attrib['Type']):
-
-                            if(lastRev):
-                                length = len(child.findall('Instance'))
-                                revision = knolAnalysis.getRevision(f,length)
-                                Text = knolAnalysis.getCleanText(revision)
-                                wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
-                                wordCount+=wordNum                                    
-                            
+                            if('compressed' in child.attrib['Type']):
+                                if(lastRev):
+                                    length = len(child.findall('Instance'))
+                                    revision = knolAnalysis.getRevision(f,length)
+                                    Text = knolAnalysis.getCleanText(revision)
+                                    wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                                    wordCount.append(wordNum)                        
+                                else:
+                                    revisionList = knolAnalysis.getAllRevisions(f)
+                                    for rev in revisionList:
+                                        revisions = knolAnalysis.wikiRetrieval(f,rev)
+                                        for revision in revisions:
+                                            Text = knolAnalysis.getCleanText(revision)
+                                            wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                                            wordCount.append(wordNum)
+    
                             else:
-                                revisionList = knolAnalysis.getAllRevisions(f)
-                                for rev in revisionList:
-                                    revisions = knolAnalysis.wikiRetrieval(f,rev)
-                                    for revision in revisions:
-                                        Text = knolAnalysis.getCleanText(revision)
-                                        wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
-                                        wordCount+=wordNum
+                                context_wiki = ET.iterparse(f, events=("start","end"))
+                                # Turning it into an iterator
+                                context_wiki = iter(context_wiki)
+                                
+                                # getting the root element
+                                event_wiki, root_wiki = next(context_wiki)
+                                
+                                for event, elem in context_wiki:
+                                    if event == "end" and 'Instance' in elem.tag:
+                                        for body in elem:
+                                            if('Body' in body.tag):
+                                                for textt in body:
+                                                    if('Text' in textt.tag):
+                                                        wordNum = len(re.sub('['+string.punctuation+']', '', textt.text).split())
+                                                        wordCount.append(wordNum)
+                                        elem.clear()
+                                        root_wiki.clear()
                                         
                                         
                         elif('QA' in child.attrib['Type']):
