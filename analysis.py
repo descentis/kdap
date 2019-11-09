@@ -22,7 +22,72 @@ import mwparserfromhell
 from nltk.tokenize import word_tokenize
 import copy
 
-class knolAnalysis(object):
+
+class instances(object):
+    
+    '''
+    creating the instance of each object.
+    The init function defined stores each instance's attribute which can be analyzed separately
+    '''
+    def __init__(self,instance, title):
+        #self.test = 'jsut to check the instances class'
+        #print(self.test)
+        #print(instance.tag)        
+        self.instanceId = instance.attrib['Id']
+        self.instanceType = instance.attrib['InstanceType']
+        self.instanceTitle = title
+        if(instance.attrib.get('RevisionId')!=None):
+            self.revId = instance.attrib['RevisionId']
+        self.instance_attrib = {}
+        for ch1 in instance:
+            if 'TimeStamp' in ch1.tag:
+                self.instance_attrib['TimeStamp'] = {}
+                for ch2 in ch1:
+                    if 'CreationDate' in ch2.tag:
+                        self.instance_attrib['TimeStamp']['CreationDate'] = ch2.text
+                    if 'LastEditDate' in ch2.tag:
+                        self.instance_attrib['TimeStamp']['LastEditDate'] = ch2.text
+                       
+                    if 'LastActivityDate' in ch2.tag:
+                        self.instance_attrib['TimeStamp']['LastActivityDate'] = ch2.text
+            
+            if 'Contributors' in ch1.tag:
+                self.instance_attrib['Contributors'] = {}
+                for ch2 in ch1:
+                    if 'OwnerUserId' in ch2.tag:
+                        self.instance_attrib['Contributors']['OwnerUserId'] = ch2.text
+                    if 'OwnerUserName' in ch2.tag:
+                        self.instance_attrib['Contributors']['OwnerUserName'] = ch2.text
+                    if 'LastEditorUserId' in ch2.tag:
+                        self.instance_attrib['Contributors']['LastEditorUserId'] = ch2.text
+            
+            if 'Body' in ch1.tag:
+                self.instance_attrib['Body'] = {}
+                for ch2 in ch1:
+                    if 'Text' in ch2.tag:
+                        self.instance_attrib['Body']['Text'] = {}
+                        self.instance_attrib['Body']['Text']['#Type'] = ch2.attrib['Type']
+                        self.instance_attrib['Body']['Text']['#Bytes'] = ch2.attrib['Bytes']
+                    
+            if 'Tags' in ch1.tag:
+                self.instance_attrib['Tags'] = ch1.text
+            
+    
+        
+    def just_to_check(self):
+        print("just to check function")
+        print(self.instanceId)
+        print(self.instanceType)
+        
+    def get_editor(self):
+        return [self.instance_attrib['Contributors']['OwnerUserId'], self.instance_attrib['Contributors']['OwnerUserName']]
+
+
+class knol(object):
+    
+    def __init__(self):
+        self.random = 'just to check the knol class'
+        print(self.random)
     
     @staticmethod
     def get_process_memory():
@@ -174,7 +239,7 @@ class knolAnalysis(object):
                 # { { }
                 nest += 1
         # collect text outside partitions
-        return knolAnalysis.dropSpans(spans, text)
+        return knol.dropSpans(spans, text)
 
     @staticmethod
     def transform(wikitext):
@@ -187,17 +252,17 @@ class knolAnalysis(object):
         res = ''
         cur = 0
         for m in nowiki.finditer(wikitext, cur):
-            res += knolAnalysis.transform1(wikitext[cur:m.start()]) + wikitext[m.start():m.end()]
+            res += knol.transform1(wikitext[cur:m.start()]) + wikitext[m.start():m.end()]
             cur = m.end()
         # leftover
-        res += knolAnalysis.transform1(wikitext[cur:])
+        res += knol.transform1(wikitext[cur:])
         return res
 
     @staticmethod
     def transform1(text):
         """Transform text not containing <nowiki>"""
 
-        return knolAnalysis.dropNested(text, r'{{', r'}}')
+        return knol.dropNested(text, r'{{', r'}}')
 
     @staticmethod
     def makeExternalImage(url, alt=''):
@@ -248,7 +313,7 @@ class knolAnalysis(object):
             # This happened by accident in the original parser, but some people used it extensively
             m = EXT_IMAGE_REGEX.match(label)
             if m:
-                label = knolAnalysis.makeExternalImage(label)
+                label = knol.makeExternalImage(label)
     
             # Use the encoded URL
             # This means that users can paste URLs directly into the text
@@ -304,8 +369,8 @@ class knolAnalysis(object):
         
         # Drop tables
         # first drop residual templates, or else empty parameter |} might look like end of table.      
-        text = knolAnalysis.dropNested(text, r'{{', r'}}')
-        text = knolAnalysis.dropNested(text, r'{\|', r'\|}')
+        text = knol.dropNested(text, r'{{', r'}}')
+        text = knol.dropNested(text, r'{\|', r'\|}')
 
         switches = (
             '__NOTOC__',
@@ -348,10 +413,10 @@ class knolAnalysis(object):
         text = text.replace("'''", '').replace("''", '"')
 
         # replace internal links
-        text = knolAnalysis.replaceInternalLinks(text)
+        text = knol.replaceInternalLinks(text)
 
         # replace external links
-        text = knolAnalysis.replaceExternalLinks(text)
+        text = knol.replaceExternalLinks(text)
 
         # drop MagicWords behavioral switches
         text = magicWordsRE.sub('', text)
@@ -362,9 +427,9 @@ class knolAnalysis(object):
         res = ''
         cur = 0
         for m in syntaxhighlight.finditer(text):
-            res += knolAnalysis.unescape(text[cur:m.start()]) + m.group(1)
+            res += knol.unescape(text[cur:m.start()]) + m.group(1)
             cur = m.end()
-        text = res + knolAnalysis.unescape(text[cur:])
+        text = res + knol.unescape(text[cur:])
         return text
 
     @staticmethod
@@ -418,14 +483,14 @@ class knolAnalysis(object):
         '''
 
         # Bulk remove all spans
-        text = knolAnalysis.dropSpans(spans, text)
+        text = knol.dropSpans(spans, text)
 
         # Drop discarded elements
         for tag in discardElements:
-            text = knolAnalysis.dropNested(text, r'<\s*%s\b[^>/]*>' % tag, r'<\s*/\s*%s>' % tag)
+            text = knol.dropNested(text, r'<\s*%s\b[^>/]*>' % tag, r'<\s*/\s*%s>' % tag)
 
 
-        text = knolAnalysis.unescape(text)
+        text = knol.unescape(text)
 
         # Expand placeholders
         for pattern, placeholder in placeholder_tag_patterns:
@@ -464,9 +529,9 @@ class knolAnalysis(object):
 
     @staticmethod
     def getCleanText(text):
-        text = knolAnalysis.transform(text)
-        text = knolAnalysis.wiki2text(text)
-        text = knolAnalysis.clean(text)
+        text = knol.transform(text)
+        text = knol.wiki2text(text)
+        text = knol.clean(text)
 
         return text        
 
@@ -544,7 +609,7 @@ class knolAnalysis(object):
         tailRE = re.compile('\w+')
         cur = 0
         res = ''
-        for s, e in knolAnalysis.findBalanced(text):
+        for s, e in knol.findBalanced(text):
             m = tailRE.match(text, e)
             if m:
                 trail = m.group(0)
@@ -562,13 +627,13 @@ class knolAnalysis(object):
                 title = inner[:pipe].rstrip()
                 # find last |
                 curp = pipe + 1
-                for s1, e1 in knolAnalysis.findBalanced(inner):
+                for s1, e1 in knol.findBalanced(inner):
                     last = inner.rfind('|', curp, s1)
                     if last >= 0:
                         pipe = last  # advance
                     curp = e1
                 label = inner[pipe + 1:].strip()
-            res += text[cur:s] + knolAnalysis.makeInternalLink(title, label) + trail
+            res += text[cur:s] + knol.makeInternalLink(title, label) + trail
             cur = end
         return res + text[cur:]
 
@@ -725,9 +790,19 @@ class knolAnalysis(object):
                 
                 cRev+=1
 
-     
-    @classmethod           
-    def countRev(cls,file_name, *args, **kwargs):
+    
+    
+    '''
+    This function can be used to get knol from a knolml file.
+    The idea behind knol is to generalize the knowledge unit for each portal.
+    Each frame will have parameters (user, time, data, etc) related to it, one can easily retrieve the parameters associated with a frame
+    '''
+    
+    # Yet to add the function
+        
+    
+              
+    def countRev(self,file_name, *args, **kwargs):
         tree = ET.parse(file_name)
         r = tree.getroot()
 
@@ -787,7 +862,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.countRev, args=(fileList[i]), kwargs={'revisionLength': revisionLength,'l': l})
+            processDict[i+1] = Process(target=knol.countRev, args=(fileList[i]), kwargs={'revisionLength': revisionLength,'l': l})
         
         for i in range(pNum):
             processDict[i+1].start()
@@ -884,7 +959,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):            
-            processDict[i+1] = Process(target=knolAnalysis.countUsers, kwargs={'file_name':fileList[i],'users': usersList,'l': l})
+            processDict[i+1] = Process(target=knol.countUsers, kwargs={'file_name':fileList[i],'users': usersList,'l': l})
         
         for i in range(pNum):
             processDict[i+1].start()
@@ -1003,7 +1078,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.getKnowledgeAge, kwargs={'file_name':fileList[i],'articleAge': ageList,'l': l})
+            processDict[i+1] = Process(target=knol.getKnowledgeAge, kwargs={'file_name':fileList[i],'articleAge': ageList,'l': l})
         
         for i in range(pNum):
             processDict[i+1].start()
@@ -1091,7 +1166,7 @@ class knolAnalysis(object):
                 if('KnowledgeData' in child.tag):
                     if('Wiki' in child.attrib['Type'] and 'revision' in child.attrib['Type']):
                         length = len(child.findall('Instance'))
-                        revision = knolAnalysis.getRevision(file_name,length)
+                        revision = knol.getRevision(file_name,length)
                         urls = re.findall(href_regex, revision)
                         for ur in urls:
                             urlList.append(ur)
@@ -1153,16 +1228,16 @@ class knolAnalysis(object):
                         if('compressed' in child.attrib['Type']):
                             if(lastRev):
                                 length = len(child.findall('Instance'))
-                                revision = knolAnalysis.getRevision(file_name,length)
-                                Text = knolAnalysis.getCleanText(revision)
+                                revision = knol.getRevision(file_name,length)
+                                Text = knol.getCleanText(revision)
                                 wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
                                 wordCount.append(wordNum)                        
                             else:
-                                revisionList = knolAnalysis.getAllRevisions(file_name)
+                                revisionList = knol.getAllRevisions(file_name)
                                 for rev in revisionList:
-                                    revisions = knolAnalysis.wikiRetrieval(file_name,rev)
+                                    revisions = knol.wikiRetrieval(file_name,rev)
                                     for revision in revisions:
-                                        Text = knolAnalysis.getCleanText(revision)
+                                        Text = knol.getCleanText(revision)
                                         wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
                                         wordCount.append(wordNum)
 
@@ -1198,7 +1273,7 @@ class knolAnalysis(object):
                                                     Text = ch3.text
                         
                         
-                        Text = knolAnalysis.getCleanText(Text)
+                        Text = knol.getCleanText(Text)
                         wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
                         
                             
@@ -1225,16 +1300,16 @@ class knolAnalysis(object):
                             if('compressed' in child.attrib['Type']):
                                 if(lastRev):
                                     length = len(child.findall('Instance'))
-                                    revision = knolAnalysis.getRevision(f,length)
-                                    Text = knolAnalysis.getCleanText(revision)
+                                    revision = knol.getRevision(f,length)
+                                    Text = knol.getCleanText(revision)
                                     wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
                                     wordCount.append(wordNum)                        
                                 else:
-                                    revisionList = knolAnalysis.getAllRevisions(f)
+                                    revisionList = knol.getAllRevisions(f)
                                     for rev in revisionList:
-                                        revisions = knolAnalysis.wikiRetrieval(f,rev)
+                                        revisions = knol.wikiRetrieval(f,rev)
                                         for revision in revisions:
-                                            Text = knolAnalysis.getCleanText(revision)
+                                            Text = knol.getCleanText(revision)
                                             wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
                                             wordCount.append(wordNum)
     
@@ -1269,7 +1344,7 @@ class knolAnalysis(object):
                                                         Text = ch3.text
                             
                             
-                            Text = knolAnalysis.getCleanText(Text)
+                            Text = knol.getCleanText(Text)
                             wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
                             
                                   
@@ -1335,7 +1410,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.countWords, kwargs={'file_name':fileList[i],'wordCount': countList, 'lastRev':lastRev,'l': l})
+            processDict[i+1] = Process(target=knol.countWords, kwargs={'file_name':fileList[i],'wordCount': countList, 'lastRev':lastRev,'l': l})
             #processDict[i+1] = Process(target=self.countWords, kwargs={'file_name':fileList[i], 'lastRev':lastRev,'l': l})
         for i in range(pNum):
             processDict[i+1].start()
@@ -1366,7 +1441,7 @@ class knolAnalysis(object):
             except:
                 revisionId = len(root.findall('Instance'))
 
-            wikiText = knolAnalysis.getRevision(file_name, revisionId)
+            wikiText = knol.getRevision(file_name, revisionId)
 
             if wikiText.find('{{Infobox') != -1:
                 return 1
@@ -1389,7 +1464,7 @@ class knolAnalysis(object):
                 except:
                     revisionId = len(root.findall('Instance'))
 
-                wikiText = knolAnalysis.getRevision(f, revisionId)
+                wikiText = knol.getRevision(f, revisionId)
 
                 if wikiText.find('{{Infobox') != -1:
                     check = 1
@@ -1447,7 +1522,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.Infobox, kwargs={'file_name':fileList[i],'Infobox': Infobox,'l': l, 'revision_id': revisionId})
+            processDict[i+1] = Process(target=knol.Infobox, kwargs={'file_name':fileList[i],'Infobox': Infobox,'l': l, 'revision_id': revisionId})
 
         for i in range(pNum):
             processDict[i+1].start()
@@ -1474,7 +1549,7 @@ class knolAnalysis(object):
             except:
                 revisionId = len(root.findall('Instance'))
 
-            wikiText = knolAnalysis.getRevision(file_name, revisionId)
+            wikiText = knol.getRevision(file_name, revisionId)
 
             countImages = 0
             imageFormates = ['.jpg','.jpeg','.svg','.gif','.png','.bmp','.tiff']
@@ -1501,7 +1576,7 @@ class knolAnalysis(object):
                 except:
                     revisionId = len(root.findall('Instance'))
 
-                wikiText = knolAnalysis.getRevision(f, revisionId)
+                wikiText = knol.getRevision(f, revisionId)
                 count += 1
 
                 countImages = 0
@@ -1562,7 +1637,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.countImages, kwargs={'file_name':fileList[i],'images': Images,'l': l, 'revision_id': revisionId})
+            processDict[i+1] = Process(target=knol.countImages, kwargs={'file_name':fileList[i],'images': Images,'l': l, 'revision_id': revisionId})
 
         for i in range(pNum):
             processDict[i+1].start()
@@ -1630,18 +1705,18 @@ class knolAnalysis(object):
     def localGiniCoefficient(*args, **kwargs):
         if kwargs.get('file_path') != None:
             file_name = kwargs['file_path']
-            p = np.array(knolAnalysis.getContributions(file_name))
-            giniValue = knolAnalysis.gini(p)
+            p = np.array(knol.getContributions(file_name))
+            giniValue = knol.gini(p)
             return giniValue
 
         elif kwargs.get('file_name') != None:
             file_name = kwargs['file_name']
             for f in file_name:
-                p = np.array(knolAnalysis.getContributions(f))
+                p = np.array(knol.getContributions(f))
                 if(len(p)==0):
                     giniValue = -1
                 else:
-                    giniValue = knolAnalysis.gini(p)
+                    giniValue = knol.gini(p)
 
                 if(kwargs.get('GiniValues')!=None):
                     kwargs['GiniValues'][f] = giniValue
@@ -1693,7 +1768,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.localGiniCoefficient, kwargs={'file_name':fileList[i],'GiniValues': GiniValues,'l': l})
+            processDict[i+1] = Process(target=knol.localGiniCoefficient, kwargs={'file_name':fileList[i],'GiniValues': GiniValues,'l': l})
 
         for i in range(pNum):
             processDict[i+1].start()
@@ -1771,7 +1846,7 @@ class knolAnalysis(object):
                 s.append(float(contributors[each]))
     
             p = np.array(s)
-            giniValue = knolAnalysis.gini(p)
+            giniValue = knol.gini(p)
             return giniValue            
         '''
     @staticmethod    
@@ -1817,7 +1892,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.globalGini, kwargs={'file_name':fileList[i],'contributors': contributors,'l': l})
+            processDict[i+1] = Process(target=knol.globalGini, kwargs={'file_name':fileList[i],'contributors': contributors,'l': l})
 
         for i in range(pNum):
             processDict[i+1].start()
@@ -1832,7 +1907,7 @@ class knolAnalysis(object):
             s.append(float(contributors[key]))
 
         p = np.array(s)
-        giniValue = knolAnalysis.gini(p)
+        giniValue = knol.gini(p)
         
         t2 = time.time()
         print(t2-t1)
@@ -1863,9 +1938,9 @@ class knolAnalysis(object):
             count = 1
             slabNo = 1 
             slabs = {}
-            revisionList = knolAnalysis.getAllRevisions(file_name)
+            revisionList = knol.getAllRevisions(file_name)
             for rev in revisionList:
-                revisions = knolAnalysis.wikiRetrieval(file_name,rev)
+                revisions = knol.wikiRetrieval(file_name,rev)
                 for revision in revisions:
                     currRevision = revision
 
@@ -1982,13 +2057,13 @@ class knolAnalysis(object):
         slab = 20
         if kwargs.get('file_path') != None:
             file_name = kwargs['file_path']
-            return knolAnalysis.revisionEdits(file_name, slab)
+            return knol.revisionEdits(file_name, slab)
 
         elif kwargs.get('file_name') != None:
             file_name = kwargs['file_name']
             for f in file_name:
                 if(kwargs.get('RevisionEdits')!=None):
-                    kwargs['RevisionEdits'][f] = knolAnalysis.revisionEdits(f, slab)
+                    kwargs['RevisionEdits'][f] = knol.revisionEdits(f, slab)
 
 
     @staticmethod
@@ -2037,7 +2112,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.revisionTypes, kwargs={'file_name':fileList[i],'RevisionEdits': RevisionEdits,'l': l})
+            processDict[i+1] = Process(target=knol.revisionTypes, kwargs={'file_name':fileList[i],'RevisionEdits': RevisionEdits,'l': l})
 
         for i in range(pNum):
             processDict[i+1].start()
@@ -2174,7 +2249,7 @@ class knolAnalysis(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knolAnalysis.findTags, kwargs={'list_tags':list_tags,'file_name':fileList[i],'tagPosts':tagPosts,'l': l})
+            processDict[i+1] = Process(target=knol.findTags, kwargs={'list_tags':list_tags,'file_name':fileList[i],'tagPosts':tagPosts,'l': l})
             
             #processDict[i+1] = Process(target=self.countWords, kwargs={'file_name':fileList[i], 'lastRev':lastRev,'l': l})
         for i in range(pNum):

@@ -19,6 +19,10 @@ from internetarchive import download
 
 class qaConverter(object):
     
+    def __init__(self):
+        self.random = 'just to check'
+        print(self.random)
+    
     @staticmethod
     def getPostType(name):
         # To get an iterable
