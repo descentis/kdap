@@ -21,7 +21,16 @@ import os
 import mwparserfromhell
 from nltk.tokenize import word_tokenize
 import copy
-
+from kdap.converter.wikiConverter import wikiConverter
+import wikipedia
+import requests
+import sqlite3
+import ast
+from bx.misc.seekbzip2 import SeekableBzip2File
+from internetarchive import download
+from pyunpack import Archive
+from os.path import expanduser
+from kdap.wikiextract.wikiExtract import wikiExtract
 
 class instances(object):
     
@@ -46,10 +55,14 @@ class instances(object):
                     if 'CreationDate' in ch2.tag:
                         self.instance_attrib['TimeStamp']['CreationDate'] = ch2.text
                     if 'LastEditDate' in ch2.tag:
-                        self.instance_attrib['TimeStamp']['LastEditDate'] = ch2.text
-                       
+                        self.instance_attrib['TimeStamp']['LastEditDate'] = ch2.text                       
                     if 'LastActivityDate' in ch2.tag:
                         self.instance_attrib['TimeStamp']['LastActivityDate'] = ch2.text
+                    if 'CommunityOwnedDate' in ch2.tag:
+                        self.instance_attrib['TimeStamp']['CommunityOwnedDate'] = ch2.text
+                    if 'ClosedDate' in ch2.tag:
+                        self.instance_attrib['TimeStamp']['ClosedDate'] = ch2.text
+                    
             
             if 'Contributors' in ch1.tag:
                 self.instance_attrib['Contributors'] = {}
@@ -68,9 +81,24 @@ class instances(object):
                         self.instance_attrib['Body']['Text'] = {}
                         self.instance_attrib['Body']['Text']['#Type'] = ch2.attrib['Type']
                         self.instance_attrib['Body']['Text']['#Bytes'] = ch2.attrib['Bytes']
+                        self.instance_attrib['Body']['Text']['text'] = ch2.text
                     
             if 'Tags' in ch1.tag:
                 self.instance_attrib['Tags'] = ch1.text
+            
+            if 'Credit' in ch1.tag:
+                self.instance_attrib['Credit'] = {}
+                for ch2 in ch1:
+                    if 'Score' in ch2.tag:
+                        self.instance_attrib['Credit']['Score'] = ch2.text
+                    if 'CommentCount' in ch2.tag:
+                        self.instance_attrib['Credit']['CommentCount'] = ch2.text
+                    if 'ViewCount' in ch2.tag:
+                        self.instance_attrib['Credit']['ViewCount'] = ch2.text
+                    if 'AnswerCount' in ch2.tag:
+                        self.instance_attrib['Credit']['AnswerCount'] = ch2.text
+                    if 'FavouriteCount' in ch2.tag:
+                        self.instance_attrib['Credit']['FavouriteCount'] = ch2.text
             
     
         
@@ -80,15 +108,443 @@ class instances(object):
         print(self.instanceType)
         
     def get_editor(self):
-        return [self.instance_attrib['Contributors']['OwnerUserId'], self.instance_attrib['Contributors']['OwnerUserName']]
+        di = {}
+        if self.instance_attrib['Contributors'].get('OwnerUserId')!=None:
+            di['OwnerUserId'] = self.instance_attrib['Contributors']['OwnerUserId']
+        if self.instance_attrib['Contributors'].get('OwnerUserName')!=None:
+            di['OwnerUserName'] = self.instance_attrib['Contributors']['OwnerUserName']
+        if self.instance_attrib['Contributors'].get('LastEditorUserId')!=None:
+            di['LastEditorUserId'] = self.instance_attrib['Contributors']['LastEditorUserId']
+        return di
+    
+    def get_title(self):
+        return self.instanceTitle
+    
+    def get_tags(self):
+        if self.instance_attrib.get('Tags')!=None:
+            return self.instance_attrib['Tags']
+        else:
+            print("No tags are found")
+    
+    def get_timestamp(self):
+        di = {}
+        if self.instance_attrib['TimeStamp'].get('CreationDate')!=None:
+            di['CreationDate'] = self.instance_attrib['TimeStamp']['CreationDate']
+        if self.instance_attrib['TimeStamp'].get('LastEditDate')!=None:
+            di['LastEditDate'] = self.instance_attrib['TimeStamp']['LastEditDate']
+        if self.instance_attrib['TimeStamp'].get('LastActivityDate')!=None:
+            di['LastActivityDate'] = self.instance_attrib['TimeStamp']['LastActivityDate']
+        if self.instance_attrib['TimeStamp'].get('CommunityOwnedDate')!=None:
+            di['CommunityOwnedDate'] = self.instance_attrib['TimeStamp']['CommunityOwnedDate']
+        if self.instance_attrib['TimeStamp'].get('ClosedDate')!=None:
+            di['ClosedDate'] = self.instance_attrib['TimeStamp']['ClosedDate']
+        return di        
+    
+    def get_score(self):
+        if self.instance_attrib.get('Credit')==None:
+            return 'Score value is not available'
+        di = {}
+        if self.instance_attrib['Credit'].get('Score')!=None:
+            di['Score'] = self.instance_attrib['Credit']['Score']
+        if self.instance_attrib['Credit'].get('CommentCount')!=None:
+            di['CommentCount'] = self.instance_attrib['Credit']['CommentCount']
+        if self.instance_attrib['Credit'].get('ViewCount')!=None:
+            di['ViewCount'] = self.instance_attrib['Credit']['ViewCount']
+        if self.instance_attrib['Credit'].get('AnswerCount')!=None:
+            di['AnswerCount'] = self.instance_attrib['Credit']['AnswerCount']
+        if self.instance_attrib['Credit'].get('FavouriteCount')!=None:
+            di['FavouriteCount'] = self.instance_attrib['Credit']['FavouriteCount']
+        return di  
+        
+    def get_text(self):
+        di = {}
+        
+        if self.instance_attrib['Body']['Text'].get('text') != None:
+            di['text'] = self.instance_attrib['Body']['Text']['text']
+        
+        return di
+    
+    def get_bytes(self):
+        if self.instance_attrib['Body']['Text'].get('#Bytes') != None:
+               return  int(self.instance_attrib['Body']['Text']['#Bytes'])
+                           
 
+class knowledge_data(object):
+    
+    def __init__(self, *args, **kwargs):
+        self.file_name = ''
+        self.dir_path = ''
+        self.kcounter = 0
+        self.knowledgeData_list = []
+        self.dir = 0
+        if(kwargs.get('file_name')!=None):
+            self.file_name = kwargs['file_name']
+        elif(kwargs.get('dir_path')!=None):
+            self.dir = 1
+            self.dir_path= kwargs['dir_path']
+            self.number = re.compile(r'(\d+)')
+            if os.path.isdir(self.dir_path+'/Posts'):
+                self.file_list = sorted(glob.glob(self.dir_path+'/Posts/*.knolml'), key=self.numericalSort)
+            else:
+                self.file_list = sorted(glob.glob(self.dir_path+'/*.knolml'), key=self.numericalSort)
+            
 
+    def numericalSort(self, value):
+        parts = self.numbers.split(value)
+        parts[1::2] = map(int, parts[1::2])
+        return parts        
+    
+    def count_instances(self):
+        if self.file_name != '':        
+            tree = ET.parse(self.file_name)
+            r = tree.getroot()
+            di = {}
+            knowledgeDataList = []
+            for child in r:
+                if('KnowledgeData' in child.tag):
+                    #root = child
+                    for ch in child:
+                        if 'Title' in ch:
+                            title = ch.text
+                    knowledgeDataList.append([title,child])
+            for kn in knowledgeDataList:
+                length = len(kn[1].findall('Instance'))
+                di[kn[0]] = length                
+
+            return di  
+        else:
+            return 'file name not given'
 class knol(object):
     
     def __init__(self):
-        self.random = 'just to check the knol class'
-        print(self.random)
+        self.dir = 0
+        self.kcounter = 0
+        self.knowledgeData_list = []
+        self.object_list = []
+        self.file_name = ''
+        self.dump_directory = ''
+
+    '''
+    frame method is used to store the knolml data in terms of frames
+    each instances can be analyzed separately and sequencially
+    '''
+    def frame(self, *args, **kwargs):
+        if(kwargs.get('file_name')!=None):
+            file_name = kwargs['file_name']
+            self.file_name = file_name
+            self.get_knowledgeData(file_name)
+        
+        elif(kwargs.get('dir_path')!=None):
+            self.dir = 1
+            dir_path = kwargs['dir_path']
+            self.numbers = re.compile(r'(\d+)')
+            self.file_count = 0
+            if os.path.isdir(dir_path+'/Posts'):
+                self.file_list = sorted(glob.glob(dir_path+'/Posts/*.knolml'), key=self.numericalSort)
+            else:
+                self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
+            self.get_knowledgeData(self.file_list[0])
+        return self.object_list
+
+    def get_knowledgeData(self,file_name):
+        tree = ET.parse(file_name)
+        
+        root = tree.getroot()
+        for elem in root:
+            if 'KnowledgeData' in elem.tag:
+                self.knowledgeData_list.append(elem)
+        
+        self.object_list = self.get_frames(self.knowledgeData_list[self.kcounter])        
     
+    
+    def numericalSort(self, value):
+        parts = self.numbers.split(value)
+        parts[1::2] = map(int, parts[1::2])
+        return parts
+    
+    def get_frames(self, elem):        
+        object_list = []
+        title = ''
+        for ch1 in elem:
+            if 'Title' in ch1.tag:
+                title = ch1.text
+            if 'Instance' in ch1.tag:
+                instance = ch1
+                object_list.append(instances(instance, title))
+        
+        return object_list
+    
+    def Next(self):
+        self.kcounter+=1
+        if(self.kcounter<len(self.knowledgeData_list)):
+            self.get_knowledgeData(self.knowledgeData_list[self.kcounter])
+        elif(self.dir==1):
+            self.file_count+=1
+            self.get_knowledgeData(self.file_list[self.file_count])
+        
+        return self.object_list
+    
+    #******************methods related to frames ends here*****************************
+        
+    '''
+    Following methods are used to download the relavent dataset from archive in Knol-ML format
+    '''
+    def extract_from_bzip(self, file, art, index, home):
+        filet = home+"/knolml_dataset/bz2t/"+file+'t'
+        chunk = 1000
+        f = SeekableBzip2File(self.dump_directory+'/'+file, filet)
+        f.seek(int(index))
+        strData = f.read(chunk).decode("utf-8")
+        artName = art.replace(" ","_")
+        artName = artName.replace("/","__")
+        if not os.path.isdir(home+'/knolml_dataset/output'):
+            os.makedirs(home+'/knolml_dataset/output')
+        article = open(home+'/knolml_dataset/output/'+artName+".xml", 'w+')
+        article.write('<mediawiki>\n')
+        article.write('<page>\n')
+        article.write('\t\t<title>'+art+'</title>\n')
+        #article.write(strData)
+        while '</page>' not in strData :
+            article.write(strData)
+            strData = f.read(chunk).decode("utf-8", errors = "ignore")
+            
+    
+        end = strData.find('</page>')
+        article.write(strData[:end])
+        article.write("\n")
+        article.write('</page>\n')
+        article.write('</mediawiki>')
+
+    def get_article_name(self, article_list):
+        '''
+        article_list provides a list of articles to be searched
+        this function finds the coorect name of the article which is present on wikipedia
+        '''
+        articles = []
+        for article in article_list:
+            wiki_names = wikipedia.search(article)
+            if article in wiki_names:
+                articles.append(article)
+                pass
+            else:
+                print("The same name article: '"+article+"' has not been found. Using the name as: "+wiki_names[0])
+                articles.append(wiki_names[0])
+        return articles
+    
+    def download_from_dump(self, home, articles):
+        if not os.path.isdir(home+'/knolml_dataset/phase_details'):
+            download('knolml_dataset', verbose=True, glob_pattern='phase_details.7z', destdir=home)
+            Archive('~/knolml_dataset/phase_details.7z').extractall('~/knolml_dataset')
+        if not os.path.isdir(home+'/knolml_dataset/bz2t'):
+            download('knolml_dataset', verbose=True, glob_pattern='bz2t.7z', destdir=home)
+            Archive('~/knolml_dataset/bz2t.7z').extractall(home+'/knolml_dataset')
+        fileList = glob.glob(home+'/knolml_dataset/phase_details/*.txt')
+        for files in fileList:
+            if('phase' in files):
+                with open(files,'r') as myFile:
+                    for line in myFile:
+                        l = line.split('#$*$#')
+                        if l[0] in articles:
+                            print("article is found")
+                            self.extract_from_bzip(l[1],l[0],int(l[2]), home)
+    
+    def download_dataset(self, sitename, *args, **kwargs):
+        # sitename = Portal name
+        # article_list = [] List of article to be extracted
+        # wikipedia_dump = directory of the wikipedia dump
+        '''
+        sitename varibale contains the portal from which user wants to download the dataset.
+        Each sitename has various parameters which can be provided as optional argument
+        '''
+        try:
+            compress_bool = kwargs['compress']
+        except:
+            compress_bool = False
+        sitename = sitename.lower()
+        home = expanduser("~")
+        if kwargs.get('destdir') != None:
+            destdir = kwargs['destdir']
+        else:
+            if not os.path.isdir(home+'/knolml_dataset/wikipedia_articles'):
+                os.makedirs(home+'/knolml_dataset/wikipedia_articles')
+            destdir = home+'/knolml_dataset/wikipedia_articles'
+            
+        if kwargs.get('wikipedia_dump')!=None:
+            self.dump_directory = kwargs['wikipedia_dump']
+            
+        if sitename == 'wikipedia':
+            if kwargs.get('article_list')!=None:
+                article_list = kwargs['article_list']
+                articles = self.get_article_name(article_list)
+                self.download_from_dump(home, articles)
+                
+            if kwargs.get('category_list')!= None:
+                category_list = kwargs['category_list']
+                final_category_list = []
+                final_category = {}
+                sub_category = {}
+                we = wikiExtract()
+                for category_name in category_list:
+                    category_title = we.get_articles_by_category(category_name)
+                    print(category_title)
+                    for key,val in category_title.items():
+                        if key != 'extra#@#category':
+                            final_category[key] = val
+                            self.download_from_dump(home, val)
+                        else:
+                            li = []
+                            for el in category_title[key]:
+                                category_list.append(el['title'].replace('Category:',''))
+                                li.append(el['title'].replace('Category:',''))
+                            
+                            sub_category[category_name] = li
+                final_category_list.append(final_category)
+                final_category_list.append(sub_category)
+                
+                if kwargs.get('article_list')!=None:
+                    if compress_bool:
+                        wikiConverter.compressAll(home+'/knolml_dataset/output/',output_dir=destdir)
+                    else:
+                        wikiConverter.convertall(home+'/knolml_dataset/output/',output_dir=destdir)
+            #if kwargs.get('category_list')!= None:
+                
+                    
+    '''
+    get_article method downloads the full revision history of an article in knol-ML format
+    '''
+    def get_wiki_article(self, article_name, *args, **kwargs):
+        #self.file_name = article_name.replace(' ','_')
+        #self.file_name = self.file_name.replace('/','__')
+        #self.file_name = self.file_name+'.knolml'
+        wiki_names = wikipedia.search(article_name)
+        output_dir = 'output'
+        if(kwargs.get('output_dir')!=None):
+            output_dir = kwargs['output_dir']
+                
+        
+        #self.file_name = output_dir+'/'+self.file_name
+            
+        if article_name in wiki_names:
+            wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
+            article_name = article_name.replace(' ', '_')
+            article_name = article_name.replace('/', '__')
+            wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+        else:
+            print("Article name is not found. Taking '"+wiki_names[0]+"' as the article name")
+            article_name = wiki_names[0]
+            wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
+            article_name = article_name.replace(' ', '_')
+            article_name = article_name.replace('/', '__')
+            wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+        
+        
+
+    # knol methods start from here    
+    
+    '''
+    This definition counts the number of instances in a knowledge article
+    '''
+    def count_instances(self, *args, **kwargs):
+        if kwargs.get('file_name') != None:
+            self.file_name = kwargs['file_name']
+        
+        if self.file_name != '':        
+            tree = ET.parse(self.file_name)
+            r = tree.getroot()
+            di = {}
+            knowledgeDataList = []
+            title = ''
+            for child in r:
+                if('KnowledgeData' in child.tag):
+                    #root = child
+                    for ch in child:
+                        if 'Title' in ch.tag:
+                            title = ch.text
+                    knowledgeDataList.append([title,child])
+            for kn in knowledgeDataList:
+                length = len(kn[1].findall('Instance'))
+                di[kn[0]] = length                
+
+            return di  
+        else:
+            return 'file name not given'
+        
+    '''
+    This definition returns the number of editors in a knowledge data
+    '''
+    def get_editors(self, *args, **kwargs):
+        if kwargs.get('file_name') != None:
+            self.file_name = kwargs['file_name']
+        
+        if self.file_name != '':    
+            tree = ET.parse(self.file_name)
+            r = tree.getroot()
+            #di = {}
+            knowledgeDataList = {}
+            title = ''
+            for child in r:
+                if('KnowledgeData' in child.tag):
+                    #root = child
+                    con_di = {}
+                    for ch in child:
+                        if 'Title' in ch.tag:
+                            title = ch.text
+                        if 'Instance' in ch.tag:
+                            
+                            for ch1 in ch:                                
+                                if 'Contributors' in ch1.tag:
+                                    for ch2 in ch1:
+                                        if 'OwnerUserName' in ch2.tag:
+                                            username = ch2.text
+                                        if 'OwnerUserId' in ch2.tag:
+                                            userid = ch2.text
+                                    con_di[userid] = username
+                    knowledgeDataList[title] = con_di            
+
+            return knowledgeDataList  
+        else:
+            return 'file name not given'
+
+    '''
+    function to display the query on database
+    '''
+    def display_data(self, query, conn):
+        cursor = conn.execute(query)
+        displayList = []
+        for row in cursor:
+             displayList.append(row)
+        
+        return displayList
+    
+    '''
+    following function queries the database to extract the articles based on category namme
+    '''
+    def get_wiki_article_by_category(self, category_name):
+        try:
+            conn = sqlite3.connect('nidhi_database/articleDescdb.db')		#connecting to database  
+            print("Connection made")
+        except:
+            print("connection refused")
+        
+        c = category_name.lower()
+        if c=='fa':
+            c = 'FA'
+        elif c == 'ga':
+            c = 'GA'
+        elif c == 'c':
+            c = 'C'
+        elif c == 'b':
+            c = 'B'
+        elif c == 'a':
+            c = 'A'
+        elif c == 'start':
+            c = 'Start'
+        elif c == 'stub':
+            c = 'Stub'
+        
+        result = self.display_data("select article_id, article_nm from article_desc where class ='"+c+"';", conn)
+        return result
+             
     @staticmethod
     def get_process_memory():
         process = psutil.Process(os.getpid())
@@ -172,470 +628,7 @@ class knol(object):
         
         return result
 
-    @staticmethod
-    def dropSpans(spans, text):
-        """
-        Drop from text the blocks identified in :param spans:, possibly nested.
-        """
-        spans.sort()
-        res = ''
-        offset = 0
-        for s, e in spans:
-            if offset <= s:         # handle nesting
-                if offset < s:
-                    res += text[offset:s]
-                offset = e
-        res += text[offset:]
-        return res
 
-    @staticmethod
-    def dropNested(text, openDelim, closeDelim):
-        """
-        A matching function for nested expressions, e.g. namespaces and tables.
-        """
-        openRE = re.compile(openDelim, re.IGNORECASE)
-        closeRE = re.compile(closeDelim, re.IGNORECASE)
-        # partition text in separate blocks { } { }
-        spans = []                  # pairs (s, e) for each partition
-        nest = 0                    # nesting level
-        start = openRE.search(text, 0)
-        if not start:
-            return text
-        end = closeRE.search(text, start.end())
-        next = start
-        while end:
-            next = openRE.search(text, next.end())
-            if not next:            # termination
-                while nest:         # close all pending
-                    nest -= 1
-                    end0 = closeRE.search(text, end.end())
-                    if end0:
-                        end = end0
-                    else:
-                        break
-                spans.append((start.start(), end.end()))
-                break
-            while end.end() < next.start():
-                # { } {
-                if nest:
-                    nest -= 1
-                    # try closing more
-                    last = end.end()
-                    end = closeRE.search(text, end.end())
-                    if not end:     # unbalanced
-                        if spans:
-                            span = (spans[0][0], last)
-                        else:
-                            span = (start.start(), last)
-                        spans = [span]
-                        break
-                else:
-                    spans.append((start.start(), end.end()))
-                    # advance start, find next close
-                    start = next
-                    end = closeRE.search(text, next.end())
-                    break           # { }
-            if next != start:
-                # { { }
-                nest += 1
-        # collect text outside partitions
-        return knol.dropSpans(spans, text)
-
-    @staticmethod
-    def transform(wikitext):
-        """
-        Transforms wiki markup.
-        @see https://www.mediawiki.org/wiki/Help:Formatting
-        """
-        # look for matching <nowiki>...</nowiki>
-        nowiki = re.compile(r'<nowiki>.*?</nowiki>')
-        res = ''
-        cur = 0
-        for m in nowiki.finditer(wikitext, cur):
-            res += knol.transform1(wikitext[cur:m.start()]) + wikitext[m.start():m.end()]
-            cur = m.end()
-        # leftover
-        res += knol.transform1(wikitext[cur:])
-        return res
-
-    @staticmethod
-    def transform1(text):
-        """Transform text not containing <nowiki>"""
-
-        return knol.dropNested(text, r'{{', r'}}')
-
-    @staticmethod
-    def makeExternalImage(url, alt=''):
-
-        return alt
-
-    @staticmethod
-    def replaceExternalLinks(text):
-        """
-        https://www.mediawiki.org/wiki/Help:Links#External_links
-        [URL anchor text]
-        """
-        wgUrlProtocols = [
-            'bitcoin:', 'ftp://', 'ftps://', 'geo:', 'git://', 'gopher://', 'http://',
-            'https://', 'irc://', 'ircs://', 'magnet:', 'mailto:', 'mms://', 'news:',
-            'nntp://', 'redis://', 'sftp://', 'sip:', 'sips:', 'sms:', 'ssh://',
-            'svn://', 'tel:', 'telnet://', 'urn:', 'worldwind://', 'xmpp:', '//'
-        ]
-        EXT_LINK_URL_CLASS = r'[^][<>"\x00-\x20\x7F\s]'
-        ANCHOR_CLASS = r'[^][\x00-\x08\x0a-\x1F]'
-        ExtLinkBracketedRegex = re.compile('\[(((?i)' + '|'.join(wgUrlProtocols) + ')' + EXT_LINK_URL_CLASS + r'+)' + r'\s*((?:' + ANCHOR_CLASS + r'|\[\[' + ANCHOR_CLASS + r'+\]\])' + r'*?)\]',
-    re.S | re.U)
-
-        EXT_IMAGE_REGEX = re.compile(
-            r"""^(http://|https://)([^][<>"\x00-\x20\x7F\s]+)
-            /([A-Za-z0-9_.,~%\-+&;#*?!=()@\x80-\xFF]+)\.((?i)gif|png|jpg|jpeg)$""",
-            re.X | re.S | re.U)
-
-        
-        s = ''
-        cur = 0
-        for m in ExtLinkBracketedRegex.finditer(text):
-            s += text[cur:m.start()]
-            cur = m.end()
-    
-            url = m.group(1)
-            label = m.group(3)
-    
-            # # The characters '<' and '>' (which were escaped by
-            # # removeHTMLtags()) should not be included in
-            # # URLs, per RFC 2396.
-            # m2 = re.search('&(lt|gt);', url)
-            # if m2:
-            #     link = url[m2.end():] + ' ' + link
-            #     url = url[0:m2.end()]
-    
-            # If the link text is an image URL, replace it with an <img> tag
-            # This happened by accident in the original parser, but some people used it extensively
-            m = EXT_IMAGE_REGEX.match(label)
-            if m:
-                label = knol.makeExternalImage(label)
-    
-            # Use the encoded URL
-            # This means that users can paste URLs directly into the text
-            # Funny characters like ö aren't valid in URLs anyway
-            # This was changed in August 2004
-            s += label  # + trail
-    
-        return s + text[cur:]
-
-    @staticmethod
-    def unescape(text):
-        """
-        Removes HTML or XML character references and entities from a text string.
-        :param text The HTML (or XML) source text.
-        :return The plain text, as a Unicode string, if necessary.
-        """
-    
-        def fixup(m):
-            text = m.group(0)
-            code = m.group(1)
-            try:
-                if text[1] == "#":  # character reference
-                    if text[2] == "x":
-                        return chr(int(code[1:], 16))
-                    else:
-                        return chr(int(code))
-                else:  # named entity
-                    return chr(name2codepoint[code])
-            except:
-                return text  # leave as is
-    
-        return re.sub("&#?(\w+);", fixup, text)
-
-    @staticmethod
-    def wiki2text(text):
-        #
-        # final part of internalParse().)
-        #
-        # $text = $this->doTableStuff( $text );
-        # $text = preg_replace( '/(^|\n)-----*/', '\\1<hr />', $text );
-        # $text = $this->doDoubleUnderscore( $text );
-        # $text = $this->doHeadings( $text );
-        # $text = $this->replaceInternalLinks( $text );
-        # $text = $this->doAllQuotes( $text );
-        # $text = $this->replaceExternalLinks( $text );
-        # $text = str_replace( self::MARKER_PREFIX . 'NOPARSE', '', $text );
-        # $text = $this->doMagicLinks( $text );
-        # $text = $this->formatHeadings( $text, $origText, $isMain );
-
-
-        syntaxhighlight = re.compile('&lt;syntaxhighlight .*?&gt;(.*?)&lt;/syntaxhighlight&gt;', re.DOTALL)
-        
-        
-        # Drop tables
-        # first drop residual templates, or else empty parameter |} might look like end of table.      
-        text = knol.dropNested(text, r'{{', r'}}')
-        text = knol.dropNested(text, r'{\|', r'\|}')
-
-        switches = (
-            '__NOTOC__',
-            '__FORCETOC__',
-            '__TOC__',
-            '__TOC__',
-            '__NEWSECTIONLINK__',
-            '__NONEWSECTIONLINK__',
-            '__NOGALLERY__',
-            '__HIDDENCAT__',
-            '__NOCONTENTCONVERT__',
-            '__NOCC__',
-            '__NOTITLECONVERT__',
-            '__NOTC__',
-            '__START__',
-            '__END__',
-            '__INDEX__',
-            '__NOINDEX__',
-            '__STATICREDIRECT__',
-            '__DISAMBIG__'
-        )
-        # Handle bold/italic/quote
-
-        bold_italic = re.compile(r"'''''(.*?)'''''")
-        bold = re.compile(r"'''(.*?)'''")
-        italic_quote = re.compile(r"''\"([^\"]*?)\"''")
-        italic = re.compile(r"''(.*?)''")
-        quote_quote = re.compile(r'""([^"]*?)""')
-        magicWordsRE = re.compile('|'.join(switches))
-        
- 
-    
-       
-        text = bold_italic.sub(r'\1', text)
-        text = bold.sub(r'\1', text)
-        text = italic_quote.sub(r'"\1"', text)
-        text = italic.sub(r'"\1"', text)
-        text = quote_quote.sub(r'"\1"', text)
-        # residuals of unbalanced quotes
-        text = text.replace("'''", '').replace("''", '"')
-
-        # replace internal links
-        text = knol.replaceInternalLinks(text)
-
-        # replace external links
-        text = knol.replaceExternalLinks(text)
-
-        # drop MagicWords behavioral switches
-        text = magicWordsRE.sub('', text)
-
-        # ############### Process HTML ###############
-
-        # turn into HTML, except for the content of <syntaxhighlight>
-        res = ''
-        cur = 0
-        for m in syntaxhighlight.finditer(text):
-            res += knol.unescape(text[cur:m.start()]) + m.group(1)
-            cur = m.end()
-        text = res + knol.unescape(text[cur:])
-        return text
-
-    @staticmethod
-    def clean(text):
-        """
-        Removes irrelevant parts from :param: text.
-        """
-
-        selfClosingTags = ('br', 'hr', 'nobr', 'ref', 'references', 'nowiki')
-        comment = re.compile(r'<!--.*?-->', re.DOTALL)
-        selfClosing_tag_patterns = [
-            re.compile(r'<\s*%s\b[^>]*/\s*>' % tag, re.DOTALL | re.IGNORECASE) for tag in selfClosingTags
-            ]
-        
-        discardElements = [
-            'gallery', 'timeline', 'noinclude', 'pre',
-            'table', 'tr', 'td', 'th', 'caption', 'div',
-            'form', 'input', 'select', 'option', 'textarea',
-            'ul', 'li', 'ol', 'dl', 'dt', 'dd', 'menu', 'dir',
-            'ref', 'references', 'img', 'imagemap', 'source', 'small',
-            'sub', 'sup', 'indicator'
-        ]        
-        spaces = re.compile(r' {2,}')
-        
-        dots = re.compile(r'\.{4,}')
-        
-        placeholder_tags = {'math': 'formula', 'code': 'codice'}
-        placeholder_tag_patterns = [
-            (re.compile(r'<\s*%s(\s*| [^>]+?)>.*?<\s*/\s*%s\s*>' % (tag, tag), re.DOTALL | re.IGNORECASE),
-             repl) for tag, repl in placeholder_tags.items()
-            ]
-
-        # Collect spans
-        spans = []
-        # Drop HTML comments
-        for m in comment.finditer(text):
-            spans.append((m.start(), m.end()))
-
-        # Drop self-closing tags
-        for pattern in selfClosing_tag_patterns:
-            for m in pattern.finditer(text):
-                spans.append((m.start(), m.end()))
-
-        '''
-        # Drop ignored tags
-        for left, right in options.ignored_tag_patterns:
-            for m in left.finditer(text):
-                spans.append((m.start(), m.end()))
-            for m in right.finditer(text):
-                spans.append((m.start(), m.end()))
-        '''
-
-        # Bulk remove all spans
-        text = knol.dropSpans(spans, text)
-
-        # Drop discarded elements
-        for tag in discardElements:
-            text = knol.dropNested(text, r'<\s*%s\b[^>/]*>' % tag, r'<\s*/\s*%s>' % tag)
-
-
-        text = knol.unescape(text)
-
-        # Expand placeholders
-        for pattern, placeholder in placeholder_tag_patterns:
-            index = 1
-            for match in pattern.finditer(text):
-                text = text.replace(match.group(), '%s_%d' % (placeholder, index))
-                index += 1
-
-        text = text.replace('<<', '«').replace('>>', '»')
-
-        #############################################
-
-        # Cleanup text
-        text = text.replace('\t', ' ')
-        text = spaces.sub(' ', text)
-        text = dots.sub('...', text)
-        text = re.sub(' (,:\.\)\]»)', r'\1', text)
-        text = re.sub('(\[\(«) ', r'\1', text)
-        text = re.sub(r'\n\W+?\n', '\n', text, flags=re.U)  # lines with only punctuations
-        text = text.replace(',,', ',').replace(',.', '.')
-        keep_tables = True
-        if keep_tables:
-            # the following regular expressions are used to remove the wikiml chartacters around table strucutures
-            # yet keep the content. The order here is imporant so we remove certain markup like {| and then
-            # then the future html attributes such as 'style'. Finally we drop the remaining '|-' that delimits cells.
-            text = re.sub(r'!(?:\s)?style=\"[a-z]+:(?:\d+)%;\"', r'', text)
-            text = re.sub(r'!(?:\s)?style="[a-z]+:(?:\d+)%;[a-z]+:(?:#)?(?:[0-9a-z]+)?"', r'', text)
-            text = text.replace('|-', '')
-            text = text.replace('|', '')
-
-        '''
-        if options.toHTML:
-            text = cgi.escape(text)
-        '''
-        return text
-
-    @staticmethod
-    def getCleanText(text):
-        text = knol.transform(text)
-        text = knol.wiki2text(text)
-        text = knol.clean(text)
-
-        return text        
-
-    @staticmethod
-    def findBalanced(text, openDelim=['[['], closeDelim=[']]']):
-        """
-        Assuming that text contains a properly balanced expression using
-        :param openDelim: as opening delimiters and
-        :param closeDelim: as closing delimiters.
-        :return: an iterator producing pairs (start, end) of start and end
-        positions in text containing a balanced expression.
-        """
-        openPat = '|'.join([re.escape(x) for x in openDelim])
-        # pattern for delimiters expected after each opening delimiter
-        afterPat = {o: re.compile(openPat + '|' + c, re.DOTALL) for o, c in zip(openDelim, closeDelim)}
-        stack = []
-        start = 0
-        cur = 0
-        # end = len(text)
-        startSet = False
-        startPat = re.compile(openPat)
-        nextPat = startPat
-        while True:
-            next = nextPat.search(text, cur)
-            if not next:
-                return
-            if not startSet:
-                start = next.start()
-                startSet = True
-            delim = next.group(0)
-            if delim in openDelim:
-                stack.append(delim)
-                nextPat = afterPat[delim]
-            else:
-                opening = stack.pop()
-                # assert opening == openDelim[closeDelim.index(next.group(0))]
-                if stack:
-                    nextPat = afterPat[stack[-1]]
-                else:
-                    yield start, next.end()
-                    nextPat = startPat
-                    start = next.end()
-                    startSet = False
-            cur = next.end()
-
-    
-    @staticmethod
-    def makeInternalLink(title, label):
-        colon = title.find(':')
-        keepLinks = False
-        acceptedNamespaces = ['w', 'wiktionary', 'wikt']
-        if colon > 0 and title[:colon] not in acceptedNamespaces:
-            return ''
-        if colon == 0:
-            # drop also :File:
-            colon2 = title.find(':', colon + 1)
-            if colon2 > 1 and title[colon + 1:colon2] not in acceptedNamespaces:
-                return ''
-        if keepLinks:
-            return '<a href="%s">%s</a>' % (quote(title.encode('utf-8')), label)
-        else:
-            return label
-
-
-    @staticmethod
-    def replaceInternalLinks(text):
-        """
-        Replaces internal links of the form:
-        [[title |...|label]]trail
-        with title concatenated with trail, when present, e.g. 's' for plural.
-        See https://www.mediawiki.org/wiki/Help:Links#Internal_links
-        """
-        # call this after removal of external links, so we need not worry about
-        # triple closing ]]].
-        tailRE = re.compile('\w+')
-        cur = 0
-        res = ''
-        for s, e in knol.findBalanced(text):
-            m = tailRE.match(text, e)
-            if m:
-                trail = m.group(0)
-                end = m.end()
-            else:
-                trail = ''
-                end = e
-            inner = text[s + 2:e - 2]
-            # find first |
-            pipe = inner.find('|')
-            if pipe < 0:
-                title = inner
-                label = title
-            else:
-                title = inner[:pipe].rstrip()
-                # find last |
-                curp = pipe + 1
-                for s1, e1 in knol.findBalanced(inner):
-                    last = inner.rfind('|', curp, s1)
-                    if last >= 0:
-                        pipe = last  # advance
-                    curp = e1
-                label = inner[pipe + 1:].strip()
-            res += text[cur:s] + knol.makeInternalLink(title, label) + trail
-            cur = end
-        return res + text[cur:]
 
 
         

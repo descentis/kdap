@@ -5,38 +5,70 @@ Created on Tue Oct  8 15:07:50 2019
 
 @author: descentis
 """
-import pycountry
-from sampleExtractdb import display_data
+
+#from sampleExtractdb import display_data
+import requests
 
 class wikiExtract(object):
     
-    def getCountryList(self):
-        list_countries = []
-        for c in pycountry.countries:
-            list_countries.append(str(c.name))
+    def get_articles_by_category(self, category_name):
+        '''
+        this definition can be used to get the names of article
+        related to a category
+        '''
+        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&format=json&cmtitle=Category:'
+        category_dict = {}
+        url = url1+category_name
+        article_list = []
+        extra_category = []
+        while(True):
+            r = requests.get(url)
+            data = r.json()
+            pages = data['query']['categorymembers']
+            for i in pages:
+                
+                if 'Category:' in i['title']:
+                    extra_category.append(i)
+                elif 'Template:' not in i['title']:
+                    article_list.append(i)
+            
+            if data.get('continue')!=None:
+                url = url+'&cmcontinue='+data['continue']['cmcontinue']
+            else:
+                break
+        category_dict[category_name] = article_list
+        category_dict['extra#@#category'] = extra_category
         
-        wiki_countries = []
+        return category_dict
+    
+    def get_articles_by_template(self, template_list):
         '''
-        countries_id = display_data("select article_nm,project from wiki_project where project='countries';")
-        for i in countries_id:
-            wikiC = display_data("select article_nm from article_desc where article_id ="+ "'"+i[0]+"';")
-            wiki_countries.append(wikiC[0][0])
-            print(wikiC[0][0])
+        this definition can be used to get the names of article
+        based on category
         '''
-        for l in list_countries:
-            print(l)
-            try:
-                wikiC = display_data("select article_id from article_desc where article_nm ="+ "'"+l+"';")
-            except:
-                pass
-            if(len(wikiC)>0):
-                wiki_countries.append(wikiC[0][0])
-                print(wikiC[0][0])
+        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=embeddedin&eilimit=5&format=json&eititle=Template:'
+        template_dict = {}
+        for template in template_list:
+            url = url1+template
+            article_list = []
+            while(True):
+                r = requests.get(url)
+                data = r.json()
+                pages = data['query']['embeddedin']
+                for i in pages:
+                    article_list.append(i)
+                
+                if data.get('continue')!=None:
+                    url = url+'&eicontinue='+data['continue']['eicontinue']
+                else:
+                    break
+            template_dict[template] = article_list
         
-        '''
-        country_wiki_name = []
-        for i in wiki_countries:
-            if i.lower() in list_countries:
-                country_wiki_name.append(i)
-        '''
-        return wiki_countries
+        return template_dict
+
+'''
+w = wikiExtract()
+B = w.get_articles_by_category('Black Lives Matter')
+for key,val in B.items():
+    print(key, val)
+'''

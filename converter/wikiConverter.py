@@ -99,7 +99,10 @@ class wikiConverter(object):
                         myFile.write(LastEditorUserName)                        
                     else:
                         if('username' in contrib.tag):
-                            LastEditorUserName = t+t+t+t+"<OwnerUserName>"+html.escape(contrib.text)+"</OwnerUserName>\n"
+                            try:
+                                LastEditorUserName = t+t+t+t+"<OwnerUserName>"+html.escape(contrib.text)+"</OwnerUserName>\n"
+                            except:
+                                LastEditorUserName = t+t+t+t+"<OwnerUserName>None</OwnerUserName>\n"
                             myFile.write(LastEditorUserName)                        
                         if(('id' in contrib.tag) and ('parentid' not in contrib.tag)):
                             LastEditorUserId = t+t+t+t+"<OwnerUserId>"+contrib.text+"</OwnerUserId>\n"
@@ -167,13 +170,14 @@ class wikiConverter(object):
         wikiConverter.instance_id+=1             
  
     @staticmethod
-    def wiki_knolml_converter(name):
+    def wiki_knolml_converter(name, *args, **kwargs):
         #global instance_id
         #Creating a meta file for the wiki article
         
         
         
         # To get an iterable for wiki file
+
         file_name = name
         context_wiki = ET.iterparse(file_name, events=("start","end"))
         # Turning it into an iterator
@@ -183,6 +187,9 @@ class wikiConverter(object):
         event_wiki, root_wiki = next(context_wiki)
         file_name = name[:-4]+'.knolml'
         file_path = file_name
+        if kwargs.get('output_dir'):
+            file_path = file_path.replace('output','wikipedia_articles')
+            
         with open(file_path,"w",encoding='utf-8') as myFile:
             myFile.write("<?xml version='1.0' encoding='utf-8'?>\n")
             myFile.write("<KnolML>\n")
@@ -391,7 +398,7 @@ class wikiConverter(object):
         if(kwargs.get('c_num')!=None):
             c_num = kwargs['c_num']
         else:
-            c_num = 24              # By default it is 24
+            c_num = 4              # By default it is 4
         fileNames = glob.glob(dir_path+'/*.xml')
         if(kwargs.get('output_dir')!=None):
             output_dir=kwargs['output_dir']
@@ -428,6 +435,74 @@ class wikiConverter(object):
         t2 = time.time()
         
         print("All process done with time: ",str(t2-t1))
+
+    @staticmethod
+    def convertwiki(*args, **kwargs):
+
+        if(kwargs.get('output_dir')!=None):
+            output_dir = kwargs['output_dir']        
+        if(kwargs.get('file_name')!=None):
+            file_name = kwargs['file_name']
+            wikiConverter.wiki_knolml_converter(file_name,output_dir=output_dir)
+            file_name = file_name[:-4] + '.knolml'
+            #wikiConverter.compress(file_name,output_dir)
+            #os.remove(file_name)            
+       
+        if(kwargs.get('file_list')!=None):
+            path_list = kwargs['file_list']
+            for file_name in path_list:            
+                wikiConverter.wiki_knolml_converter(file_name, output_dir=output_dir)
+                file_name = file_name[:-4] + '.knolml'
+                #wikiConverter.compress(file_name,output_dir)
+                #os.remove(file_name)
+        
+        if((kwargs.get('file_name')==None) and (kwargs.get('file_list')==None)):
+            print("No arguments provided")
+            
+
+    @staticmethod
+    def convertall(dir_path, *args, **kwargs):
+        t1 = time.time()
+        if(kwargs.get('c_num')!=None):
+            c_num = kwargs['c_num']
+        else:
+            c_num = 4              # By default it is 4
+        fileNames = glob.glob(dir_path+'/*.xml')
+        if(kwargs.get('output_dir')!=None):
+            output_dir=kwargs['output_dir']
+        else:
+            output_dir = os.getcwd()
+        fileNum = len(fileNames)
+        fileList = []
+        if(fileNum<c_num):
+            for f in fileNames:
+                fileList.append([f])
+        
+        else:           
+
+            f = np.array_split(fileNames,c_num)
+            for i in f:
+                fileList.append(i.tolist())
+        
+        l = Lock()
+        processDict = {}
+        if(fileNum<c_num):
+            pNum = fileNum
+        else:
+            pNum = c_num
+        for i in range(pNum):
+            processDict[i+1] = Process(target=wikiConverter.convertwiki,kwargs={'output_dir':output_dir,'file_list': fileList[i],'l': l})
+        
+        for i in range(pNum):
+            processDict[i+1].start()
+        
+        for i in range(pNum):
+            processDict[i+1].join()
+        
+        
+        t2 = time.time()
+        
+        print("All process done with time: ",str(t2-t1))        
         
         
     @staticmethod    
@@ -450,7 +525,8 @@ class wikiConverter(object):
     
         for each in featuredArticleList:
             articleName = each
-
+            articleName = articleName.replace(' ','_')
+            articleName = articleName.replace('/','__')
             file_handler = io.open(output_dir+articleName+'.xml', mode='w+', encoding='utf-8')
             url = 'https://en.m.wikipedia.org/w/index.php?title=Special:Export&pages=' + articleName + '&history=1&action=submit'
             headers = {
