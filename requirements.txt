@@ -10,4 +10,5 @@ nltk==3.4.5
 xmltodict
 matplotlib
 prettytable
-bx
+bx-python
+pyunpack
