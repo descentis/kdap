@@ -14,7 +14,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=['requests==2.21.0',
                       'internetarchive==1.8.5',
-                      'numpy==1.16.5',
+                      'numpy',
                       'wikipedia',
                       'networkx',
                       'pycountry',
