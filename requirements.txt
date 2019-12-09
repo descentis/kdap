@@ -1,6 +1,6 @@
 requests==2.21.0
 internetarchive==1.8.5
-numpy==1.17.2
+numpy==1.16.5
 wikipedia
 networkx
 pycountry
