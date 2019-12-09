@@ -23,7 +23,8 @@ setuptools.setup(
                       'nltk==3.4.5',
                       'xmltodict',
                       'matplotlib',
-                      'prettytable'],
+                      'prettytable',
+                      'bx'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: BSD License",
