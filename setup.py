@@ -24,7 +24,8 @@ setuptools.setup(
                       'xmltodict',
                       'matplotlib',
                       'prettytable',
-                      'bx'],
+                      'bx-python',
+                      'pyunpack'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: BSD License",
