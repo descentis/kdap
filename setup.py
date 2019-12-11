@@ -25,7 +25,8 @@ setuptools.setup(
                       'matplotlib',
                       'prettytable',
                       'bx-python',
-                      'pyunpack'],
+                      'pyunpack',
+                      'mwviews'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: BSD License",
