@@ -23,7 +23,10 @@ class wikiExtract(object):
         extra_category = []
         while(True):
             r = requests.get(url)
-            data = r.json()
+            try:
+                data = r.json()
+            except:
+                break
             pages = data['query']['categorymembers']
             for i in pages:
                 
@@ -41,34 +44,33 @@ class wikiExtract(object):
         
         return category_dict
     
-    def get_articles_by_template(self, template_list):
+    def get_articles_by_template(self, template_name):
         '''
         this definition can be used to get the names of article
         based on category
         '''
         url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=embeddedin&eilimit=5&format=json&eititle=Template:'
         template_dict = {}
-        for template in template_list:
-            url = url1+template
-            article_list = []
-            while(True):
-                r = requests.get(url)
-                data = r.json()
-                pages = data['query']['embeddedin']
-                for i in pages:
-                    article_list.append(i)
-                
-                if data.get('continue')!=None:
-                    url = url+'&eicontinue='+data['continue']['eicontinue']
-                else:
-                    break
-            template_dict[template] = article_list
+        url = url1+template_name
+        article_list = []
+        while(True):
+            r = requests.get(url)
+            data = r.json()
+            pages = data['query']['embeddedin']
+            for i in pages:
+                article_list.append(i)
+            
+            if data.get('continue')!=None:
+                url = url+'&eicontinue='+data['continue']['eicontinue']
+            else:
+                break
+        template_dict[template_name] = article_list
         
         return template_dict
 
 '''
 w = wikiExtract()
-B = w.get_articles_by_category('Black Lives Matter')
+B = w.get_articles_by_template(['Black Lives Matter'])
 for key,val in B.items():
     print(key, val)
 '''
