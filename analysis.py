@@ -374,6 +374,7 @@ class knol(object):
             compress_bool = False
         sitename = sitename.lower()
         home = expanduser("~")
+        download_data = True
         if kwargs.get('destdir') != None:
             destdir = kwargs['destdir']
         else:
@@ -389,6 +390,13 @@ class knol(object):
                 article_list = kwargs['article_list']
                 articles = self.get_article_name(article_list)
                 self.download_from_dump(home, articles)
+                if compress_bool:
+                    wikiConverter.compressAll(home+'/knolml_dataset/output/', output_dir=destdir)
+                else:
+                    print("conversion started")
+                    wikiConverter.convertall(home+'/knolml_dataset/output/', output_dir=destdir)
+            if kwargs.get('download')!=None:
+                download_data = kwargs['download']
                 
             if kwargs.get('category_list')!= None:
                 category_list = kwargs['category_list']
@@ -402,16 +410,17 @@ class knol(object):
                     for key,val in category_title.items():
                         if key != 'extra#@#category':
                             final_category[key] = val
-                            download_list = []
-                            for el in category_title[key]:
-                                download_list.append(el['title'])
-                            articles = self.get_article_name(download_list)
-                            self.download_from_dump(home, articles, key)
-                            if compress_bool:
-                                wikiConverter.compressAll(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
-                            else:
-                                print("conversion started")
-                                wikiConverter.convertall(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                            if download_data:
+                                download_list = []
+                                for el in category_title[key]:
+                                    download_list.append(el['title'])
+                                articles = self.get_article_name(download_list)
+                                self.download_from_dump(home, articles, key)
+                                if compress_bool:
+                                    wikiConverter.compressAll(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                                else:
+                                    print("conversion started")
+                                    wikiConverter.convertall(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
                         else:
                             li = []
                             for el in category_title[key]:
@@ -436,16 +445,17 @@ class knol(object):
                     for key,val in template_title.items():
                         if key != 'extra#@#category':
                             final_template[key] = val
-                            download_list = []
-                            for el in template_title[key]:
-                                download_list.append(el['title'])
-                            articles = self.get_article_name(download_list)
-                            self.download_from_dump(home, articles, key)
-                            if compress_bool:
-                                wikiConverter.compressAll(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
-                            else:
-                                print("conversion started")
-                                wikiConverter.convertall(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                            if download_data:
+                                download_list = []
+                                for el in template_title[key]:
+                                    download_list.append(el['title'])
+                                articles = self.get_article_name(download_list)
+                                self.download_from_dump(home, articles, key)
+                                if compress_bool:
+                                    wikiConverter.compressAll(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                                else:
+                                    print("conversion started")
+                                    wikiConverter.convertall(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
                         else:
                             li = []
                             for el in template_title[key]:
@@ -503,31 +513,49 @@ class knol(object):
     '''
     following function queries the database to extract the articles based on category namme
     '''
-    def get_wiki_article_by_category(self, category_name):
+    def get_wiki_article_by_class(self, *args, **kwargs):
+        home = expanduser("~")
+        if not os.path.exists(home+'/knolml_dataset/articleDescdb.db'):
+            download('knolml_dataset', verbose=True, glob_pattern='articleDescdb.db', destdir=home)
         try:
-            conn = sqlite3.connect('nidhi_database/articleDescdb.db')		#connecting to database  
+            conn = sqlite3.connect(home+'/knolml_dataset/articleDescdb.db')		#connecting to database  
             print("Connection made")
         except:
             print("connection refused")
+            
+        if kwargs.get('wikiproject')!=None:
+            wikiproject = kwargs['wikiproject']
+            
+            article_id = []
+            if wikiproject.lower()!='mathematics':
+                article_ids = self.display_data("select article_nm,project from wiki_project where project='"+wikiproject.lower()+"';",conn)
+                for i in article_ids:
+                    article_id.append(i[0])
+                article_id = str(tuple(article_id))
+                
+                articles = self.display_data("select article_nm from article_desc where article_id in "+article_id+";", conn)
+            else:
+                articles = self.download_dataset('wikipedia', category_list=['WikiProject Mathematics articles'], download=False)
         
-        c = category_name.lower()
-        if c=='fa':
-            c = 'FA'
-        elif c == 'ga':
-            c = 'GA'
-        elif c == 'c':
-            c = 'C'
-        elif c == 'b':
-            c = 'B'
-        elif c == 'a':
-            c = 'A'
-        elif c == 'start':
-            c = 'Start'
-        elif c == 'stub':
-            c = 'Stub'
-        
-        result = self.display_data("select article_id, article_nm from article_desc where class ='"+c+"';", conn)
-        return result
+        if kwargs.get('wiki_class')!=None:
+            c = kwargs['wiki_class'].lower()
+            if c=='fa':
+                c = 'FA'
+            elif c == 'ga':
+                c = 'GA'
+            elif c == 'c':
+                c = 'C'
+            elif c == 'b':
+                c = 'B'
+            elif c == 'a':
+                c = 'A'
+            elif c == 'start':
+                c = 'Start'
+            elif c == 'stub':
+                c = 'Stub'
+            
+            articles = self.display_data("select article_id, article_nm from article_desc where class ='"+c+"';", conn)
+        return articles
              
 
     # All the analysis functions are written after this
@@ -609,17 +637,19 @@ class knol(object):
             
         return instance_date
     
-    def get_page_views(self, site_name, article_name, *args, **kwargs):
+    def get_pageviews(self, site_name, *args, **kwargs):
         if site_name.lower() == 'wikipedia':
             start = ''
             end = ''
             granularity='monthly'
+            if kwargs.get('article_name')!=None:
+                article_name = kwargs['article_name']
             article_name = self.get_article_name(article_name)
             if kwargs.get('start')!=None:
-                start = kwargs['start']
+                start = kwargs['start'].replace('-','')
 
             if kwargs.get('end')!=None:
-                end = kwargs['end']
+                end = kwargs['end'].replace('-','')
 
             if kwargs.get('granularity')!=None:
                 granularity = kwargs['granularity']                
@@ -1044,47 +1074,76 @@ class knol(object):
                                 for newch in elem:
                                     if 'TimeStamp' in newch.tag:
                                         for ch1 in newch:
-                                            if 'CreationDate' in ch1:
+                                            if 'CreationDate' in ch1.tag:
                                                 date_format = "%Y-%m-%dT%H:%M:%S.%f"
                                                 t = datetime.strptime(ch1.text, date_format)
                                                 if kwargs.get('granularity')!=None:
+                                                    if kwargs.get('start')!=None:
+                                                        s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
+                                                        if t>s:
+                                                            editor_bool = 1
+                                                    if kwargs.get('end')!=None:
+                                                        e = datetime.strptime(kwargs['end'], '%Y-%m-%d')
+                                                        if t>e:
+                                                            editor_bool = 0
+                                                            continue
                                                     if kwargs['granularity'].lower() == 'monthly':
-                                                        if kwargs.get('start')!=None:
-                                                            s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
-                                                            if t>s:
-                                                                editor_bool = 1
-                                                            if editor_dict.get(t.year)==None:
-                                                                editor_dict[t.year] = {}
-                                                                editor_dict[t.year][t.month] = []
-                                                            elif editor_dict[t.year].get(t.month)==None:
-                                                                editor_dict[t.year][t.month] = []
+                                                        if editor_dict.get(t.year)==None:
+                                                            editor_dict[t.year] = {}
+                                                            editor_dict[t.year][t.month] = []
+                                                        elif editor_dict[t.year].get(t.month)==None:
+                                                            editor_dict[t.year][t.month] = []
                                                     elif kwargs['granularity'].lower() == 'yearly':
-                                                        if kwargs.get('start')!=None:
-                                                            s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
-                                                            if t>s:
-                                                                editor_bool = 1
                                                             if editor_dict.get(t.year)==None:
                                                                 editor_dict[t.year] = []
+                                                    elif kwargs['granularity'].lower() == 'daily':
+                                                            if editor_dict.get(t.year)==None:
+                                                                editor_dict[t.year] = {}
+                                                                editor_dict[t.year][t.month] = {}
+                                                                editor_dict[t.year][t.month][t.day] = []
+                                                            elif editor_dict[t.year].get(t.month)==None:
+                                                                editor_dict[t.year][t.month] = {}
+                                                                editor_dict[t.year][t.month][t.day] = []
+                                                            elif editor_dict[t.year][t.month].get(t.day)==None:
+                                                                editor_dict[t.year][t.month][t.day] = []
                                                             
                                     if('Contributors' in newch.tag):
                                         for chi in newch:
-                                            if('OwnerUserId' in chi.tag):
-                                                if(chi.text not in uList):
-                                                    uList.append(chi.text)
-                                                    if editor_bool:
-                                                        try:
-                                                            if chi.text not in editor_dict[t.year][t.month]:
-                                                                editor_dict[t.year][t.month].append(chi.text)
-                                                        except:
-                                                            if chi.text not in editor_dict[t.year]:
-                                                                editor_dict[t.year].append(chi.text)
+                                            if('OwnerUserName' in chi.tag):
+                                                U = chi.text
+                                                
+                                            if editor_bool:
+                                                
+                                                if kwargs['granularity'].lower() != None:
+                                                    if kwargs['granularity'].lower() == 'monthly':
+                                                    
+                                                        if U not in editor_dict[t.year][t.month]:
+                                                            editor_dict[t.year][t.month].append(U)
+                                                            
+                                                    elif kwargs['granularity'].lower() == 'daily':
+                                                        if U not in editor_dict[t.year][t.month][t.day]:
+                                                            editor_dict[t.year][t.month][t.day].append(U)
+                                                    
+                                                    elif kwargs['granularity'].lower() == 'yearly':
+                                                        if U not in editor_dict[t.year]:
+                                                            editor_dict[t.year].append(U)
+                                            else:
+                                                if(U not in uList):
+                                                    uList.append(U)
                                 elem.clear()
                                 root_wiki.clear()                                                            
                 except:
                     print('problem with file parsing: '+f)
                 if(kwargs.get('users')!=None):
-                    kwargs['users'][f] = uList
-                    #print(kwargs['revisionLength'])
+                    if kwargs.get('dir_path')!=None:
+                        f = f.replace(kwargs['dir_path']+'/','')
+                    f = f[:-7].replace('_', ' ')
+                    f = f.replace('__', '/')
+                    if kwargs.get('granularity')==None:
+                        kwargs['users'][f] = uList
+                    else:
+                        kwargs['users'][f] = editor_dict
+                    
         else:
             print("No arguments provided")
 
@@ -1132,9 +1191,10 @@ class knol(object):
             if kwargs.get('granularity') != None:
                 granularity = kwargs['granularity']
                 start = kwargs['start']
-                processDict[i+1] = Process(target=self.__get_editor, kwargs={'file_name':fileList[i],'users': usersList, 'granularity':granularity, 'start':start,'l': l})
+                end = kwargs['end']
+                processDict[i+1] = Process(target=self.__get_editor, kwargs={'file_name':fileList[i],'users': usersList, 'granularity':granularity, 'start':start, 'end':end, 'dir_path': dir_path, 'l': l})
             else:
-                processDict[i+1] = Process(target=self.__get_editor, kwargs={'file_name':fileList[i],'users': usersList, 'l': l})
+                processDict[i+1] = Process(target=self.__get_editor, kwargs={'file_name':fileList[i],'users': usersList, 'dir_path': dir_path, 'l': l})
         
         for i in range(pNum):
             processDict[i+1].start()
@@ -1144,6 +1204,43 @@ class knol(object):
             
         return usersList
 
+    def get_author_similarity(self, editors, *args, **kwargs):
+        if kwargs.get('similarity')!=None:
+            similarity = kwargs['similarity']
+        
+        if similarity.lower()=='jaccard':
+            s1 = []
+            s2 = []
+            similarity = {}
+            for article, aval in editors.items():
+                similarity[article] = {}
+                start = editors[article].keys()[0]
+                end = editors[article].keys()[-1]
+                for date in range(start, end):
+                    similarity[article][date] = {}
+                    for month in range(1,13):
+                        similarity[article][date][month] = {}
+                        for day in range(1,32):
+                            try:
+                                s1 = editors[article][date][month][day]
+                            except:
+                                s1 = []
+                            stotal = []
+                            sinter = []
+                            for page, val in editors.items():
+                                if page!=article:
+                                    try:
+                                        s2 = editors[page][date][month][day]
+                                    except:
+                                        s2 = []
+                                    
+                                    sinter = sinter+s2
+                            
+                            stotal = stotal+s1
+                            try:
+                                similarity[article][date][month][day] = len(set(s1) & set(sinter))/len(stotal)
+                            except:
+                                similarity[article][date][month][day] = 0
 
     @staticmethod
     def getKnowledgeAge(*args, **kwargs):
