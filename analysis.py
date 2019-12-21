@@ -316,6 +316,7 @@ class knol(object):
                 article.write("\n")
                 article.write('</page>\n')
                 article.write('</mediawiki>')
+            f.close()
         except:
             print("please provide the dump information")
 
@@ -358,7 +359,7 @@ class knol(object):
                         l = line.split('#$*$#')
                         if l[0] in articles:
                             print("article is found")
-                            self.extract_from_bzip(l[1],l[0],int(l[2]), home, key)
+                            #self.extract_from_bzip(l[1],l[0],int(l[2]), home, key)
     
     def download_dataset(self, sitename, *args, **kwargs):
         # sitename = Portal name
@@ -389,7 +390,7 @@ class knol(object):
             if kwargs.get('article_list')!=None:
                 article_list = kwargs['article_list']
                 key = 'article_list'
-                #articles = self.get_article_name(article_list)
+                articles = self.get_article_name(article_list)
                 self.download_from_dump(home, article_list, key)
                 if compress_bool:
                     wikiConverter.compressAll(home+'/knolml_dataset/output/', output_dir=destdir)
