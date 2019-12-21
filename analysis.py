@@ -390,8 +390,9 @@ class knol(object):
             if kwargs.get('article_list')!=None:
                 article_list = kwargs['article_list']
                 key = 'article_list'
-                articles = self.get_article_name(article_list)
+                #articles = self.get_article_name(article_list)
                 self.download_from_dump(home, article_list, key)
+                
                 if compress_bool:
                     wikiConverter.compressAll(home+'/knolml_dataset/output/', output_dir=destdir)
                 else:
