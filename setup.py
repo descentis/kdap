@@ -26,7 +26,8 @@ setuptools.setup(
                       'prettytable',
                       'bx-python',
                       'pyunpack',
-                      'mwviews'],
+                      'mwviews',
+                      'patool'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: BSD License",
