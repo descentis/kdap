@@ -1244,6 +1244,69 @@ class knol(object):
                                 similarity[article][date][month][day] = len(set(s1) & set(sinter))/len(stotal)
                             except:
                                 similarity[article][date][month][day] = 0
+        
+
+
+    def get_author_edits(self, site_name, *args, **kwargs):
+        if site_name.lower()=='wikipedia':
+            all_wiki = False
+            if kwargs.get('article_list')!=None:
+                article_list = kwargs['article_list']
+            elif kwargs.get('dir_path')!=None:
+                article_list = glob.glob(kwargs['dir_path']+'/*.knolml')
+            elif kwargs.get('editor_list')!=None:
+                editor_list = kwargs['editor_list']
+                all_wiki = True
+            author_contrib = {}
+            
+            if not all_wiki:
+                for article in article_list:
+                    context_wiki = ET.iterparse(article, events=("start","end"))
+                    # Turning it into an iterator
+                    context_wiki = iter(context_wiki)
+                    event_wiki, root_wiki = next(context_wiki)
+                    bytes = 0
+                    editor = ''
+                    if kwargs.get('dir_path')!=None:
+                        article_key = article.replace(kwargs['dir_path'], '')
+                        article_key = article_key.replace('/', '')
+                    else:
+                        article_key = article
+                    try:
+                        for event, elem in context_wiki:
+                            if event == "end" and 'Instance' in elem.tag:
+                                    for ch1 in elem:
+                                        if 'Contributors' in ch1.tag:
+                                            for ch2 in ch1:
+                                                if 'OwnerUserName' in ch2.tag:
+                                                    if author_contrib.get(ch2.text)==None:
+                                                        author_contrib[ch2.text] = {}
+                                                        author_contrib[ch2.text][article_key] = 0
+                                                    elif author_contrib[ch2.text].get(article_key)==None:
+                                                        author_contrib[ch2.text][article_key] = 0
+                                                    editor = ch2.text
+                                        
+                                        if 'Body' in ch1.tag:
+                                            for ch2 in ch1:
+                                                if 'Text' in ch2.tag:
+                                                    diff = int(ch2.attrib['Bytes']) - bytes
+                                                    
+                                                    author_contrib[editor][article_key] += diff
+                                                    bytes = int(ch2.attrib['Bytes'])
+                                    
+                                    elem.clear()
+                                    root_wiki.clear()
+                    except:
+                        print("error with file: "+article)
+            
+            else:
+                for editor in editor_list:
+                    author_contrib[editor] = wikiExtract.get_author_wiki_edits(editor)
+            
+            return author_contrib
+                
+        
+
 
     @staticmethod
     def getKnowledgeAge(*args, **kwargs):
