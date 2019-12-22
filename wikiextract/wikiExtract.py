@@ -68,6 +68,30 @@ class wikiExtract(object):
         
         return template_dict
 
+    def get_author_wiki_edits(self, editor):
+        '''
+        This defination can be used to get the edits of a user in wikipedia
+        '''
+        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=usercontribs&format=json&ucuser='
+        author_list = []
+        url = url1+editor
+        while(True):
+            r = requests.get(url)
+            try:
+                data = r.json()
+            except:
+                break
+            pages = data['query']['usercontribs']
+            for i in pages:
+                author_list.append(i)
+            
+            if data.get('continue')!=None:
+                url = url+'&ucontinue='+data['continue']['ucontinue']
+            else:
+                break
+        
+        return author_list
+
 '''
 w = wikiExtract()
 B = w.get_articles_by_template(['Black Lives Matter'])
