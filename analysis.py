@@ -1039,7 +1039,74 @@ class knol(object):
             
         return revisionLength
 
+    def get_wiki_talk_instance(self, *args, **kwargs):
+        if kwargs.get('file_path')!=None:
+            file_name = kwargs['file_path']
+            rev = wikiExtract.get_wiki_revision(file_name)
+            revisions = {}
+            revisions[file_name.split('/')[-1]] = rev
+        
+        if kwargs.get('file_list')!=None:
+            for file_name in kwargs['file_list']:
+                rev = wikiExtract.get_wiki_revision(file_name)
 
+                if(kwargs.get('revisions')!=None):  
+                    if kwargs.get('dir_path')!=None:
+                        file_name = file_name.replace(kwargs['dir_path']+'/','')
+                    file_name = file_name[:-7].replace('_', ' ')
+                    file_name = file_name.replace('__', '/')
+                    kwargs['revisions'][file_name] = rev
+
+    def get_wiki_talk_instances(self, *args, **kwargs):
+        '''
+        This piece of code is to ensure the multiprocessing
+        Enter a date in YYYY-MM-DD format for start and end dates
+        '''
+        if(kwargs.get('file_list')!=None):
+            file_list = kwargs['file_list']
+        
+        elif(kwargs.get('dir_path')!=None):
+            dir_path = kwargs['dir_path']
+            
+            file_list = glob.glob(dir_path+'/*.knolml')
+        
+        if(kwargs.get('c_num')!=None):
+            cnum = kwargs['c_num']
+        else:
+            cnum = 4           # Bydefault it is 4
+        
+        fileNum = len(file_list)
+        
+        fileList = []
+        if(fileNum<cnum):
+            for f in file_list:
+                fileList.append([f])
+        
+        else:           
+
+            f = np.array_split(file_list,cnum)
+            for i in f:
+                fileList.append(i.tolist())        
+
+        manager = Manager()
+        revisions = manager.dict()
+
+        l = Lock()
+        processDict = {}
+        if(fileNum<cnum):
+            pNum = fileNum
+        else:
+            pNum = cnum
+        for i in range(pNum):
+
+            processDict[i+1] = Process(target=self.get_wiki_talk_instance, kwargs={'file_list':fileList[i], 'revisions': revisions, 'dir_path': dir_path,'l': l})                
+        for i in range(pNum):
+            processDict[i+1].start()
+        
+        for i in range(pNum):
+            processDict[i+1].join()  
+            
+        return revisions
 
     def __get_editor(self, *args, **kwargs):
         #print(file_name)
@@ -1248,6 +1315,15 @@ class knol(object):
 
 
     def get_author_edits(self, site_name, *args, **kwargs):
+        '''
+        get_author_edits(site_name,[article_list, dir_path, editor_list, all_wiki=False])
+        The following function is used to get the edits of each user
+        site_name = 'name of the portal e.g. wikipedia'
+        all_wiki = if site_name = wikipedia then setting this varible True will get all the edits of the users of article
+        article_list = list of file names (in knolml format)
+        dir_path = path of the directory where all the files are present (in knolml format)
+        editor_list = list of editor usernames for which edits are required
+        '''
         if site_name.lower()=='wikipedia':
             all_wiki = False
             if kwargs.get('article_list')!=None:
@@ -1305,71 +1381,194 @@ class knol(object):
             
             return author_contrib
                 
+    def get_wiki_revert(self, *args, **kwargs):
+        if kwargs.get('file_path')!=None:
+            file_name = kwargs['file_path']
+            
+            context_wiki = ET.iterparse(file_name, events=("start","end"))
+            # Turning it into an iterator
+            context_wiki = iter(context_wiki)
+            event_wiki, root_wiki = next(context_wiki)
+            sha_dict = {}
+            reverts_count = 0
+            id = 1
+            try:
+                for event, elem in context_wiki:
+                    if event == "end" and 'Instance' in elem.tag:
+                        for ch1 in elem:
+                            if 'Knowl' in ch1.tag:
+                                if ch1.attrib['key'] == 'sha':
+                                    if sha_dict.get(ch1.text)==None:
+                                        sha_dict[ch1.text] = 0
+                                    else:
+                                        reverts_count+=1
+                        
+                        id+=1
+                        elem.clear()
+                        root_wiki.clear()
+            except:
+                print("error in file parsing "+ file_name)
         
+        if kwargs.get('file_list')!=None:
+            for file_name in kwargs['file_list']:
+        
+                context_wiki = ET.iterparse(file_name, events=("start","end"))
+                # Turning it into an iterator
+                context_wiki = iter(context_wiki)
+                event_wiki, root_wiki = next(context_wiki)
+                sha_dict = {}
+                reverts_count = 0
+                id = 1
+                try:
+                    for event, elem in context_wiki:
+                        if event == "end" and 'Instance' in elem.tag:
+                            for ch1 in elem:
+                                if 'Knowl' in ch1.tag:
+                                    if ch1.attrib['key'] == 'sha':
+                                        if sha_dict.get(ch1.text)==None:
+                                            sha_dict[ch1.text] = 0
+                                        else:
+                                            reverts_count += 1
+                            
+                            id+=1
+                            elem.clear()
+                            root_wiki.clear()
+                except:
+                    print("error in file parsing "+ file_name)
+
+                if(kwargs.get('reverts')!=None):
+                    if kwargs.get('dir_path')!=None:
+                        file_name = file_name.replace(kwargs['dir_path']+'/','')
+                    file_name = file_name[:-7].replace('_', ' ')
+                    file_name = file_name.replace('__', '/')
+
+                    kwargs['reverts'][file_name] = reverts_count
+
+    def get_wiki_reverts(self, *args, **kwargs):
+
+        if(kwargs.get('file_list')!=None):
+            file_list = kwargs['file_list']
+        
+        elif(kwargs.get('dir_path')!=None):
+            dir_path = kwargs['dir_path']
+            
+            file_list = glob.glob(dir_path+'/*.knolml')
+        
+        
+        if(kwargs.get('c_num')!=None):
+            cnum = kwargs['c_num']
+        else:
+            cnum = 4           # Bydefault it is 4
+        
+        fileNum = len(file_list)
+        
+        fileList = []
+        if(fileNum<cnum):
+            for f in file_list:
+                fileList.append([f])
+        
+        else:           
+
+            f = np.array_split(file_list,cnum)
+            for i in f:
+                fileList.append(i.tolist())        
+        
+        manager = Manager()
+        revertList = manager.dict()
+
+        l = Lock()
+        processDict = {}
+        if(fileNum<cnum):
+            pNum = fileNum
+        else:
+            pNum = cnum
+        for i in range(pNum):    
+
+            processDict[i+1] = Process(target=self.get_wiki_revert, kwargs={'file_list':fileList[i],'reverts': revertList, 'dir_path': dir_path, 'l': l})
+        
+        for i in range(pNum):
+            processDict[i+1].start()
+        
+        for i in range(pNum):
+            processDict[i+1].join()  
+            
+        return revertList                                    
 
 
-    @staticmethod
-    def getKnowledgeAge(*args, **kwargs):
+    def getKnowledgeAge(self, *args, **kwargs):
         
         if(kwargs.get('l')!=None):
             l = kwargs['l']
         
         if(kwargs.get('file_path')!=None):
-            
-            file_name = kwargs['file_path']            
-            tree = ET.parse(file_name)            
-            root = tree.getroot()    
-            
+            file_name = kwargs['file_path']
+            context_wiki = ET.iterparse(file_name, events=("start","end"))
+            # Turning it into an iterator
+            context_wiki = iter(context_wiki)
+            event_wiki, root_wiki = next(context_wiki)
             date_format = "%Y-%m-%dT%H:%M:%S.%f"
-            flag = 0
-            for child in root:
-                if('KnowledgeData' in child.tag):
-                    for ch1 in child:
-                        if('Instance' in ch1.tag):
-                            for ch2 in ch1:
-                                if('TimeStamp' in ch2.tag):
-                                    for ch3 in ch2:
-                                        if('CreationDate' in ch3.tag):
-                                            firstDate = datetime.strptime(ch3.text, date_format)
-                                            flag = 1
-                if(flag):
-                    break
-            
-            currentDate = datetime.strptime(datetime.today().strftime(date_format), date_format)
-            
-            articleAge = currentDate - firstDate
+            try:
+                for event, elem in context_wiki:
+                    if event == "end" and 'Instance' in elem.tag:
+                        for newch in elem:
+                            if 'TimeStamp' in newch.tag:
+                                for ch1 in newch:
+                                    if 'CreationDate' in ch1.tag:
+                                        firstDate = ch1.text
+                                        firstDate = datetime.strptime(date_format, ch1.text)
+                                        flag = 1
+                        if(flag):
+                            break
+                currentDate = datetime.strptime(datetime.today().strftime(date_format), date_format)
+                
+                articleAge = currentDate - firstDate 
+            except:
+                print("problem with file ", file_name)
+                
             return articleAge
         
         elif(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             for f in file_name:
-                tree = ET.parse(f)            
-                root = tree.getroot()    
-                
+                context_wiki = ET.iterparse(f, events=("start","end"))
+                # Turning it into an iterator
+                context_wiki = iter(context_wiki)
+                event_wiki, root_wiki = next(context_wiki)
                 date_format = "%Y-%m-%dT%H:%M:%S.%f"
-                flag = 0
-                for child in root:
-                    if('KnowledgeData' in child.tag):
-                        for ch1 in child:
-                            if('Instance' in ch1.tag):
-                                for ch2 in ch1:
-                                    if('TimeStamp' in ch2.tag):
-                                        for ch3 in ch2:
-                                            if('CreationDate' in ch3.tag):
-                                                firstDate = datetime.strptime(ch3.text, date_format)
-                                                flag = 1
-                    if(flag):
-                        break
-                
-                currentDate = datetime.strptime(datetime.today().strftime(date_format), date_format)
-                
-                articleAge = currentDate - firstDate
+                firstDate = ''
+                articleAge = ''
+                try:
+                    for event, elem in context_wiki:
+                        if event == "end" and 'Instance' in elem.tag:
+                            for newch in elem:
+                                if 'TimeStamp' in newch.tag:
+                                    for ch1 in newch:
+                                        if 'CreationDate' in ch1.tag:
+                                            firstDate = datetime.strptime(ch1.text, date_format)
+                                            flag = 1
+                            if(flag):
+                                break
+                    currentDate = datetime.strptime(datetime.today().strftime(date_format), date_format)
+                    
+                    articleAge = currentDate - firstDate
+                    if kwargs.get('date')!=None:
+                        currentDate = datetime.strptime(kwargs['date'], '%Y-%m-%d')
+                    else:
+                        currentDate = datetime.strptime(datetime.today().strftime(date_format), date_format)
+                    
+                    articleAge = currentDate - firstDate
+                except:
+                    print("problem with file ", f)
                 if(kwargs.get('articleAge')!=None):
+                    if kwargs.get('dir_path')!=None:
+                        f = f.replace(kwargs['dir_path']+'/','')
+                    f = f[:-7].replace('_', ' ')
+                    f = f.replace('__', '/')
                     kwargs['articleAge'][f] = articleAge
                 
      
-    @staticmethod
-    def getAgeOfKnowledge(*args, **kwargs):
+    
+    def get_age_of_knowledge(self, *args, **kwargs):
 
         '''
         This piece of code is to ensure the multiprocessing
@@ -1416,8 +1615,11 @@ class knol(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knol.getKnowledgeAge, kwargs={'file_name':fileList[i],'articleAge': ageList,'l': l})
-        
+            if kwargs.get('date')!=None:
+                processDict[i+1] = Process(target=self.getKnowledgeAge, kwargs={'file_name':fileList[i],'articleAge': ageList, 'date':kwargs['date'], 'l': l})        
+            else:
+                processDict[i+1] = Process(target=self.getKnowledgeAge, kwargs={'file_name':fileList[i],'articleAge': ageList, 'l': l})
+                
         for i in range(pNum):
             processDict[i+1].start()
         
