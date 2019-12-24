@@ -91,6 +91,32 @@ class wikiExtract(object):
                 break
         
         return author_list
+    
+    def get_wiki_revision(seld, file_name):
+        '''
+        This defination can be used to get the number of edits in an article of wikipedia
+        '''
+        url1 = 'https://en.wikipedia.org/w/api.php?action=query&prop=revisions&rvdir=newer&format=json&titles=Talk:'
+        revisions = 0
+        url = url1+file_name
+        while(True):
+            r = requests.get(url)
+            try:
+                data = r.json()
+            except:
+                break
+            key = list(data['query']['pages'].keys())
+            #print(key)
+            pages = data['query']['pages'][key[0]]['revisions']
+            for i in pages:
+                revisions+=1
+            
+            if data.get('continue')!=None:
+                url = url+'&rvcontinue='+data['continue']['rvcontinue']
+            else:
+                break
+        
+        return revisions
 
 '''
 w = wikiExtract()
