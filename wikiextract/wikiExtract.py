@@ -92,7 +92,7 @@ class wikiExtract(object):
         
         return author_list
     
-    def get_wiki_revision(seld, file_name):
+    def get_wiki_revision(self, file_name):
         '''
         This defination can be used to get the number of edits in an article of wikipedia
         '''
