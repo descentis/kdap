@@ -86,7 +86,7 @@ class wikiExtract(object):
                 author_list.append(i)
             
             if data.get('continue')!=None:
-                url = url+'&ucontinue='+data['continue']['ucontinue']
+                url = url+'&uccontinue='+data['continue']['uccontinue']
             else:
                 break
         
