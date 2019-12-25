@@ -1274,6 +1274,30 @@ class knol(object):
             
         return usersList
 
+    def get_wiki_group_editors(self, group):
+        '''
+        This defination can be used to get the edits of a user in wikipedia
+        '''
+        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=allusers&format=json&augroup='
+        author_list = []
+        url = url1+group
+        while(True):
+            r = requests.get(url)
+            try:
+                data = r.json()
+            except:
+                break
+            pages = data['query']['allusers']
+            for i in pages:
+                author_list.append(i['name'])
+            
+            if data.get('continue')!=None:
+                url = url+'&aufrom='+data['continue']['aufrom']
+            else:
+                break
+        
+        return author_list
+    
     def get_author_similarity(self, editors, *args, **kwargs):
         if kwargs.get('similarity')!=None:
             similarity = kwargs['similarity']
@@ -1323,6 +1347,8 @@ class knol(object):
         article_list = list of file names (in knolml format)
         dir_path = path of the directory where all the files are present (in knolml format)
         editor_list = list of editor usernames for which edits are required
+        type = type of edit to be measured e.g. bytes, number, sentences. bytes by default
+        ordered_by = means of ordering e.g. editor or article
         '''
         if site_name.lower()=='wikipedia':
             all_wiki = False
@@ -1334,20 +1360,30 @@ class knol(object):
                 editor_list = kwargs['editor_list']
                 all_wiki = True
             author_contrib = {}
+            if kwargs.get('type')!=None:
+                type = kwargs['type']
+            else:
+                type = 'bytes'
             
+            if kwargs.get('ordered_by')!=None:
+                order = kwargs['ordered_by']
+            else:
+                order = 'editor'
             if not all_wiki:
                 for article in article_list:
                     context_wiki = ET.iterparse(article, events=("start","end"))
                     # Turning it into an iterator
                     context_wiki = iter(context_wiki)
                     event_wiki, root_wiki = next(context_wiki)
-                    bytes = 0
+                    edit_bytes = 0
                     editor = ''
                     if kwargs.get('dir_path')!=None:
                         article_key = article.replace(kwargs['dir_path'], '')
                         article_key = article_key.replace('/', '')
                     else:
                         article_key = article
+                    if order=='article':
+                        author_contrib[article_key] = {}
                     try:
                         for event, elem in context_wiki:
                             if event == "end" and 'Instance' in elem.tag:
@@ -1355,20 +1391,33 @@ class knol(object):
                                         if 'Contributors' in ch1.tag:
                                             for ch2 in ch1:
                                                 if 'OwnerUserName' in ch2.tag:
-                                                    if author_contrib.get(ch2.text)==None:
-                                                        author_contrib[ch2.text] = {}
-                                                        author_contrib[ch2.text][article_key] = 0
-                                                    elif author_contrib[ch2.text].get(article_key)==None:
-                                                        author_contrib[ch2.text][article_key] = 0
-                                                    editor = ch2.text
+                                                    if order=='editor':
+                                                        if author_contrib.get(ch2.text)==None:
+                                                            author_contrib[ch2.text] = {}
+                                                            author_contrib[ch2.text][article_key] = 0
+                                                        elif author_contrib[ch2.text].get(article_key)==None:
+                                                            author_contrib[ch2.text][article_key] = 0
+                                                        editor = ch2.text
+                                                    else:
+                                                        if author_contrib[article_key].get(ch2.text)==None:
+                                                            author_contrib[article_key][ch2.text] = 0
+                                                        editor = ch2.text
                                         
                                         if 'Body' in ch1.tag:
-                                            for ch2 in ch1:
-                                                if 'Text' in ch2.tag:
-                                                    diff = int(ch2.attrib['Bytes']) - bytes
-                                                    
-                                                    author_contrib[editor][article_key] += diff
-                                                    bytes = int(ch2.attrib['Bytes'])
+                                            if type=='bytes':
+                                                for ch2 in ch1:
+                                                    if 'Text' in ch2.tag:
+                                                        diff = int(ch2.attrib['Bytes']) - edit_bytes
+                                                        if order == 'editor':
+                                                            author_contrib[editor][article_key] += diff
+                                                        else:
+                                                            author_contrib[article_key][editor] += diff
+                                                        edit_bytes = int(ch2.attrib['Bytes'])
+                                            elif type=='edits':
+                                                if order == 'editor':
+                                                    author_contrib[editor][article_key] += 1
+                                                else:
+                                                    author_contrib[article_key][editor] += 1
                                     
                                     elem.clear()
                                     root_wiki.clear()
@@ -1376,8 +1425,9 @@ class knol(object):
                         print("error with file: "+article)
             
             else:
-                for editor in editor_list:
-                    author_contrib[editor] = wikiExtract.get_author_wiki_edits(editor)
+                we = wikiExtract()
+                for editor in editor_list:               
+                    author_contrib[editor] = we.get_author_wiki_edits(editor)
             
             return author_contrib
                 
