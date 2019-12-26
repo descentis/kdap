@@ -72,7 +72,7 @@ class wikiExtract(object):
         '''
         This defination can be used to get the edits of a user in wikipedia
         '''
-        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=usercontribs&format=json&ucuser='
+        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=users&usprop=editcount&format=json&ususers='
         author_list = []
         url = url1+editor
         while(True):
@@ -81,7 +81,7 @@ class wikiExtract(object):
                 data = r.json()
             except:
                 break
-            pages = data['query']['usercontribs']
+            pages = data['query']['users']
             for i in pages:
                 author_list.append(i)
             
