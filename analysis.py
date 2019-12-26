@@ -31,6 +31,7 @@ from pyunpack import Archive
 from os.path import expanduser
 from kdap.wikiextract.wikiExtract import wikiExtract
 from mwviews.api import PageviewsClient
+from kdap.converter.qaConverter import qaConverter
 
 class instances(object):
     
@@ -470,7 +471,10 @@ class knol(object):
                 final_template_list.append(sub_template)
                 
                 return final_template_list            
-                
+        elif sitename == 'stackexchange':
+            if kwargs.get('portal')!=None:
+                portal = kwargs['portal']
+                qaConverter.convert(portal, download=True, post=True)
                     
     '''
     get_article method downloads the full revision history of an article in knol-ML format
@@ -1677,7 +1681,21 @@ class knol(object):
             processDict[i+1].join()  
             
         return ageList        
+
+    def numericalSort(self, value):
+        parts = self.numbers.split(value)
+        parts[1::2] = map(int, parts[1::2])
+        return parts        
     
+    def get_stack_posts(self, dir_path, post_type, *args, **kwargs):
+        if kwargs.get('order_by')!=None:
+            order = kwargs['order_by']
+            if order.lower() == 'recent':
+                if os.path.isdir(dir_path+'/Posts'):
+                    file_list = sorted(glob.glob(dir_path+'/Posts/*.knolml'), key=self.numericalSort)
+                else:
+                    print("provide the path for stack exchange knolml dataset")
+                
     
     @staticmethod
     def knowledgeByDate(file_name, first_date, *args, **kwargs):
