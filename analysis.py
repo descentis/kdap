@@ -1286,25 +1286,12 @@ class knol(object):
         '''
         This defination can be used to get the edits of a user in wikipedia
         '''
-        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=allusers&format=json&augroup='
-        author_list = []
-        url = url1+group
-        while(True):
-            r = requests.get(url)
-            try:
-                data = r.json()
-            except:
-                break
-            pages = data['query']['allusers']
-            for i in pages:
-                author_list.append(i['name'])
-            
-            if data.get('continue')!=None:
-                url = url+'&aufrom='+data['continue']['aufrom']
-            else:
-                break
-        
-        return author_list
+        if group=='bots':
+            B = self.download_dataset('wikipedia',download=False, category_list=['All Wikipedia bots'])
+            bot_list = []
+            for i in B[0]['All Wikipedia bots']:
+                bot_list.append(i['title'].replace('User:',''))
+            return bot_list
     
     def get_author_similarity(self, editors, *args, **kwargs):
         if kwargs.get('similarity')!=None:
@@ -1348,7 +1335,7 @@ class knol(object):
                                 similarity[article][date][month][day] = 0
             return similarity
         
-    def __chunks(l, n):
+    def __chunks(self, l, n):
         n = max(1, n)
         return (l[i:i+n] for i in range(0, len(l), n))
 
@@ -1442,11 +1429,11 @@ class knol(object):
                 we = wikiExtract()
                 editor_extract = []
                 for editor in editor_list:
-                    if len(editor.split('.')) > 3 or len(editor.split(':')>3):
+                    if len(editor.split('.')) > 3 or len(editor.split(':'))>3:
                         pass
                     else:
                         editor_extract.append(editor)
-                editors_name = self.chunks(editor_extract,100)
+                editors_name = self.__chunks(editor_extract,50)
                 final_list = []
                 for e in editors_name:
                     final_list += we.get_author_wiki_edits(e)
@@ -1633,8 +1620,8 @@ class knol(object):
                 except:
                     print("problem with file ", f)
                 if(kwargs.get('articleAge')!=None):
-                    if kwargs.get('dir_path')!=None:
-                        f = f.replace(kwargs['dir_path']+'/','')
+                   
+                    f = f.split('/')[-1]
                     f = f[:-7].replace('_', ' ')
                     f = f.replace('__', '/')
                     kwargs['articleAge'][f] = articleAge
