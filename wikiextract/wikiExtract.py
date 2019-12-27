@@ -74,7 +74,9 @@ class wikiExtract(object):
         '''
         url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=users&usprop=editcount&format=json&ususers='
         author_list = []
-        url = url1+editor
+        editor_list = '|'.join(editor)
+        url = url1+editor_list
+        print(url)
         while(True):
             r = requests.get(url)
             try:
