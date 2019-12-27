@@ -16,7 +16,7 @@ class wikiExtract(object):
         this definition can be used to get the names of article
         related to a category
         '''
-        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&format=json&cmtitle=Category:'
+        url1 = 'https://en.wikipedia.org/w/api.php?action=query&list=categorymembers&format=json&cmlimit=500&cmtitle=Category:'
         category_dict = {}
         url = url1+category_name
         article_list = []
@@ -76,7 +76,6 @@ class wikiExtract(object):
         author_list = []
         editor_list = '|'.join(editor)
         url = url1+editor_list
-        print(url)
         while(True):
             r = requests.get(url)
             try:
