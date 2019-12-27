@@ -592,6 +592,10 @@ class knol(object):
                 print('problem with file parsing: '+file_name)
             
             if(kwargs.get('instance_date')!=None):  
+                if kwargs.get('dir_path')!=None:
+                    file_name = file_name.replace(kwargs['dir_path']+'/','')
+                else:
+                    file_name = file_name.split('/')[-1]
                 file_name = file_name[:-7].replace('_', ' ')
                 file_name = file_name.replace('__', '/')
                 kwargs['instance_date'][file_name] = date
@@ -1304,16 +1308,19 @@ class knol(object):
     
     def get_author_similarity(self, editors, *args, **kwargs):
         if kwargs.get('similarity')!=None:
-            similarity = kwargs['similarity']
+            similar = kwargs['similarity']
         
-        if similarity.lower()=='jaccard':
+        if similar.lower()=='jaccard':
             s1 = []
             s2 = []
             similarity = {}
             for article, aval in editors.items():
                 similarity[article] = {}
-                start = editors[article].keys()[0]
-                end = editors[article].keys()[-1]
+                try:
+                    start = list(editors[article].keys())[0]
+                    end = list(editors[article].keys())[-1]
+                except:
+                    continue
                 for date in range(start, end):
                     similarity[article][date] = {}
                     for month in range(1,13):
@@ -1339,8 +1346,11 @@ class knol(object):
                                 similarity[article][date][month][day] = len(set(s1) & set(sinter))/len(stotal)
                             except:
                                 similarity[article][date][month][day] = 0
+            return similarity
         
-
+    def __chunks(l, n):
+        n = max(1, n)
+        return (l[i:i+n] for i in range(0, len(l), n))
 
     def get_author_edits(self, site_name, *args, **kwargs):
         '''
@@ -1430,8 +1440,17 @@ class knol(object):
             
             else:
                 we = wikiExtract()
-                for editor in editor_list:               
-                    author_contrib[editor] = we.get_author_wiki_edits(editor)
+                editor_extract = []
+                for editor in editor_list:
+                    if len(editor.split('.')) > 3 or len(editor.split(':')>3):
+                        pass
+                    else:
+                        editor_extract.append(editor)
+                editors_name = self.chunks(editor_extract,100)
+                final_list = []
+                for e in editors_name:
+                    final_list += we.get_author_wiki_edits(e)
+                author_contrib = final_list
             
             return author_contrib
                 
