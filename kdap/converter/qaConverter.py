@@ -88,7 +88,14 @@ class qaConverter(object):
     
     
     @staticmethod
-    def writeHistoryData(elem,post_id,instanceId,HistoryType,postType,val,name):
+    def writeHistoryData(*args, **kwargs):
+        elem = kwargs['elem']
+        post_id = kwargs['post_id']
+        instanceId = kwargs['instanceId']
+        HistoryType = kwargs['HistoryType']
+        postType = kwargs['postType']
+        val = kwargs['val']
+        name = kwargs['name']
         filePath = name+'/'
         if(val==1 and postType[0]!='2'):
             filePath = filePath+"Post"+str(post_id)+".knolml"
@@ -350,31 +357,32 @@ class qaConverter(object):
                 if(postType[post_id][0]=='1'):
                     if(postIdBuffer.get(post_id)==None):
                         postIdBuffer[post_id] = 1
-                        qaConverter.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],1,name)
+                        # elem,post_id,instanceId,HistoryType,postType,val,name
+                        qaConverter.writeHistoryData(elem=elem, post_id=post_id, instanceId=postIdBuffer[post_id], HistoryType=HistoryType, postType=postType[post_id], val=1, name=name)
                     else:
                         postIdBuffer[post_id]+=1
-                        qaConverter.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],2,name)
+                        qaConverter.writeHistoryData(elem=elem, post_id=post_id, instanceId=postIdBuffer[post_id], HistoryType=HistoryType, postType=postType[post_id], val=2, name=name)
                     
                     instanceId+=1
                 elif(postType[post_id][0]=='2'):
                     if(postIdBuffer.get(post_id)==None):
                         if(postIdBuffer.get(postType[post_id][1])!=None):
                             postIdBuffer[postType[post_id][1]] += 1
-                            qaConverter.writeHistoryData(elem,post_id,postIdBuffer[postType[post_id][1]],HistoryType,postType[post_id],1,name)
+                            qaConverter.writeHistoryData(elem=elem,post_id=post_id,instanceId=postIdBuffer[postType[post_id][1]],HistoryType=HistoryType,postType=postType[post_id],val=1,name=name)
                         
                     else:
                         if(postIdBuffer.get(postType[post_id][1])!=None):
                             postIdBuffer[postType[post_id][1]]+=1
-                            qaConverter.writeHistoryData(elem,post_id,postIdBuffer[postType[post_id][1]],HistoryType,postType[post_id],2,name)
+                            qaConverter.writeHistoryData(elem=elem,post_id=post_id,instanceId=postIdBuffer[postType[post_id][1]],HistoryType=HistoryType,postType=postType[post_id],val=2,name=name)
                     instanceId+=1
                     
                 else:
                     if(postIdBuffer.get(post_id)==None):
                         postIdBuffer[post_id] = 1
-                        qaConverter.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],1,name)
+                        qaConverter.writeHistoryData(elem=elem,post_id=post_id,instanceId=postIdBuffer[post_id],HistoryType=HistoryType,postType=postType[post_id],val=1,name=name)
                     else:
                         postIdBuffer[post_id]+=1
-                        qaConverter.writeHistoryData(elem,post_id,postIdBuffer[post_id],HistoryType,postType[post_id],2,name)
+                        qaConverter.writeHistoryData(elem=elem,post_id=post_id,instanceId=postIdBuffer[post_id],HistoryType=HistoryType,postType=postType[post_id],val=2,name=name)
                     
                     instanceId+=1                    
 
