@@ -290,7 +290,13 @@ class knol(object):
     '''
     Following methods are used to download the relavent dataset from archive in Knol-ML format
     '''
-    def extract_from_bzip(self, file, art, index, home, key):
+    def extract_from_bzip(self, *args, **kwargs):
+        # file, art, index, home, key
+        file = kwargs['file']
+        art = kwargs['art']
+        index = kwargs['index']
+        home = kwargs['home']
+        key = kwargs['key']
         filet = home+"/knolml_dataset/bz2t/"+file+'t'
         chunk = 1000
         try:
@@ -360,9 +366,10 @@ class knol(object):
                         l = line.split('#$*$#')
                         if l[0] in articles:
                             print("article is found")
-                            self.extract_from_bzip(l[1],l[0],int(l[2]), home, key)
+                            # file, art, index, home, key
+                            self.extract_from_bzip(file=l[1],art=l[0],index=int(l[2]), home=home, key=key)
     
-    def download_dataset(self, sitename, *args, **kwargs):
+    def download_dataset(self, *args, **kwargs):
         # sitename = Portal name
         # article_list = [] List of article to be extracted
         # wikipedia_dump = directory of the wikipedia dump
@@ -370,6 +377,11 @@ class knol(object):
         sitename varibale contains the portal from which user wants to download the dataset.
         Each sitename has various parameters which can be provided as optional argument
         '''
+        if kwargs.get('sitename') != None:
+            sitename = kwargs['sitename'].lower()
+        else:
+            print('add sitename')
+            return
         try:
             compress_bool = kwargs['compress']
         except:
