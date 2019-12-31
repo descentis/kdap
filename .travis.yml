@@ -1,4 +1,10 @@
 language: python
 
 # command to run tests
-script: pytest
+install:
+    - pip install coveralls
+    - python setup.py develop
+script:
+    - coverage run --source=kdap -m unittest discover
+after_success:
+    - coveralls
