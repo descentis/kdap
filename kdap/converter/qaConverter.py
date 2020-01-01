@@ -123,25 +123,7 @@ class qaConverter(object):
                     Timestamp information
                     '''
                 
-                    TimeStamp = t+t+t+"<TimeStamp>\n "
-                    myFile.write(TimeStamp)
-                    if(elem.attrib.get("CreationDate") != None):
-                        CreationDate = t+t+t+t+"<CreationDate>"+elem.attrib['CreationDate']+"</CreationDate> \n"
-                        myFile.write(CreationDate)
-                    if(elem.attrib.get("LastEditDate") != None):
-                        LastEditDate = t+t+t+t+"<LastEditDate>"+elem.attrib['LastEditDate']+"</LastEditDate> \n"
-                        myFile.write(LastEditDate)
-                    if(elem.attrib.get("LastActivityDate") != None):
-                        LastActivityDate = t+t+t+t+"<LastActivityDate>"+elem.attrib['LastActivityDate']+"</LastActivityDate> \n"
-                        myFile.write(LastActivityDate)
-                    if(elem.attrib.get("CommunityOwnedDate") != None):
-                        CommunityOwnedDate = t+t+t+t+"<CommunityOwnedDate>"+elem.attrib['CommunityOwnedDate']+"</CommunityOwnedDate> \n"
-                        myFile.write(CommunityOwnedDate)
-                    if(elem.attrib.get("ClosedDate") != None):
-                        ClosedDate = t+t+t+t+"<ClosedDate>"+elem.attrib['ClosedDate']+"</ClosedDate> \n"
-                        myFile.write(ClosedDate)
-                    TimeStamp = t+t+t+"</TimeStamp>\n "
-                    myFile.write(TimeStamp)
+                    qaConverter.__write_timestamp(myFile, elem)
         
         
                     '''
@@ -504,7 +486,33 @@ class qaConverter(object):
     '''
     Writing the data for posts
     '''
-
+    @staticmethod
+    def __write_timestamp(myFile, elem):
+        t = '\t'
+        '''
+        Timestamp information
+        '''
+    
+        TimeStamp = t+t+t+"<TimeStamp>\n "
+        myFile.write(TimeStamp)
+        if(elem.attrib.get("CreationDate") != None):
+            CreationDate = t+t+t+t+"<CreationDate>"+elem.attrib['CreationDate']+"</CreationDate> \n"
+            myFile.write(CreationDate)
+        if(elem.attrib.get("LastEditDate") != None):
+            LastEditDate = t+t+t+t+"<LastEditDate>"+elem.attrib['LastEditDate']+"</LastEditDate> \n"
+            myFile.write(LastEditDate)
+        if(elem.attrib.get("LastActivityDate") != None):
+            LastActivityDate = t+t+t+t+"<LastActivityDate>"+elem.attrib['LastActivityDate']+"</LastActivityDate> \n"
+            myFile.write(LastActivityDate)
+        if(elem.attrib.get("CommunityOwnedDate") != None):
+            CommunityOwnedDate = t+t+t+t+"<CommunityOwnedDate>"+elem.attrib['CommunityOwnedDate']+"</CommunityOwnedDate> \n"
+            myFile.write(CommunityOwnedDate)
+        if(elem.attrib.get("ClosedDate") != None):
+            ClosedDate = t+t+t+t+"<ClosedDate>"+elem.attrib['ClosedDate']+"</ClosedDate> \n"
+            myFile.write(ClosedDate)
+        TimeStamp = t+t+t+"</TimeStamp>\n "
+        myFile.write(TimeStamp)
+        
     @staticmethod
     def writePostData(*args, **kwargs):
         # elem,post_id,instanceId,postType,val,name
@@ -540,29 +548,7 @@ class qaConverter(object):
                 
                 if(f2==1):
         
-                    '''
-                    Timestamp information
-                    '''
-                
-                    TimeStamp = t+t+t+"<TimeStamp>\n "
-                    myFile.write(TimeStamp)
-                    if(elem.attrib.get("CreationDate") != None):
-                        CreationDate = t+t+t+t+"<CreationDate>"+elem.attrib['CreationDate']+"</CreationDate> \n"
-                        myFile.write(CreationDate)
-                    if(elem.attrib.get("LastEditDate") != None):
-                        LastEditDate = t+t+t+t+"<LastEditDate>"+elem.attrib['LastEditDate']+"</LastEditDate> \n"
-                        myFile.write(LastEditDate)
-                    if(elem.attrib.get("LastActivityDate") != None):
-                        LastActivityDate = t+t+t+t+"<LastActivityDate>"+elem.attrib['LastActivityDate']+"</LastActivityDate> \n"
-                        myFile.write(LastActivityDate)
-                    if(elem.attrib.get("CommunityOwnedDate") != None):
-                        CommunityOwnedDate = t+t+t+t+"<CommunityOwnedDate>"+elem.attrib['CommunityOwnedDate']+"</CommunityOwnedDate> \n"
-                        myFile.write(CommunityOwnedDate)
-                    if(elem.attrib.get("ClosedDate") != None):
-                        ClosedDate = t+t+t+t+"<ClosedDate>"+elem.attrib['ClosedDate']+"</ClosedDate> \n"
-                        myFile.write(ClosedDate)
-                    TimeStamp = t+t+t+"</TimeStamp>\n "
-                    myFile.write(TimeStamp)
+                    qaConverter.__write_timestamp(myFile, elem)
         
                     
                     qaConverter.write_body_rep(elem,myFile)
