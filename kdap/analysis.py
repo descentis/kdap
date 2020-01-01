@@ -687,106 +687,9 @@ class knol(object):
                 return p.article_views('en.wikipedia', article_name, granularity=granularity, start=start, end=end)
 
     @staticmethod
-    def getRevision(file_name,n):
-        tree = ET.parse(file_name)
-        r = tree.getroot()
-        revisionsDict = {}
-        for child in r:
-            if('KnowledgeData' in child.tag):
-                root = child
-        length = len(root.findall('Instance'))
-        for each in root.iter('Instance'):
-            instanceId = int(each.attrib['Id'])
-            for child in each:
-                if 'Body' in child.tag:
-                    revisionsDict[instanceId] = child[0].text
-    
-    
+    def get_diff_match(revisionsDict, length, n):
         #n = int(input(str(length)+" Revisons found, enter the revision number to be loaded: "))
-        original = n
-        m = int((math.log(length)) ** 2)+1
-        if n%m != 0:
-            interval = n - (n%m) + 1
-            n = n - interval + 1
-        else:
-            interval = n - (m-1)
-            n = n - interval + 1
-        
-        
-        count = interval
-        prev_str = revisionsDict[count]
-        result = prev_str
-        while count < original:
-            count += 1
-            s = [x.replace("\n", "`").replace("-", "^") for x in prev_str.split(" ")]
-            i = 0
-            while(True):
-                if i == len(s):
-                    break;
-                if s[i].isspace() or s[i] == '':
-                    del s[i]
-                else:	
-                    i += 1	
-        
-            next_rev = revisionsDict[count]
-            s2 = next_rev.split(" ")
-            i = 0
-            while(True):
-                if i == len(s2):
-                    break;
-                if s2[i].isspace() or s2[i] == '':
-                    del s2[i]
-                else:	
-                    i += 1	
-        
-            index = 0
-            result = ""
-            for x in s2:
-                if x.isdigit():
-                    for i in range(index, index+int(x)):
-                        result += s[i].replace("`", "\n").replace("^", "-")
-                        result += " "
-                        index += 1
-                elif x[0] == "'" and x[-1] == "'" and x[1:-1].isdigit():
-        
-                        result += x[1:-1].replace("`", "\n			").replace("^", "-")
-                        result += " "
-                else:
-                    if x[0] == '-':
-                        for i in range(index, index+int(x[1:])):
-                            index += 1
-                    else:
-                        result += x.replace("`", "\n			").replace("^", "-")		
-                        result += " "
-        
-            prev_str = result
-            
-        
-        return result
-
-
-
-
-        
-    
-    @classmethod
-    def wikiRetrieval(cls,file_name,n):
-        tree = ET.parse(file_name)
-        r = tree.getroot()
-        revisionsDict = {}
         returnResult = []
-        for child in r:
-            if('KnowledgeData' in child.tag):
-                root = child
-        length = len(root.findall('Instance'))
-        for each in root.iter('Instance'):
-            instanceId = int(each.attrib['Id'])
-            for child in each:
-                if 'Body' in child.tag:
-                    revisionsDict[instanceId] = child[0].text
-    
-    
-        #n = int(input(str(length)+" Revisons found, enter the revision number to be loaded: "))
         original = n
         m = int((math.log(length)) ** 2)+1
         if n%m != 0:
@@ -845,8 +748,28 @@ class knol(object):
                         result += " "
         
             prev_str = result
-            returnResult.append(result)
+            returnResult.append(result)        
+
+
+
+    
+    @classmethod
+    def wikiRetrieval(cls,file_name,n):
+        tree = ET.parse(file_name)
+        r = tree.getroot()
+        revisionsDict = {}
         
+        for child in r:
+            if('KnowledgeData' in child.tag):
+                root = child
+        length = len(root.findall('Instance'))
+        for each in root.iter('Instance'):
+            instanceId = int(each.attrib['Id'])
+            for child in each:
+                if 'Body' in child.tag:
+                    revisionsDict[instanceId] = child[0].text
+
+        returnResult = knol.get_diff_match(revisionsDict, length, n)
         return returnResult
     
     
