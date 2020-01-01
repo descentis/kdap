@@ -32,6 +32,7 @@ from os.path import expanduser
 from kdap.wikiextract.wikiExtract import wikiExtract
 from mwviews.api import PageviewsClient
 from kdap.converter.qaConverter import qaConverter
+from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
 
 class instances(object):
     
@@ -102,6 +103,16 @@ class instances(object):
                         self.instance_attrib['Credit']['FavouriteCount'] = ch2.text
             
     
+    def is_question(self):
+        if self.instanceType == 'Question':
+            return True
+        
+    def is_answer(self):
+        if self.instanceType == 'Answer':
+            return True    
+    def is_comment(self):
+        if self.instanceType == 'Comments':
+            return True
         
     def just_to_check(self):
         print("just to check function")
@@ -157,11 +168,20 @@ class instances(object):
             di['FavouriteCount'] = self.instance_attrib['Credit']['FavouriteCount']
         return di  
         
-    def get_text(self):
+    def get_text(self, *args, **kwargs):
         di = {}
-        
+            
         if self.instance_attrib['Body']['Text'].get('text') != None:
             di['text'] = self.instance_attrib['Body']['Text']['text']
+        
+        if kwargs.get('clean') != None:
+            qe = QueryExecutor()
+            qe.setOutputFileDirectoryName('lol')
+            qe.setNumberOfProcesses(5)
+            qe.setNumberOfBytes(2000000000)
+            qe.setTextValue(di['text'])
+            qe.runQuery()
+            return qe.result()
         
         return di
     
@@ -215,6 +235,7 @@ class knowledge_data(object):
             return di  
         else:
             return 'file name not given'
+        
 class knol(object):
     
     def __init__(self):
@@ -233,8 +254,7 @@ class knol(object):
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             self.file_name = file_name
-            self.get_knowledgeData(file_name)
-        
+            self.get_knowledgeData(self.file_name)
         elif(kwargs.get('dir_path')!=None):
             self.dir = 1
             dir_path = kwargs['dir_path']
@@ -245,6 +265,7 @@ class knol(object):
             else:
                 self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
             self.get_knowledgeData(self.file_list[0])
+            
         return self.object_list
 
     def get_knowledgeData(self,file_name):
@@ -486,7 +507,7 @@ class knol(object):
         elif sitename == 'stackexchange':
             if kwargs.get('portal')!=None:
                 portal = kwargs['portal']
-                qaConverter.convert(portal, download=True, post=True)
+                qaConverter.convert(name=portal, download=True, post=True)
                     
     '''
     get_article method downloads the full revision history of an article in knol-ML format
@@ -749,7 +770,8 @@ class knol(object):
         
             prev_str = result
             returnResult.append(result)        
-
+        
+        return returnResult
 
 
     
@@ -758,7 +780,6 @@ class knol(object):
         tree = ET.parse(file_name)
         r = tree.getroot()
         revisionsDict = {}
-        
         for child in r:
             if('KnowledgeData' in child.tag):
                 root = child
@@ -857,7 +878,8 @@ class knol(object):
     def __countRev(self, *args, **kwargs):
         if kwargs.get('file_list') != None:
             file_list = kwargs['file_list']
-            
+        if kwargs.get('l') != None:
+            l = kwargs['l']
         for file_name in file_list:
             context_wiki = ET.iterparse(file_name, events=("start","end"))
             # Turning it into an iterator
@@ -876,41 +898,59 @@ class knol(object):
             total_rev_dict = {}
             # getting the root element
             event_wiki, root_wiki = next(context_wiki)
-            try:
-                for event, elem in context_wiki:
-                    if event == "end" and 'Instance' in elem.tag:
-                        total_rev+=1
-                        for ch1 in elem:
-                            if 'TimeStamp' in ch1.tag:
-                                for ch2 in ch1:
-                                    if 'CreationDate' in ch2.tag:
-                                        t = ch2.text
-                                        if kwargs.get('granularity') != None:
-                                            if kwargs['granularity'].lower() == 'monthly':
-                                                t = datetime.strptime(t, date_format)
-                                                if t>= start:
-                                                    if total_rev_dict.get(t.year)==None:
-                                                        total_rev_dict[t.year] = {}
-                                                        total_rev_dict[t.year][t.month] = 1
-                                                    elif total_rev_dict[t.year].get(t.month)==None:
-                                                        total_rev_dict[t.year][t.month] = 1
-                                                    else:
-                                                        total_rev_dict[t.year][t.month] += 1
-                                            if kwargs['granularity'].lower() == 'yearly':
-                                                if t>=start:
-                                                    if total_rev_dict.get(t.year)==None:
-                                                        total_rev_dict[t.year] = 1
-                                                    else:
-                                                        total_rev_dict[t.year] += 1
+            #try:
+            for event, elem in context_wiki:
+                if event == "end" and 'Instance' in elem.tag:
+                    if kwargs.get('instance_type') != None:
+                        if kwargs['instance_type'] == 'question' and elem.attrib['InstanceType']=='Question':
+                            l.acquire()
+                            if(kwargs.get('revisionLength')!=None):
+                                if kwargs['revisionLength'].get('questions') == None:
+                                    kwargs['revisionLength']['questions'] = 1
+                                else:
+                                    kwargs['revisionLength']['questions'] += 1
+                            l.release()
+                        elif kwargs['instance_type'] == 'answer' and elem.attrib['InstanceType']=='Answer':
+                            l.acquire()
+                            if(kwargs.get('revisionLength')!=None):
+                                if kwargs['revisionLength'].get('answers') == None:
+                                    kwargs['revisionLength']['asnwers'] = 1
+                                else:
+                                    kwargs['revisionLength']['answers'] += 1
+                            l.release()
                         
-                        elem.clear()
-                        root_wiki.clear()
-            except:
-                print('problem with file parsing: '+file_name)
+                    total_rev+=1
+                    for ch1 in elem:
+                        if 'TimeStamp' in ch1.tag:
+                            for ch2 in ch1:
+                                if 'CreationDate' in ch2.tag:
+                                    t = ch2.text
+                                    if kwargs.get('granularity') != None:
+                                        if kwargs['granularity'].lower() == 'monthly':
+                                            t = datetime.strptime(t, date_format)
+                                            if t>= start:
+                                                if total_rev_dict.get(t.year)==None:
+                                                    total_rev_dict[t.year] = {}
+                                                    total_rev_dict[t.year][t.month] = 1
+                                                elif total_rev_dict[t.year].get(t.month)==None:
+                                                    total_rev_dict[t.year][t.month] = 1
+                                                else:
+                                                    total_rev_dict[t.year][t.month] += 1
+                                        if kwargs['granularity'].lower() == 'yearly':
+                                            if t>=start:
+                                                if total_rev_dict.get(t.year)==None:
+                                                    total_rev_dict[t.year] = 1
+                                                else:
+                                                    total_rev_dict[t.year] += 1
+                    
+                    elem.clear()
+                    root_wiki.clear()
+            #except:
+                #print('problem with file parsing: '+file_name)
             #print(total_rev)
             #return total_rev_dict
             
-            if(kwargs.get('revisionLength')!=None):  
+            if(kwargs.get('revisionLength')!=None and kwargs.get('instance_type')==None):  
                 if kwargs.get('dir_path')!=None:
                     file_name = file_name.replace(kwargs['dir_path']+'/','')
                 file_name = file_name[:-7].replace('_', ' ')
@@ -927,8 +967,14 @@ class knol(object):
         This piece of code is to ensure the multiprocessing
         Enter a date in YYYY-MM-DD format for start and end dates
         '''
+        if kwargs.get('instance_type')!=None:
+            instance_type = kwargs['instance_type']
+        else:
+            instance_type = ''
+            
         if(kwargs.get('file_list')!=None):
             file_list = kwargs['file_list']
+        
         
         elif(kwargs.get('dir_path')!=None):
             dir_path = kwargs['dir_path']
@@ -970,10 +1016,10 @@ class knol(object):
                     end = kwargs['end']
                 else:
                     end = ''
-                processDict[i+1] = Process(target=self.__countRev, kwargs={'file_list':fileList[i], 'revisionLength': revisionLength, 'dir_path': dir_path, 'granularity': granularity, 'start': start, 'end':end, 'l': l})
+                processDict[i+1] = Process(target=self.__countRev, kwargs={'file_list':fileList[i], 'revisionLength': revisionLength, 'dir_path': dir_path, 'granularity': granularity, 'start': start, 'end':end, 'instance_type':instance_type, 'l': l})
         
             else:
-                processDict[i+1] = Process(target=self.__countRev, kwargs={'file_list':fileList[i], 'revisionLength': revisionLength, 'dir_path': dir_path,'l': l})                
+                processDict[i+1] = Process(target=self.__countRev, kwargs={'file_list':fileList[i], 'revisionLength': revisionLength, 'dir_path': dir_path, 'instance_type':instance_type,'l': l})                
         for i in range(pNum):
             processDict[i+1].start()
         
@@ -981,7 +1027,59 @@ class knol(object):
             processDict[i+1].join()  
             
         return revisionLength
-
+    
+    def __is_qa(self, file_name):
+        with open(file_name, 'r') as myFile:
+            for line in myFile:
+                if '<KnowledgeData' in line and 'QA' in line: 
+                    return True
+    def get_instance_id(self, *args, **kwargs):
+        if kwargs.get('file_path') != None:
+            file_name = kwargs['file_path']
+            f = file_name.split('/')[-1]
+            instance = {}
+            
+            context_wiki = ET.iterparse(file_name, events=("start","end"))
+            # Turning it into an iterator
+            context_wiki = iter(context_wiki)
+            event_wiki, root_wiki = next(context_wiki)
+            for event, elem in context_wiki:
+                if event == "end" and 'Instance' in elem.tag:
+                    if kwargs.get('type') == None:
+                        if instance.get(f) == None:
+                            instance[f] = []
+                        else:
+                            instance[f].append(elem['Id'])
+                    elem.clear()
+                    root_wiki.clear()
+            return instance
+        if kwargs.get('dir_path') != None:
+            dir_path = kwargs['dir_path']
+            
+            file_list = glob.glob(dir_path+'/*.knolml')
+            instance = {}
+            if self.__is_qa(file_list[0]):
+                for files in file_list:
+                    f = files.split('/')[-1]
+                    context_wiki = ET.iterparse(files, events=("start","end"))
+                    # Turning it into an iterator
+                    context_wiki = iter(context_wiki)
+                    event_wiki, root_wiki = next(context_wiki)
+                    for event, elem in context_wiki:
+                        if event == "end" and 'Instance' in elem.tag:
+                            if kwargs.get('type') == None:
+                                instance[f] = []
+                                instance[f].append(elem['Id'])
+                            elif kwargs['type'] == 'accepted answer':
+                                if elem.attrib.get('AcceptedAnswerId')!=None:
+                                    instance[f] = []
+                                    instance[f].append(elem.attrib['Id'])
+                            elem.clear()
+                            root_wiki.clear()           
+                
+            return instance         
+                
+            
     def get_wiki_talk_instance(self, *args, **kwargs):
         if kwargs.get('file_path')!=None:
             file_name = kwargs['file_path']
@@ -1628,6 +1726,191 @@ class knol(object):
             processDict[i+1].join()  
             
         return ageList        
+
+
+    
+    def revisionEdits(self, file_name, slab):
+        tree = ET.parse(file_name)
+        root = tree.getroot()
+
+        result = {
+            'Number of Words': 0,
+            'Number of Sentences': 0,
+            'Number of Wikilinks': 0,
+            'Number of PNs': 0,
+            'Content Added': 0,
+            'Content Deleted': 0,
+            'Content Reorganised': 0,
+            'Hyperlink Added': 0,
+            'Hyperlink Deleted': 0,
+            'Hyperlink Fixed': 0
+        }
+        for child in root:
+            if('KnowledgeData' in child.tag):
+                root = child
+
+        if 'Wiki' in root.attrib['Type']:
+            length = len(root.findall('Instance'))
+            revlength = int(length/20)
+            prevRevision = ''
+            prevTotalLinks = []
+            count = 1
+            slabNo = 1 
+            slabs = {}
+            revisionList = knol.getAllRevisions(file_name)
+            for rev in revisionList:
+                revisions = knol.wikiRetrieval(file_name,rev)
+                for revision in revisions:
+                    currRevision = revision
+
+                    code = mwparserfromhell.parse(currRevision)
+                    externalLinks = code.filter_external_links()
+                    wikiLinks = code.filter_wikilinks()
+
+                    for i in range(len(externalLinks)):
+                        externalLinks[i] = str(externalLinks[i])
+                    for i in range(len(wikiLinks)):
+                        wikiLinks[i] = str(wikiLinks[i])
+
+                    externalLinks = list(set(externalLinks))
+                    wikiLinks = list(set(wikiLinks))
+                    totalLinks = []
+                    for each in externalLinks:
+                        totalLinks.append(each)
+                    for each in wikiLinks:
+                        totalLinks.append(each)
+
+                    if totalLinks != prevTotalLinks:
+                        if len(totalLinks) > len(prevTotalLinks):
+                            result['Hyperlink Added'] += 1
+                        elif len(totalLinks) < len(prevTotalLinks):
+                            result['Hyperlink Deleted'] += 1
+                        else:
+                            result['Hyperlink Fixed'] += 1
+
+                    if currRevision != prevRevision:
+                        if len(word_tokenize(currRevision)) > len(word_tokenize(prevRevision)):
+                            result['Content Added'] += 1
+                        elif len(word_tokenize(currRevision)) < len(word_tokenize(prevRevision)):
+                            result['Content Deleted'] += 1
+                        else:
+                            result['Content Reorganised'] += 1
+
+                    prevRevision = currRevision
+                    prevTotalLinks = totalLinks
+
+                    if count%revlength == 0:
+                        slabs['Slab'+str(slabNo)] = copy.deepcopy(result)
+                        slabNo += 1
+
+                    count += 1
+
+            return slabs
+
+        else:
+            length = len(root.findall('Instance'))
+            content = {}
+            hyperlink = {}
+            s1 = []
+            s2 = []
+            totalLinks = 0
+            slabs = {}
+            if slab < length:
+                revlength = int(length/slab)
+            else:
+                revlength = 1
+            count = 0
+            slabNo = 1
+            for child in root:
+                if 'Instance' in child.tag:
+                    if 'RevisionId' in child.attrib:
+                        revisionId = child.attrib['RevisionId']
+                    else:
+                        # This means its a comment
+                        continue
+
+                    for each in child:
+                        if 'Body' in each.tag:
+                            for i in each:
+                                if 'Text' in i.tag:
+                                    s = re.findall(r'(http?://\S+)', i.text)
+
+                                    if len(s) != 0: #If Hyperlink is found
+                                        if revisionId in hyperlink:
+                                            if len(hyperlink[revisionId]) < len(s):
+                                                result['Hyperlink Added'] += 1
+                                            elif len(hyperlink[revisionId]) > len(s):
+                                                result['Hyperlink Deleted'] += 1
+                                            elif len(hyperlink[revisionId]) == len(s) and hyperlink[revisionId] != s:
+                                                result['Hyperlink Fixed'] += 1
+                                        else:
+                                            result['Hyperlink Added'] += 1                                        
+                                        hyperlink[revisionId] = s
+
+                                    if revisionId in content:
+                                        #check if content is added or not
+                                        if len(content[revisionId]) < len(i.text):
+                                            result['Content Added'] += 1
+                                        elif len(content[revisionId]) > len(i.text):
+                                            result['Content Deleted'] += 1
+                                        elif len(content[revisionId]) == len(i.text) and content[revisionId] != i.text:
+                                            result['Content Reorganised'] += 1
+                                         
+                                    else:
+                                        #content is added
+                                        result['Content Added'] += 1
+
+                                    content[revisionId] = i.text
+
+                    if count%revlength == 0:
+                        slabs['Slab'+str(slabNo)] = copy.deepcopy(result)
+                        slabNo += 1
+
+                count += 1
+
+            return slabs
+
+
+    
+    def get_revision_type(self, *args, **kwargs):
+        slab = 20
+        if kwargs.get('file_path') != None:
+            file_name = kwargs['file_path']
+            return self.revisionEdits(file_name, slab)
+
+        elif kwargs.get('file_name') != None:
+            file_name = kwargs['file_name']
+            for f in file_name:
+                if(kwargs.get('RevisionEdits')!=None):
+                    kwargs['RevisionEdits'][f] = self.revisionEdits(f, slab)
+
+
+    def get_revision_types(self, *args, **kwargs):
+        all_var = knol.__get_multiprocessing(*args, **kwargs)
+        # revisionId, file_list, pNum
+        revisionId = all_var[0]
+        fileList = all_var[1]
+        pNum = all_var[2]
+
+
+        manager = Manager()
+        RevisionEdits = manager.dict()
+
+        l = Lock()
+        processDict = {}
+ 
+        for i in range(pNum):
+            processDict[i+1] = Process(target=self.revisionTypes, kwargs={'file_name':fileList[i],'RevisionEdits': RevisionEdits,'l': l})
+
+        for i in range(pNum):
+            processDict[i+1].start()
+
+        for i in range(pNum):
+            processDict[i+1].join()
+
+        return RevisionEdits
+
+
 
     def numericalSort(self, value):
         parts = self.numbers.split(value)
@@ -2414,185 +2697,6 @@ class knol(object):
         
 
         return giniValue
- 
-    @staticmethod
-    def revisionEdits(file_name, slab):
-        tree = ET.parse(file_name)
-        root = tree.getroot()
-
-        result = {
-            'Content Added': 0,
-            'Content Deleted': 0,
-            'Content Reorganised': 0,
-            'Hyperlink Added': 0,
-            'Hyperlink Deleted': 0,
-            'Hyperlink Fixed': 0
-        }
-        for child in root:
-            if('KnowledgeData' in child.tag):
-                root = child
-
-        if 'Wiki' in root.attrib['Type']:
-            length = len(root.findall('Instance'))
-            revlength = int(length/20)
-            prevRevision = ''
-            prevTotalLinks = []
-            count = 1
-            slabNo = 1 
-            slabs = {}
-            revisionList = knol.getAllRevisions(file_name)
-            for rev in revisionList:
-                revisions = knol.wikiRetrieval(file_name,rev)
-                for revision in revisions:
-                    currRevision = revision
-
-                    code = mwparserfromhell.parse(currRevision)
-                    externalLinks = code.filter_external_links()
-                    wikiLinks = code.filter_wikilinks()
-
-                    for i in range(len(externalLinks)):
-                        externalLinks[i] = str(externalLinks[i])
-                    for i in range(len(wikiLinks)):
-                        wikiLinks[i] = str(wikiLinks[i])
-
-                    externalLinks = list(set(externalLinks))
-                    wikiLinks = list(set(wikiLinks))
-                    totalLinks = []
-                    for each in externalLinks:
-                        totalLinks.append(each)
-                    for each in wikiLinks:
-                        totalLinks.append(each)
-
-                    if totalLinks != prevTotalLinks:
-                        if len(totalLinks) > len(prevTotalLinks):
-                            result['Hyperlink Added'] += 1
-                        elif len(totalLinks) < len(prevTotalLinks):
-                            result['Hyperlink Deleted'] += 1
-                        else:
-                            result['Hyperlink Fixed'] += 1
-
-                    if currRevision != prevRevision:
-                        if len(word_tokenize(currRevision)) > len(word_tokenize(prevRevision)):
-                            result['Content Added'] += 1
-                        elif len(word_tokenize(currRevision)) < len(word_tokenize(prevRevision)):
-                            result['Content Deleted'] += 1
-                        else:
-                            result['Content Reorganised'] += 1
-
-                    prevRevision = currRevision
-                    prevTotalLinks = totalLinks
-
-                    if count%revlength == 0:
-                        slabs['Slab'+str(slabNo)] = copy.deepcopy(result)
-                        slabNo += 1
-
-                    count += 1
-
-            return slabs
-
-        else:
-            length = len(root.findall('Instance'))
-            content = {}
-            hyperlink = {}
-            s1 = []
-            s2 = []
-            totalLinks = 0
-            slabs = {}
-            if slab < length:
-                revlength = int(length/slab)
-            else:
-                revlength = 1
-            count = 0
-            slabNo = 1
-            for child in root:
-                if 'Instance' in child.tag:
-                    if 'RevisionId' in child.attrib:
-                        revisionId = child.attrib['RevisionId']
-                    else:
-                        # This means its a comment
-                        continue
-
-                    for each in child:
-                        if 'Body' in each.tag:
-                            for i in each:
-                                if 'Text' in i.tag:
-                                    s = re.findall(r'(http?://\S+)', i.text)
-
-                                    if len(s) != 0: #If Hyperlink is found
-                                        if revisionId in hyperlink:
-                                            if len(hyperlink[revisionId]) < len(s):
-                                                result['Hyperlink Added'] += 1
-                                            elif len(hyperlink[revisionId]) > len(s):
-                                                result['Hyperlink Deleted'] += 1
-                                            elif len(hyperlink[revisionId]) == len(s) and hyperlink[revisionId] != s:
-                                                result['Hyperlink Fixed'] += 1
-                                        else:
-                                            result['Hyperlink Added'] += 1                                        
-                                        hyperlink[revisionId] = s
-
-                                    if revisionId in content:
-                                        #check if content is added or not
-                                        if len(content[revisionId]) < len(i.text):
-                                            result['Content Added'] += 1
-                                        elif len(content[revisionId]) > len(i.text):
-                                            result['Content Deleted'] += 1
-                                        elif len(content[revisionId]) == len(i.text) and content[revisionId] != i.text:
-                                            result['Content Reorganised'] += 1
-                                         
-                                    else:
-                                        #content is added
-                                        result['Content Added'] += 1
-
-                                    content[revisionId] = i.text
-
-                    if count%revlength == 0:
-                        slabs['Slab'+str(slabNo)] = copy.deepcopy(result)
-                        slabNo += 1
-
-                count += 1
-
-            return slabs
-
-
-    @staticmethod
-    def revisionTypes(*args, **kwargs):
-        slab = 20
-        if kwargs.get('file_path') != None:
-            file_name = kwargs['file_path']
-            return knol.revisionEdits(file_name, slab)
-
-        elif kwargs.get('file_name') != None:
-            file_name = kwargs['file_name']
-            for f in file_name:
-                if(kwargs.get('RevisionEdits')!=None):
-                    kwargs['RevisionEdits'][f] = knol.revisionEdits(f, slab)
-
-
-    @staticmethod
-    def getRevisionTypes(*args, **kwargs):
-        all_var = knol.__get_multiprocessing(*args, **kwargs)
-        # revisionId, file_list, pNum
-        revisionId = all_var[0]
-        fileList = all_var[1]
-        pNum = all_var[2]
-
-
-        manager = Manager()
-        RevisionEdits = manager.dict()
-
-        l = Lock()
-        processDict = {}
- 
-        for i in range(pNum):
-            processDict[i+1] = Process(target=knol.revisionTypes, kwargs={'file_name':fileList[i],'RevisionEdits': RevisionEdits,'l': l})
-
-        for i in range(pNum):
-            processDict[i+1].start()
-
-        for i in range(pNum):
-            processDict[i+1].join()
-
-        return RevisionEdits
     
     
     @staticmethod
