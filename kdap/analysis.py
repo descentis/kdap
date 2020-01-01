@@ -1398,61 +1398,44 @@ class knol(object):
             author_contrib = final_list
         
         return author_contrib
-                
+    
+    def __get_reverts(self, file_name):
+
+        context_wiki = ET.iterparse(file_name, events=("start","end"))
+        # Turning it into an iterator
+        context_wiki = iter(context_wiki)
+        event_wiki, root_wiki = next(context_wiki)
+        sha_dict = {}
+        reverts_count = 0
+        id = 1
+        try:
+            for event, elem in context_wiki:
+                if event == "end" and 'Instance' in elem.tag:
+                    for ch1 in elem:
+                        if 'Knowl' in ch1.tag:
+                            if ch1.attrib['key'] == 'sha':
+                                if sha_dict.get(ch1.text)==None:
+                                    sha_dict[ch1.text] = 0
+                                else:
+                                    reverts_count+=1
+                    
+                    id+=1
+                    elem.clear()
+                    root_wiki.clear()
+        except:
+            print("error in file parsing "+ file_name)        
+        return reverts_count
+    
     def get_wiki_revert(self, *args, **kwargs):
         if kwargs.get('file_path')!=None:
             file_name = kwargs['file_path']
-            
-            context_wiki = ET.iterparse(file_name, events=("start","end"))
-            # Turning it into an iterator
-            context_wiki = iter(context_wiki)
-            event_wiki, root_wiki = next(context_wiki)
-            sha_dict = {}
-            reverts_count = 0
-            id = 1
-            try:
-                for event, elem in context_wiki:
-                    if event == "end" and 'Instance' in elem.tag:
-                        for ch1 in elem:
-                            if 'Knowl' in ch1.tag:
-                                if ch1.attrib['key'] == 'sha':
-                                    if sha_dict.get(ch1.text)==None:
-                                        sha_dict[ch1.text] = 0
-                                    else:
-                                        reverts_count+=1
-                        
-                        id+=1
-                        elem.clear()
-                        root_wiki.clear()
-            except:
-                print("error in file parsing "+ file_name)
+            reverts_count = self.__get_reverts(file_name)
+
         
         if kwargs.get('file_list')!=None:
             for file_name in kwargs['file_list']:
         
-                context_wiki = ET.iterparse(file_name, events=("start","end"))
-                # Turning it into an iterator
-                context_wiki = iter(context_wiki)
-                event_wiki, root_wiki = next(context_wiki)
-                sha_dict = {}
-                reverts_count = 0
-                id = 1
-                try:
-                    for event, elem in context_wiki:
-                        if event == "end" and 'Instance' in elem.tag:
-                            for ch1 in elem:
-                                if 'Knowl' in ch1.tag:
-                                    if ch1.attrib['key'] == 'sha':
-                                        if sha_dict.get(ch1.text)==None:
-                                            sha_dict[ch1.text] = 0
-                                        else:
-                                            reverts_count += 1
-                            
-                            id+=1
-                            elem.clear()
-                            root_wiki.clear()
-                except:
-                    print("error in file parsing "+ file_name)
+                reverts_count = self.__get_reverts(file_name)
 
                 if(kwargs.get('reverts')!=None):
                     if kwargs.get('dir_path')!=None:
@@ -2696,34 +2679,11 @@ class knol(object):
         #t1 = time.time()
         
         
-        if(kwargs.get('file_list')!=None):
-            file_list = kwargs['file_list']
-            
-        elif(kwargs.get('dir_path')!=None):
-            dir_path = kwargs['dir_path']
-            
-            file_list = glob.glob(dir_path+'/*.knolml')
-            
-        fileNum = len(file_list)
-        
-        if(kwargs.get('c_num')!=None):
-            cnum = kwargs['c_num']
-        elif(fileNum<24):
-            cnum = fileNum+1           # Bydefault it is 24
-        else:
-            cnum = 24
-        
-        
-        fileList = []
-        if(fileNum<cnum):
-            for f in file_list:
-                fileList.append([f])
-            
-        else:           
-    
-            f = np.array_split(file_list,cnum)
-            for i in f:
-                fileList.append(i.tolist())        
+        all_var = knol.__get_multiprocessing(*args, **kwargs)
+        # revisionId, file_list, pNum
+        revisionId = all_var[0]
+        fileList = all_var[1]
+        pNum = all_var[2]
         
         
     
@@ -2733,10 +2693,6 @@ class knol(object):
     
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
-            pNum = fileNum
-        else:
-            pNum = cnum
         for i in range(pNum):
             processDict[i+1] = Process(target=knol.findTags, kwargs={'list_tags':list_tags,'file_name':fileList[i],'tagPosts':tagPosts,'l': l})
             
