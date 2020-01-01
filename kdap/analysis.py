@@ -2047,11 +2047,7 @@ class knol(object):
                     kwargs['Infobox'][f] = check
 
     @staticmethod
-    def checkInfobox(*args, **kwargs):
-
-        '''
-        This piece of code is to ensure the multiprocessing
-        '''
+    def __get_multiprocessing(*args, **kwargs):
         if(kwargs.get('file_list')!=None):
             file_list = kwargs['file_list']
 
@@ -2084,15 +2080,30 @@ class knol(object):
             for i in f:
                 fileList.append(i.tolist())        
 
-        manager = Manager()
-        Infobox = manager.dict()
-
-        l = Lock()
-        processDict = {}
         if(fileNum<cnum):
             pNum = fileNum
         else:
             pNum = cnum
+        all_var = []
+        all_var.append(revisionId)
+        all_var.append(fileList)
+        all_var.append(pNum)
+        
+    @staticmethod
+    def checkInfobox(*args, **kwargs):
+
+        '''
+        This piece of code is to ensure the multiprocessing
+        '''
+        all_var = knol.__get_multiprocessing(*args, **kwargs)
+        # revisionId, file_list, pNum
+        revisionId = all_var[0]
+        fileList = all_var[1]
+        pNum = all_var[2]
+        l = Lock()
+        processDict = {}            
+        manager = Manager()
+        Infobox = manager.dict()
         for i in range(pNum):
             processDict[i+1] = Process(target=knol.Infobox, kwargs={'file_name':fileList[i],'Infobox': Infobox,'l': l, 'revision_id': revisionId})
 
@@ -2165,38 +2176,11 @@ class knol(object):
         '''
         This piece of code is to ensure the multiprocessing
         '''
-        if(kwargs.get('file_list')!=None):
-            file_list = kwargs['file_list']
-
-        elif(kwargs.get('dir_path')!=None):
-            dir_path = kwargs['dir_path']
-
-            file_list = glob.glob(dir_path+'/*.knolml')
-
-        if kwargs.get('revision_id') != None:
-            revisionId = kwargs['revision_id']
-        else:
-            revisionId = None
-
-        fileNum = len(file_list)
-
-        if(kwargs.get('c_num')!=None):
-            cnum = kwargs['c_num']
-        elif(fileNum<24):
-            cnum = fileNum+1           # Bydefault it is 24
-        else:
-            cnum = 24
-
-
-        fileList = []
-        if(fileNum<cnum):
-            for f in file_list:
-                fileList.append([f])
-  
-        else:
-            f = np.array_split(file_list,cnum)
-            for i in f:
-                fileList.append(i.tolist())        
+        all_var = knol.__get_multiprocessing(*args, **kwargs)
+        # revisionId, file_list, pNum
+        revisionId = all_var[0]
+        fileList = all_var[1]
+        pNum = all_var[2]
 
 
         manager = Manager()
@@ -2204,10 +2188,6 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
-            pNum = fileNum
-        else:
-            pNum = cnum
         for i in range(pNum):
             processDict[i+1] = Process(target=knol.countImages, kwargs={'file_name':fileList[i],'images': Images,'l': l, 'revision_id': revisionId})
 
@@ -2296,38 +2276,12 @@ class knol(object):
 
     @staticmethod
     def getLocalGiniCoefficient(*args, **kwargs):
-        if(kwargs.get('file_list')!=None):
-            file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
-            dir_path = kwargs['dir_path']
-
-            file_list = glob.glob(dir_path+'/*.knolml')
-
-        if kwargs.get('revision_id') != None:
-            revisionId = kwargs['revision_id']
-        else:
-            revisionId = None
-
-        fileNum = len(file_list)
-
-        if(kwargs.get('c_num')!=None):
-            cnum = kwargs['c_num']
-        elif(fileNum<24):
-            cnum = fileNum+1           # Bydefault it is 24
-        else:
-            cnum = 24
-
-
-        fileList = []
-        if(fileNum<cnum):
-            for f in file_list:
-                fileList.append([f])
-
-        else:
-            f = np.array_split(file_list,cnum)
-            for i in f:
-                fileList.append(i.tolist())
+        all_var = knol.__get_multiprocessing(*args, **kwargs)
+        # revisionId, file_list, pNum
+        revisionId = all_var[0]
+        fileList = all_var[1]
+        pNum = all_var[2]
 
 
         manager = Manager()
@@ -2335,10 +2289,6 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
-            pNum = fileNum
-        else:
-            pNum = cnum
         for i in range(pNum):
             processDict[i+1] = Process(target=knol.localGiniCoefficient, kwargs={'file_name':fileList[i],'GiniValues': GiniValues,'l': l})
 
@@ -2637,38 +2587,11 @@ class knol(object):
 
     @staticmethod
     def getRevisionTypes(*args, **kwargs):
-        if(kwargs.get('file_list')!=None):
-            file_list = kwargs['file_list']
-
-        elif(kwargs.get('dir_path')!=None):
-            dir_path = kwargs['dir_path']
-
-            file_list = glob.glob(dir_path+'/*.knolml')
-
-        if kwargs.get('revision_id') != None:
-            revisionId = kwargs['revision_id']
-        else:
-            revisionId = None
-
-        fileNum = len(file_list)
-
-        if(kwargs.get('c_num')!=None):
-            cnum = kwargs['c_num']
-        elif(fileNum<24):
-            cnum = fileNum+1           # Bydefault it is 24
-        else:
-            cnum = 24
-
-
-        fileList = []
-        if(fileNum<cnum):
-            for f in file_list:
-                fileList.append([f])
-
-        else:
-            f = np.array_split(file_list,cnum)
-            for i in f:
-                fileList.append(i.tolist())
+        all_var = knol.__get_multiprocessing(*args, **kwargs)
+        # revisionId, file_list, pNum
+        revisionId = all_var[0]
+        fileList = all_var[1]
+        pNum = all_var[2]
 
 
         manager = Manager()
@@ -2676,10 +2599,7 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
-            pNum = fileNum
-        else:
-            pNum = cnum
+ 
         for i in range(pNum):
             processDict[i+1] = Process(target=knol.revisionTypes, kwargs={'file_name':fileList[i],'RevisionEdits': RevisionEdits,'l': l})
 
