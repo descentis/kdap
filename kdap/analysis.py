@@ -275,9 +275,20 @@ class knowledge_data(object):
             return di  
         else:
             return 'file name not given'
-        
+
+class frames_iterator(object):
+    def __init__(self, knol_obj):
+        self.knol_obj = knol_obj
+
+
+    def __iter__(self):
+        pass
+
+    def __next__(self):
+        cur = self.knol_obj.
+
 class knol(object):
-    
+
     def __init__(self):
         self.dir = 0
         self.kcounter = 0
@@ -286,15 +297,19 @@ class knol(object):
         self.file_name = ''
         self.dump_directory = ''
 
+        self.elem_counter = 0
+
     '''
     frame method is used to store the knolml data in terms of frames
     each instances can be analyzed separately and sequencially
     '''
+
     def frame(self, *args, **kwargs):
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             self.file_name = file_name
-            self.get_knowledgeData(self.file_name)
+            self.total_elements = len(ET.parse(file_name).getroot().findall('KnowledgeData'))
+            # self.get_knowledgeData(self.file_name)
         elif(kwargs.get('dir_path')!=None):
             self.dir = 1
             dir_path = kwargs['dir_path']
@@ -304,26 +319,38 @@ class knol(object):
                 self.file_list = sorted(glob.glob(dir_path+'/Posts/*.knolml'), key=self.numericalSort)
             else:
                 self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
-            self.get_knowledgeData(self.file_list[0])
+            # self.get_knowledgeData(self.file_list[0])
             
         return self.object_list
 
-    def get_knowledgeData(self,file_name):
+    def get_knowledgeData(self, file_name, index=-1):
         tree = ET.parse(file_name)
         
         root = tree.getroot()
-        for elem in root:
-            if 'KnowledgeData' in elem.tag:
-                self.knowledgeData_list.append(elem)
-        
-        self.object_list = self.get_frames(self.knowledgeData_list[self.kcounter])        
+        if index == -1:
+            for elem in root:
+                if 'KnowledgeData' in elem.tag:
+                    self.knowledgeData_list.append(elem)
+
+            self.object_list = self.get_frames(self.knowledgeData_list[self.kcounter])
+        else:
+            matches = root.findall('KnowledgeData')
+            for match in matches:
+                instances = match.findall('Instance')
+                if len(instances) <= index:
+                    index -= len(instances)
+                else:
+                    title = ''
+                    if match.find('Title') is not None:
+                        title = match.find('Title').text
+                    return instances(instances[index], title)
     
     
     def numericalSort(self, value):
         parts = self.numbers.split(value)
         parts[1::2] = map(int, parts[1::2])
         return parts
-    
+
     def get_frames(self, elem):        
         object_list = []
         title = ''
@@ -337,6 +364,8 @@ class knol(object):
         return object_list
     
     def Next(self):
+        pass
+        '''
         self.kcounter+=1
         if(self.kcounter<len(self.knowledgeData_list)):
             self.get_knowledgeData(self.knowledgeData_list[self.kcounter])
@@ -345,7 +374,8 @@ class knol(object):
             self.get_knowledgeData(self.file_list[self.file_count])
         
         return self.object_list
-    
+        '''
+
     #******************methods related to frames ends here*****************************
         
     '''
@@ -2939,4 +2969,4 @@ class knol(object):
         t2 = time.time()
         print(t2-t1)
         '''
-        return tagPosts 
+        return tagPosts
