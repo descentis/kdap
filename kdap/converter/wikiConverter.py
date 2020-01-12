@@ -187,48 +187,52 @@ class wikiConverter(object):
         event_wiki, root_wiki = next(context_wiki)
         file_name = name[:-4]+'.knolml'
         file_path = file_name
-        if kwargs.get('output_dir'):
+        if kwargs.get('output_dir')!=None:
             file_path = file_path.replace('output','wikipedia_articles')
-            
-        with open(file_path,"w",encoding='utf-8') as myFile:
-            myFile.write("<?xml version='1.0' encoding='utf-8'?>\n")
-            myFile.write("<KnolML>\n")
-            myFile.write('<Def attr.name="sha" attrib.type="string" for="Instance" id="sha"/>\n')
-           
-        prefix = '{http://www.mediawiki.org/xml/export-0.10/}'    #In case of Wikipedia, prefic is required
-        f = 0
-        title_text = ''
-        for event, elem in context_wiki:
-            
-            if event == "end" and 'id' in elem.tag:
-                if(f==0):
-                    with open(file_path,"a",encoding='utf-8') as myFile:
-                         myFile.write("\t<KnowledgeData "+"Type="+'"'+"Wiki/text/revision"+'"'+" Id="+'"'+elem.text+'"'+">\n")
-                         
-                    f=1
-                        
-            if event == "end" and 'title' in elem.tag:
-                title_text = elem.text
-    
-            if(f==1 and title_text!=None):            
-                Title = "\t\t<Title>"+title_text+"</Title>\n"
-                with open(file_path,"a",encoding='utf-8') as myFile:
-                    myFile.write(Title)
-                title_text = None
-            if event == "end" and 'revision' in elem.tag:
-         
-                with open(file_path,"a",encoding='utf-8') as myFile:
-                    wikiConverter.wiki_file_writer(elem,myFile,prefix)
+        
+        if not os.path.exists(file_path):
+            with open(file_path,"w",encoding='utf-8') as myFile:
+                myFile.write("<?xml version='1.0' encoding='utf-8'?>\n")
+                myFile.write("<KnolML>\n")
+                myFile.write('<Def attr.name="sha" attrib.type="string" for="Instance" id="sha"/>\n')
+               
+            prefix = '{http://www.mediawiki.org/xml/export-0.10/}'    #In case of Wikipedia, prefic is required
+            f = 0
+            title_text = ''
+            try:
+                for event, elem in context_wiki:
                     
-                    
-                elem.clear()
-                root_wiki.clear() 
-    
-        with open(file_path,"a",encoding='utf-8') as myFile:
-            myFile.write("\t</KnowledgeData>\n")
-            myFile.write("</KnolML>\n") 
-    
-        wikiConverter.instance_id = 1
+                    if event == "end" and 'id' in elem.tag:
+                        if(f==0):
+                            with open(file_path,"a",encoding='utf-8') as myFile:
+                                 myFile.write("\t<KnowledgeData "+"Type="+'"'+"Wiki/text/revision"+'"'+" Id="+'"'+elem.text+'"'+">\n")
+                                 
+                            f=1
+                                
+                    if event == "end" and 'title' in elem.tag:
+                        title_text = elem.text
+            
+                    if(f==1 and title_text!=None):            
+                        Title = "\t\t<Title>"+title_text+"</Title>\n"
+                        with open(file_path,"a",encoding='utf-8') as myFile:
+                            myFile.write(Title)
+                        title_text = None
+                    if event == "end" and 'revision' in elem.tag:
+                 
+                        with open(file_path,"a",encoding='utf-8') as myFile:
+                            wikiConverter.wiki_file_writer(elem,myFile,prefix)
+                            
+                            
+                        elem.clear()
+                        root_wiki.clear() 
+            except:
+                print("found problem with the data: "+ file_name)
+        
+            with open(file_path,"a",encoding='utf-8') as myFile:
+                myFile.write("\t</KnowledgeData>\n")
+                myFile.write("</KnolML>\n") 
+        
+            wikiConverter.instance_id = 1
 
 
     @staticmethod
@@ -390,7 +394,20 @@ class wikiConverter(object):
         for i in range(0,len(l),n):
             yield l[i:i+n]
 
-    
+    @staticmethod
+    def __file_lists(fileNum,c_num,fileNames):
+        fileList = []
+        if(fileNum<c_num):
+            for f in fileNames:
+                fileList.append([f])
+        
+        else:           
+
+            f = np.array_split(fileNames,c_num)
+            for i in f:
+                fileList.append(i.tolist())
+        
+        return fileList
      
     @staticmethod
     def compressAll(dir_path, *args, **kwargs):
@@ -404,18 +421,8 @@ class wikiConverter(object):
             output_dir=kwargs['output_dir']
         else:
             output_dir = os.getcwd()
-        fileNum = len(fileNames)
-        fileList = []
-        if(fileNum<c_num):
-            for f in fileNames:
-                fileList.append([f])
-        
-        else:           
-
-            f = np.array_split(fileNames,c_num)
-            for i in f:
-                fileList.append(i.tolist())
-        
+        fileNum = len(fileNames)   
+        fileList = wikiConverter.__file_lists(fileNum, c_num, fileNames)
         l = Lock()
         processDict = {}
         if(fileNum<c_num):
@@ -470,20 +477,12 @@ class wikiConverter(object):
         fileNames = glob.glob(dir_path+'/*.xml')
         if(kwargs.get('output_dir')!=None):
             output_dir=kwargs['output_dir']
+            if not os.path.isdir(output_dir):
+                os.makedirs(output_dir)
         else:
             output_dir = os.getcwd()
         fileNum = len(fileNames)
-        fileList = []
-        if(fileNum<c_num):
-            for f in fileNames:
-                fileList.append([f])
-        
-        else:           
-
-            f = np.array_split(fileNames,c_num)
-            for i in f:
-                fileList.append(i.tolist())
-        
+        fileList = wikiConverter.__file_lists(fileNum, c_num, fileNames)
         l = Lock()
         processDict = {}
         if(fileNum<c_num):
