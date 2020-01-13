@@ -282,15 +282,16 @@ class frames_iterator(object):
 
     def __iter__(self):
         self.value = self.knol_obj.Next()
-        pass
+
+        return self
 
     def __next__(self):
         cur = self.value
-
         if cur is None:
-            raise StopIteration
+            return
 
         self.value = self.knol_obj.Next()
+        return cur
 
 class knol(object):
 
@@ -313,7 +314,6 @@ class knol(object):
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             self.file_name = file_name
-            self.total_elements = len(ET.parse(file_name).getroot().findall('KnowledgeData'))
             # self.get_knowledgeData(self.file_name)
         elif(kwargs.get('dir_path')!=None):
             self.dir = 1
@@ -2991,3 +2991,7 @@ class knol(object):
         print(t2-t1)
         '''
         return tagPosts
+
+k = knol()
+for i in k.frame(file_name='test.knolml'):
+    print(i.instanceId)
