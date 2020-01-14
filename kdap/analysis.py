@@ -30,7 +30,7 @@ from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
 import textstat
 from collections import Counter
-
+import inspect
 class instances(object):
 
     '''
@@ -310,6 +310,7 @@ class knol(object):
     each instances can be analyzed separately and sequencially
     '''
 
+
     def frame(self, *args, **kwargs):
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
@@ -326,7 +327,7 @@ class knol(object):
                 self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
             # self.get_knowledgeData(self.file_list[0])
 
-        return frames_iterator(self)
+        return iter(self.Next())
 
     def get_knowledgeData(self, file_name, index=-1):
         tree = ET.parse(file_name)
@@ -370,22 +371,30 @@ class knol(object):
         return object_list
 
     def Next(self):
-        if self.dir == 1:
-            inst = self.get_knowledgeData(self.file_count, self.elem_counter)
-            self.elem_counter += 1
-            if inst is None:
-                self.file_count += 1
-                self.elem_counter = 0
-                if self.file_count < len(self.file_list):
-                    inst = self.get_knowledgeData(self.file_count, self.elem_counter)
-                    self.elem_counter += 1
+        while True:
+            if self.dir == 1:
+                inst = self.get_knowledgeData(self.file_count, self.elem_counter)
+                self.elem_counter += 1
+                if inst is None:
+                    self.file_count += 1
+                    self.elem_counter = 0
+                    if self.file_count < len(self.file_list):
+                        inst = self.get_knowledgeData(self.file_count, self.elem_counter)
+                        self.elem_counter += 1
+                    else:
+                        print('ra')
+                        return
+                print('a')
+                yield inst
+            else:
+                inst = self.get_knowledgeData(self.file_name, self.elem_counter)
+                self.elem_counter += 1
+                if inst is not None:
+                    print('b', self.elem_counter)
+                    yield inst
                 else:
-                    inst = None
-            return inst
-        else:
-            inst = self.get_knowledgeData(self.file_name, self.elem_counter)
-            self.elem_counter += 1
-            return inst
+                    print('rb')
+                    return
         '''
         self.kcounter+=1
         if(self.kcounter<len(self.knowledgeData_list)):
@@ -2993,5 +3002,14 @@ class knol(object):
         return tagPosts
 
 k = knol()
-for i in k.frame(file_name='test.knolml'):
-    print(i.instanceId)
+x = k.frame(file_name='test.knolml')
+
+print('TEST')
+print(type(k))
+'''
+l = list(x)
+print("!", l, len(l))
+
+for i in x:
+    print(i.instanceId, type(i))
+'''
