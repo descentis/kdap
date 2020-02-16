@@ -28,7 +28,6 @@ from kdap.wikiextract.wikiExtract import wikiExtract
 from mwviews.api import PageviewsClient
 from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
-import textstat
 from collections import Counter 
 
 class instances(object):
@@ -426,7 +425,7 @@ class knol(object):
                     for line in myFile:
                         l = line.split('#$*$#')
                         if l[0] in articles:
-                            print("article is found")
+                            print("Found hit for article "+l[0])
                             # file, art, index, home, key
                             self.extract_from_bzip(file=l[1],art=l[0],index=int(l[2]), home=home, key=key)
     
