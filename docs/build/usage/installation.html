@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="English">
   <head>
     <meta charset="utf-8" />
-    <title>Installation: &#8212; KDAP 0.1.23 documentation</title>
+    <title>Overview / Install &#8212; KDAP 0.1.23 documentation</title>
     <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -32,8 +32,52 @@
 
           <div class="body" role="main">
             
-  <div class="section" id="installation">
-<h1>Installation:<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="overview-install">
+<span id="intro-toplevel"></span><h1>Overview / Install<a class="headerlink" href="#overview-install" title="Permalink to this headline">¶</a></h1>
+<p>This library contains a collection of utilities for efficiently processing Knol-ML database dumps. There are two important features that this module intends to address: providing standard algorithms and efficient parsing of Knol-ML dump.</p>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.python.org">Python</a> 3.4 or newer</p></li>
+<li><p><a class="reference external" href="https://git-scm.com/">Git</a></p></li>
+</ul>
+</div>
+<div class="section" id="installing-kdap">
+<h2>Installing kdap<a class="headerlink" href="#installing-kdap" title="Permalink to this headline">¶</a></h2>
+<p>Installing kdap is easily done using <a class="reference external" href="https://pip.pypa.io/en/latest/installing.html">pip</a>. Assuming it is installed, just run the following from the command-line:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span># pip install kdap
+</pre></div>
+</div>
+</div>
+<div class="section" id="source-code">
+<h2>Source Code<a class="headerlink" href="#source-code" title="Permalink to this headline">¶</a></h2>
+<p>kdap's git repo is available on GitHub, which can be browsed at:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://github.com/descentis/kdap">https://github.com/descentis/kdap</a></p></li>
+</ul>
+</div></blockquote>
+<p>and cloned using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ git clone https://github.com/descentis/kdap
+$ cd kdap
+</pre></div>
+</div>
+<p>Optionally (but suggested), make use of virtualenv:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ virtualenv -p python3 venv
+$ source venv/bin/activate
+</pre></div>
+</div>
+<p>Install the requirements:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install -r requirements.txt
+$ pip install -r test-requirements.txt
+$ unzip test-repos.zip
+</pre></div>
+</div>
+<p>and run the tests using pytest:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pytest
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -54,8 +98,14 @@
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation:</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Overview / Install</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-kdap">Installing kdap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#source-code">Source Code</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Functions:</a></li>
 </ul>
 
 <div class="relations">
