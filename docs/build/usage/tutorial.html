@@ -14,6 +14,8 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Functions:" href="functions.html" />
+    <link rel="prev" title="Overview / Install" href="installation.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -32,35 +34,43 @@
             
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>Using PyDriller is very simple. You only need to create <cite>RepositoryMining</cite>: this class will receive in input the path to the repository and will return a generator that iterates over the commits. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">RepositoryMining</span><span class="p">(</span><span class="s1">&#39;path/to/the/repo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">traverse_commits</span><span class="p">():</span>
-    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Hash {}, author {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+<p>Using kdap is very simple. You only need to create <cite>knol</cite>: this class will create the knol object which can be further used to call the kdap methods. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">kdap</span>
+<span class="n">knol</span> <span class="o">=</span> <span class="n">kdap</span><span class="o">.</span><span class="n">knol</span><span class="p">()</span>
+<span class="n">knol</span><span class="o">.</span><span class="n">get_wiki_article</span><span class="p">(</span><span class="s1">&#39;India&#39;</span><span class="p">,[</span><span class="n">output_dir</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>will print the name of the developers for each commit.</p>
-<p>Inside <cite>RepositoryMining</cite>, you will have to configure which projects to analyze, for which commits, for which dates etc. For all the possible configurations, have a look at <span class="xref std std-ref">configuration_toplevel</span>.</p>
-<p>We can also pass a list of repositories (both local and remote), and PyDriller will analyze sequentially. In case of a remote repository, PyDriller will clone it in a temporary folder, and delete it afterwards. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;repos/repo1&quot;</span><span class="p">,</span> <span class="s2">&quot;repos/repo2&quot;</span><span class="p">,</span> <span class="s2">&quot;https://github.com/ishepard/pydriller.git&quot;</span><span class="p">,</span> <span class="s2">&quot;repos/repo3&quot;</span><span class="p">,</span> <span class="s2">&quot;https://github.com/apache/hadoop.git&quot;</span><span class="p">]</span>
-<span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">RepositoryMining</span><span class="p">(</span><span class="n">path_to_repo</span><span class="o">=</span><span class="n">urls</span><span class="p">)</span><span class="o">.</span><span class="n">traverse_commits</span><span class="p">():</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Project {}, commit {}, date {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-           <span class="n">commit</span><span class="o">.</span><span class="n">project_path</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">author_date</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>Let's make another example: print all the modified files for every commit. This does the magic:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">RepositoryMining</span><span class="p">(</span><span class="s1">&#39;path/to/the/repo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">traverse_commits</span><span class="p">():</span>
-    <span class="k">for</span> <span class="n">modification</span> <span class="ow">in</span> <span class="n">commit</span><span class="o">.</span><span class="n">modifications</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Author {} modified {} in commit {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">modification</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
-</pre></div>
-</div>
-<p>That's it!</p>
-<p>Behind the scenes, PyDriller opens the Git repository and extracts all the necessary information. Then, the framework returns a generator that can iterate over the commits.</p>
-<p>Furthermore, PyDriller can calculate structural metrics of every file changed in a commit. To calculate these metrics, Pydriller relies on <a class="reference external" href="https://github.com/terryyin/lizard">Lizard</a>, a powerful tool that can analyze source code of many different programming languages, both at class and method level!</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">RepositoryMining</span><span class="p">(</span><span class="s1">&#39;path/to/the/repo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">traverse_commits</span><span class="p">():</span>
-    <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">commit</span><span class="o">.</span><span class="n">modifications</span><span class="p">:</span>
-        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;{} has complexity of {}, and it contains {} methods&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-              <span class="n">mod</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mod</span><span class="o">.</span><span class="n">complexity</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">methods</span><span class="p">)))</span>
-</pre></div>
-</div>
+<p>will download the full revision history of India article in KnolMl format. kdap makes the data extraction process super simple.
+Sampeling dataset from Wikipedia or Stack Exchage requires only a few lines of code. For example, suppose you want random five articles
+from each category of Wikipedia classes</p>
+<blockquote>
+<div><p>from random import sample
+category_list = ['FA', 'GA', 'B', 'C', 'Start', 'Stub']
+articles = {}
+for category in category_list:</p>
+<blockquote>
+<div><p>articles[category] = sample(knol.get_wiki_article_by_class(wiki_class=category), 5)</p>
+</div></blockquote>
+</div></blockquote>
+<p>The above code will return the names of the Wikipedia articles randomly sampled from each category.
+With KnolMl dataset present in local system, you can perform various analysis on it. For example:</p>
+<blockquote>
+<div><p>revisions = knol.get_num_instances(dir_path='', granularity='monthly', start='2015-07-01')</p>
+</div></blockquote>
+<p>Will return a dictionary of month wise number of revisions for all the articles in the provided directory.</p>
+<p>Similarly stack exchange data can be analysed using the same methods. For example, finding question of answer ratio requires only few lines of code:</p>
+<blockquote>
+<div><p>stack_list = ['3dprinting', 'ai', 'arduino', 'boardgames', 'chemistry', 'chess']
+atoq_ratio = []
+for portal in stack_list:</p>
+<blockquote>
+<div><p>knol.download_dataset(sitename='stackexchange', portal=portal)
+gini_list.append(knol.get_global_gini_coefficient(dir_path=portal+'/Posts'))
+questions = knol.get_num_instances(dir_path=portal+'/Posts', instance_type='question')
+answers = knol.get_num_instances(dir_path=portal+'/Posts', instance_type='answer')
+atoq_ratio.append(questions['questions']/answers['answers'])</p>
+</div></blockquote>
+</div></blockquote>
 </div>
 
 
@@ -80,8 +90,9 @@
 
 
 <h3>Navigation</h3>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Overview / Install</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Functions:</a></li>
 </ul>
 
@@ -89,6 +100,8 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Overview / Install</a></li>
+      <li>Next: <a href="functions.html" title="next chapter">Functions:</a></li>
   </ul></li>
 </ul>
 </div>

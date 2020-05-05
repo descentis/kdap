@@ -6,36 +6,36 @@
 Getting Started
 ==================
 
-Using PyDriller is very simple. You only need to create `RepositoryMining`: this class will receive in input the path to the repository and will return a generator that iterates over the commits. For example::
+Using kdap is very simple. You only need to create `knol`: this class will create the knol object which can be further used to call the kdap methods. For example::
 
-    for commit in RepositoryMining('path/to/the/repo').traverse_commits():
-        print('Hash {}, author {}'.format(commit.hash, commit.author.name))
+    import kdap
+    knol = kdap.knol()
+    knol.get_wiki_article('India',[output_dir])
 
-will print the name of the developers for each commit. 
+will download the full revision history of India article in KnolMl format. kdap makes the data extraction process super simple.
+Sampeling dataset from Wikipedia or Stack Exchage requires only a few lines of code. For example, suppose you want random five articles
+from each category of Wikipedia classes
+    
+    from random import sample
+    category_list = ['FA', 'GA', 'B', 'C', 'Start', 'Stub']
+    articles = {}
+    for category in category_list:
+            articles[category] = sample(knol.get_wiki_article_by_class(wiki_class=category), 5)
 
-Inside `RepositoryMining`, you will have to configure which projects to analyze, for which commits, for which dates etc. For all the possible configurations, have a look at :ref:`configuration_toplevel`.
+The above code will return the names of the Wikipedia articles randomly sampled from each category.
+With KnolMl dataset present in local system, you can perform various analysis on it. For example:
 
-We can also pass a list of repositories (both local and remote), and PyDriller will analyze sequentially. In case of a remote repository, PyDriller will clone it in a temporary folder, and delete it afterwards. For example::
+    revisions = knol.get_num_instances(dir_path='', granularity='monthly', start='2015-07-01')
 
-    urls = ["repos/repo1", "repos/repo2", "https://github.com/ishepard/pydriller.git", "repos/repo3", "https://github.com/apache/hadoop.git"]
-    for commit in RepositoryMining(path_to_repo=urls).traverse_commits():
-        print("Project {}, commit {}, date {}".format(
-               commit.project_path, commit.hash, commit.author_date))
+Will return a dictionary of month wise number of revisions for all the articles in the provided directory.
 
+Similarly stack exchange data can be analysed using the same methods. For example, finding question of answer ratio requires only few lines of code:
 
-Let's make another example: print all the modified files for every commit. This does the magic::
-
-    for commit in RepositoryMining('path/to/the/repo').traverse_commits():
-        for modification in commit.modifications:
-            print('Author {} modified {} in commit {}'.format(commit.author.name, modification.filename, commit.hash))
-
-That's it!
-
-Behind the scenes, PyDriller opens the Git repository and extracts all the necessary information. Then, the framework returns a generator that can iterate over the commits. 
-
-Furthermore, PyDriller can calculate structural metrics of every file changed in a commit. To calculate these metrics, Pydriller relies on `Lizard <https://github.com/terryyin/lizard>`_, a powerful tool that can analyze source code of many different programming languages, both at class and method level! ::
-
-    for commit in RepositoryMining('path/to/the/repo').traverse_commits():
-        for mod in commit.modifications:
-            print('{} has complexity of {}, and it contains {} methods'.format(
-                  mod.filename, mod.complexity, len(mod.methods)))
+    stack_list = ['3dprinting', 'ai', 'arduino', 'boardgames', 'chemistry', 'chess']
+    atoq_ratio = []
+    for portal in stack_list:
+        knol.download_dataset(sitename='stackexchange', portal=portal)
+        gini_list.append(knol.get_global_gini_coefficient(dir_path=portal+'/Posts'))
+        questions = knol.get_num_instances(dir_path=portal+'/Posts', instance_type='question')
+        answers = knol.get_num_instances(dir_path=portal+'/Posts', instance_type='answer')   
+        atoq_ratio.append(questions['questions']/answers['answers'])
