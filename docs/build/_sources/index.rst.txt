@@ -10,5 +10,5 @@ Welcome to KDAP's documentation!
    :maxdepth: 2
    
    usage/installation
-   usage/quickstart
+   usage/tutorial
    usage/functions
