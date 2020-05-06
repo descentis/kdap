@@ -33,405 +33,116 @@
             
   <div class="section" id="api-reference">
 <span id="api-reference-toplevel"></span><h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-kdap.analysis">
-<span id="gitrepository"></span><h2>GitRepository<a class="headerlink" href="#module-kdap.analysis" title="Permalink to this headline">¶</a></h2>
-<p>Created on Tue Mar  5 11:56:26 2019</p>
-<p>&#64;author: descentis</p>
-<dl class="class">
-<dt id="kdap.analysis.instances">
-<em class="property">class </em><code class="sig-prename descclassname">kdap.analysis.</code><code class="sig-name descname">instances</code><span class="sig-paren">(</span><em class="sig-param">instance</em>, <em class="sig-param">title</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances" title="Permalink to this definition">¶</a></dt>
-<dd><p>creating the instance of each object.
+<div class="section" id="module-kdap.analysis.instances">
+<span id="instances"></span><h2>instances<a class="headerlink" href="#module-kdap.analysis.instances" title="Permalink to this headline">¶</a></h2>
+<p>creating the instance of each object.
 The init function defined stores each instance's attribute which can be analyzed separately</p>
-<dl class="method">
-<dt id="kdap.analysis.instances.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">instance</em>, <em class="sig-param">title</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__delattr__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__delattr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__delattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement delattr(self, name).</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="kdap.analysis.instances.__module__">
-<code class="sig-name descname">__module__</code><em class="property"> = 'kdap.analysis'</em><a class="headerlink" href="#kdap.analysis.instances.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.get_bytes">
-<code class="sig-name descname">get_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_bytes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.get_editor">
-<code class="sig-name descname">get_editor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_editor" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.get_score">
-<code class="sig-name descname">get_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_score" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.get_tags">
-<code class="sig-name descname">get_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_tags" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.get_text">
-<code class="sig-name descname">get_text</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_text" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.get_timestamp">
-<code class="sig-name descname">get_timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_timestamp" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.get_title">
-<code class="sig-name descname">get_title</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_title" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.is_answer">
-<code class="sig-name descname">is_answer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_answer" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.is_comment">
-<code class="sig-name descname">is_comment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_comment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.is_question">
-<code class="sig-name descname">is_question</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_question" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.instances.just_to_check">
-<code class="sig-name descname">just_to_check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.just_to_check" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dl class="function">
+<dt id="kdap.analysis.instances.__dir__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__dir__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__dir__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default dir() implementation.</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="kdap.analysis.knol">
-<em class="property">class </em><code class="sig-prename descclassname">kdap.analysis.</code><code class="sig-name descname">knol</code><a class="headerlink" href="#kdap.analysis.knol" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="kdap.analysis.knol.Infobox">
-<em class="property">static </em><code class="sig-name descname">Infobox</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.Infobox" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.Next">
-<code class="sig-name descname">Next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.Next" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__format__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__format__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__format__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Default object formatter.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="kdap.analysis.knol.__module__">
-<code class="sig-name descname">__module__</code><em class="property"> = 'kdap.analysis'</em><a class="headerlink" href="#kdap.analysis.knol.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.allRevisions">
-<code class="sig-name descname">allRevisions</code><span class="sig-paren">(</span><em class="sig-param">file_name</em>, <em class="sig-param">root</em>, <em class="sig-param">tree</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.allRevisions" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>for child in r:</dt><dd><dl class="simple">
-<dt>if('KnowledgeData' in child.tag):</dt><dd><p>root = child</p>
-</dd>
-</dl>
-</dd>
-</dl>
+<dl class="function">
+<dt id="kdap.analysis.instances.__ge__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__ge__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__ge__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&gt;=value.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.checkInfobox">
-<em class="property">static </em><code class="sig-name descname">checkInfobox</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.checkInfobox" title="Permalink to this definition">¶</a></dt>
-<dd><p>This piece of code is to ensure the multiprocessing</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__getattribute__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__getattribute__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__getattribute__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return getattr(self, name).</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.countAllWords">
-<em class="property">static </em><code class="sig-name descname">countAllWords</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.countAllWords" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.countImages">
-<em class="property">static </em><code class="sig-name descname">countImages</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.countImages" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.countWords">
-<em class="property">static </em><code class="sig-name descname">countWords</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.countWords" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.display_data">
-<code class="sig-name descname">display_data</code><span class="sig-paren">(</span><em class="sig-param">query</em>, <em class="sig-param">conn</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.display_data" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.download_dataset">
-<code class="sig-name descname">download_dataset</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.download_dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>sitename varibale contains the portal from which user wants to download the dataset.
-Each sitename has various parameters which can be provided as optional argument</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__gt__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__gt__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__gt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&gt;value.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.download_from_dump">
-<code class="sig-name descname">download_from_dump</code><span class="sig-paren">(</span><em class="sig-param">home</em>, <em class="sig-param">articles</em>, <em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.download_from_dump" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.extract_from_bzip">
-<code class="sig-name descname">extract_from_bzip</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.extract_from_bzip" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.findAllTags">
-<em class="property">static </em><code class="sig-name descname">findAllTags</code><span class="sig-paren">(</span><em class="sig-param">list_tags</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.findAllTags" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.findTags">
-<em class="property">static </em><code class="sig-name descname">findTags</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.findTags" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.frame">
-<code class="sig-name descname">frame</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.frame" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.getAllRevisions">
-<em class="property">classmethod </em><code class="sig-name descname">getAllRevisions</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.getAllRevisions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.getContributions">
-<em class="property">static </em><code class="sig-name descname">getContributions</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.getContributions" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.getKnowledgeAge">
-<code class="sig-name descname">getKnowledgeAge</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.getKnowledgeAge" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.getLocalGiniCoefficient">
-<em class="property">static </em><code class="sig-name descname">getLocalGiniCoefficient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.getLocalGiniCoefficient" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.getNumberOfImages">
-<em class="property">static </em><code class="sig-name descname">getNumberOfImages</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.getNumberOfImages" title="Permalink to this definition">¶</a></dt>
-<dd><p>This piece of code is to ensure the multiprocessing</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__init_subclass__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__init_subclass__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__init_subclass__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is called when a class is subclassed.</p>
+<p>The default implementation does nothing. It may be
+overridden to extend subclasses.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.getRev">
-<code class="sig-name descname">getRev</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.getRev" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.getUrl">
-<em class="property">static </em><code class="sig-name descname">getUrl</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.getUrl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_age_of_knowledge">
-<code class="sig-name descname">get_age_of_knowledge</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_age_of_knowledge" title="Permalink to this definition">¶</a></dt>
-<dd><p>This piece of code is to ensure the multiprocessing</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__le__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__le__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__le__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&lt;=value.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.get_article_name">
-<code class="sig-name descname">get_article_name</code><span class="sig-paren">(</span><em class="sig-param">article_list</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_article_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>article_list provides a list of articles to be searched
-this function finds the coorect name of the article which is present on wikipedia</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__lt__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__lt__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__lt__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self&lt;value.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.get_author_edits">
-<code class="sig-name descname">get_author_edits</code><span class="sig-paren">(</span><em class="sig-param">site_name</em><span class="optional">[</span>, <em class="sig-param">article_list</em>, <em class="sig-param">dir_path</em>, <em class="sig-param">editor_list</em>, <em class="sig-param">all_wiki=False</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_author_edits" title="Permalink to this definition">¶</a></dt>
-<dd><p>The following function is used to get the edits of each user
-all_wiki = if site_name = wikipedia then setting this varible True will get all the edits of the users of article
-article_list = list of file names (in knolml format)
-dir_path = path of the directory where all the files are present (in knolml format)
-editor_list = list of editor usernames for which edits are required
-type = type of edit to be measured e.g. bytes, edits, sentences. bytes by default
-ordered_by = means of ordering e.g. editor, questions, answers or article</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__ne__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__ne__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__ne__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return self!=value.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.get_author_similarity">
-<code class="sig-name descname">get_author_similarity</code><span class="sig-paren">(</span><em class="sig-param">editors</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_author_similarity" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_diff_match">
-<em class="property">static </em><code class="sig-name descname">get_diff_match</code><span class="sig-paren">(</span><em class="sig-param">revisionsDict</em>, <em class="sig-param">length</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_diff_match" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_editors">
-<code class="sig-name descname">get_editors</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_editors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_frames">
-<code class="sig-name descname">get_frames</code><span class="sig-paren">(</span><em class="sig-param">elem</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_frames" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_global_gini_coefficient">
-<code class="sig-name descname">get_global_gini_coefficient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_global_gini_coefficient" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_instance_date">
-<code class="sig-name descname">get_instance_date</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_instance_date" title="Permalink to this definition">¶</a></dt>
-<dd><p>This piece of code is to ensure the multiprocessing</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__new__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__new__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__new__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and return a new object.  See help(type) for accurate signature.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.get_instance_id">
-<code class="sig-name descname">get_instance_id</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_instance_id" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_knowledgeData">
-<code class="sig-name descname">get_knowledgeData</code><span class="sig-paren">(</span><em class="sig-param">file_name</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_knowledgeData" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_num_instances">
-<code class="sig-name descname">get_num_instances</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_num_instances" title="Permalink to this definition">¶</a></dt>
-<dd><p>This piece of code is to ensure the multiprocessing
-Enter a date in YYYY-MM-DD format for start and end dates</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__reduce__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__reduce__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__reduce__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper for pickle.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.get_pageviews">
-<code class="sig-name descname">get_pageviews</code><span class="sig-paren">(</span><em class="sig-param">site_name</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_pageviews" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_revision_type">
-<code class="sig-name descname">get_revision_type</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_revision_type" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_revision_types">
-<code class="sig-name descname">get_revision_types</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_revision_types" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_stack_posts">
-<code class="sig-name descname">get_stack_posts</code><span class="sig-paren">(</span><em class="sig-param">dir_path</em>, <em class="sig-param">post_type</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_stack_posts" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_wiki_article">
-<code class="sig-name descname">get_wiki_article</code><span class="sig-paren">(</span><em class="sig-param">article_name</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_article" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_wiki_article_by_class">
-<code class="sig-name descname">get_wiki_article_by_class</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_article_by_class" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_wiki_group_editors">
-<code class="sig-name descname">get_wiki_group_editors</code><span class="sig-paren">(</span><em class="sig-param">group</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_group_editors" title="Permalink to this definition">¶</a></dt>
-<dd><p>This defination can be used to get the edits of a user in wikipedia</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__reduce_ex__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__reduce_ex__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__reduce_ex__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper for pickle.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.get_wiki_revert">
-<code class="sig-name descname">get_wiki_revert</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_revert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_wiki_reverts">
-<code class="sig-name descname">get_wiki_reverts</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_reverts" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_wiki_talk_instance">
-<code class="sig-name descname">get_wiki_talk_instance</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_talk_instance" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.get_wiki_talk_instances">
-<code class="sig-name descname">get_wiki_talk_instances</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_talk_instances" title="Permalink to this definition">¶</a></dt>
-<dd><p>This piece of code is to ensure the multiprocessing
-Enter a date in YYYY-MM-DD format for start and end dates</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__repr__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__repr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__repr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return repr(self).</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="kdap.analysis.knol.gini">
-<em class="property">static </em><code class="sig-name descname">gini</code><span class="sig-paren">(</span><em class="sig-param">array</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.gini" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.globalGini">
-<code class="sig-name descname">globalGini</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.globalGini" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.knowledgeByDate">
-<em class="property">static </em><code class="sig-name descname">knowledgeByDate</code><span class="sig-paren">(</span><em class="sig-param">file_name</em>, <em class="sig-param">first_date</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.knowledgeByDate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.localGiniCoefficient">
-<em class="property">static </em><code class="sig-name descname">localGiniCoefficient</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.localGiniCoefficient" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.numericalSort">
-<code class="sig-name descname">numericalSort</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.numericalSort" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.revisionEdits">
-<code class="sig-name descname">revisionEdits</code><span class="sig-paren">(</span><em class="sig-param">file_name</em>, <em class="sig-param">slab</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.revisionEdits" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knol.wikiRetrieval">
-<em class="property">classmethod </em><code class="sig-name descname">wikiRetrieval</code><span class="sig-paren">(</span><em class="sig-param">file_name</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.wikiRetrieval" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dl class="function">
+<dt id="kdap.analysis.instances.__setattr__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__setattr__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement setattr(self, name, value).</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="kdap.analysis.knowledge_data">
-<em class="property">class </em><code class="sig-prename descclassname">kdap.analysis.</code><code class="sig-name descname">knowledge_data</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knowledge_data" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="kdap.analysis.knowledge_data.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knowledge_data.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dl class="function">
+<dt id="kdap.analysis.instances.__sizeof__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__sizeof__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__sizeof__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Size of object in memory, in bytes.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="kdap.analysis.knowledge_data.__module__">
-<code class="sig-name descname">__module__</code><em class="property"> = 'kdap.analysis'</em><a class="headerlink" href="#kdap.analysis.knowledge_data.__module__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knowledge_data.count_instances">
-<code class="sig-name descname">count_instances</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knowledge_data.count_instances" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="kdap.analysis.knowledge_data.numericalSort">
-<code class="sig-name descname">numericalSort</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knowledge_data.numericalSort" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<dl class="function">
+<dt id="kdap.analysis.instances.__subclasshook__">
+<code class="sig-prename descclassname">kdap.analysis.instances.</code><code class="sig-name descname">__subclasshook__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__subclasshook__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract classes can override this to customize issubclass().</p>
+<p>This is invoked early on by abc.ABCMeta.__subclasscheck__().
+It should return True, False or NotImplemented.  If it returns
+NotImplemented, the normal algorithm is used.  Otherwise, it
+overrides the normal algorithm (and the outcome is cached).</p>
 </dd></dl>
 
 </div>
@@ -459,7 +170,7 @@ Enter a date in YYYY-MM-DD format for start and end dates</p>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="functions.html">Functions:</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-kdap.analysis">GitRepository</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-kdap.analysis.instances">instances</a></li>
 </ul>
 </li>
 </ul>

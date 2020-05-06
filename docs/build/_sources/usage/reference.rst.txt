@@ -3,10 +3,10 @@
 API Reference
 =============
 
-GitRepository
+instances
 -------------
 
-.. automodule:: kdap.analysis
+.. automodule:: kdap.analysis.instances
    :members:
    :undoc-members:
    :special-members:
