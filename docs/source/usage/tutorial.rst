@@ -12,7 +12,7 @@ Using kdap is very simple. You only need to create `knol`: this class will creat
     knol = kdap.knol()
     knol.get_wiki_article('India',[output_dir])
 
-will download the full revision history of India article in KnolMl format. kdap makes the data extraction process super simple.
+will download the full revision history of India article in KnolMl format, where output_dir is an optional argument to be provided without the brackets as a string. kdap makes the data extraction process super simple.
 Sampeling dataset from Wikipedia or Stack Exchage requires only a few lines of code. For example, suppose you want random five articles
 from each category of Wikipedia classes::
     
