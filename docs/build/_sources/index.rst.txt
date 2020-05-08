@@ -12,4 +12,3 @@ Welcome to KDAP's documentation!
    usage/installation
    usage/tutorial
    usage/functions
-   usage/reference
