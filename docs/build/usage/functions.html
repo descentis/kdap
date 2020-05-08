@@ -36,65 +36,76 @@
 <p>This page contains the list of fucntions and their implementation details</p>
 <div class="section" id="graph-methods">
 <h2>Graph Methods<a class="headerlink" href="#graph-methods" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><p>def get_graph_by_wikiarticle(self, article_name):</p>
-<blockquote>
-<div><p><strong>Does not require dataset download</strong></p>
-<p>This method takes an article name as an argument and creates the induced subgraph
-among the articles present in there.</p>
-<p><em>Arguments</em></p>
-<dl class="simple">
-<dt>article_name:</dt><dd><p>Type: String
-The name of the article for which the interwiki graph has to be created.</p>
-</dd>
-</dl>
-<p>e.g knol.get_graph_by_name('India')</p>
-</div></blockquote>
-<p>def get_graph_by_wikiarticle_list(self, article_list, *args, **kwargs):</p>
-<blockquote>
-<div><p><strong>Does not require dataset download</strong></p>
-<p>This method takes a list of articles name as an argument and creates the induced subgraph
-among the articles using the wikilinks.</p>
-<p><em>Arguments</em></p>
-<dl class="simple">
-<dt>article_list:</dt><dd><p>Type: List of strings
-The list of articles name for which the interwiki graph has to be created.</p>
-</dd>
-<dt>file_name:</dt><dd><p>optional
-file name by which you want to create the graph</p>
-</dd>
-</dl>
-<p>eg. knol.get_graph_by_wikiarticle_list(['India', 'Pakistan'], file_name='relation')</p>
-</div></blockquote>
-<p>def get_graph_by_wikiarticle_countries(self, *args, **kwargs):</p>
-<blockquote>
-<div><p><strong>Does not require dataset download</strong></p>
-<p>This method creates the induced subgraph among the articles of all the
-wikipedia pages of all the countries using the wikilinks.</p>
-<p><em>Arguments</em></p>
-<dl class="simple">
-<dt>country_list:</dt><dd><p>optional
-Type: List of strings
-The list of countries name for which the interwiki graph has to be created.
-When not set, the graph is created for all the countries</p>
-</dd>
-</dl>
-<p>e.g knol.get_graph_by_wikiarticle_countries()</p>
-</div></blockquote>
-<p>def get_graph_by_wikiarticle_cities(self, country_name):</p>
-<blockquote>
-<div><p><strong>Does not require dataset download</strong></p>
-<p>This method creates the induced subgraph among the articles of all the
-wikipedia pages of all the cities of a given country using the wikilinks.</p>
-<p><em>Arguments</em></p>
-<dl class="simple">
-<dt>country_name:</dt><dd><p>Type: string
-The country name for which the city graph has to be created.</p>
-</dd>
-</dl>
-<p>e.g knol.get_graph_by_wikiarticle_cities('United States')</p>
-</div></blockquote>
-</div></blockquote>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_graph_by_wikiarticle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_name</span><span class="p">):</span>
+
+    <span class="o">**</span><span class="n">Does</span> <span class="ow">not</span> <span class="n">require</span> <span class="n">dataset</span> <span class="n">download</span><span class="o">**</span>
+
+    <span class="n">This</span> <span class="n">method</span> <span class="n">takes</span> <span class="n">an</span> <span class="n">article</span> <span class="n">name</span> <span class="k">as</span> <span class="n">an</span> <span class="n">argument</span> <span class="ow">and</span> <span class="n">creates</span> <span class="n">the</span> <span class="n">induced</span> <span class="n">subgraph</span>
+    <span class="n">among</span> <span class="n">the</span> <span class="n">articles</span> <span class="n">present</span> <span class="ow">in</span> <span class="n">there</span><span class="o">.</span>
+
+    <span class="o">*</span><span class="n">Arguments</span><span class="o">*</span>
+
+    <span class="n">article_name</span><span class="p">:</span>
+        <span class="n">Type</span><span class="p">:</span> <span class="n">String</span>
+        <span class="n">The</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">article</span> <span class="k">for</span> <span class="n">which</span> <span class="n">the</span> <span class="n">interwiki</span> <span class="n">graph</span> <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">created</span><span class="o">.</span>
+
+    <span class="n">e</span><span class="o">.</span><span class="n">g</span> <span class="n">knol</span><span class="o">.</span><span class="n">get_graph_by_name</span><span class="p">(</span><span class="s1">&#39;India&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_list</span><span class="p">,</span> \<span class="o">*</span><span class="n">args</span><span class="p">,</span> \<span class="o">*</span>\<span class="o">*</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="o">**</span><span class="n">Does</span> <span class="ow">not</span> <span class="n">require</span> <span class="n">dataset</span> <span class="n">download</span><span class="o">**</span>
+
+    <span class="n">This</span> <span class="n">method</span> <span class="n">takes</span> <span class="n">a</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">articles</span> <span class="n">name</span> <span class="k">as</span> <span class="n">an</span> <span class="n">argument</span> <span class="ow">and</span> <span class="n">creates</span> <span class="n">the</span> <span class="n">induced</span> <span class="n">subgraph</span>
+    <span class="n">among</span> <span class="n">the</span> <span class="n">articles</span> <span class="n">using</span> <span class="n">the</span> <span class="n">wikilinks</span><span class="o">.</span>
+
+    <span class="o">*</span><span class="n">Arguments</span><span class="o">*</span>
+
+    <span class="n">article_list</span><span class="p">:</span>
+        <span class="n">Type</span><span class="p">:</span> <span class="n">List</span> <span class="n">of</span> <span class="n">strings</span>
+        <span class="n">The</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">articles</span> <span class="n">name</span> <span class="k">for</span> <span class="n">which</span> <span class="n">the</span> <span class="n">interwiki</span> <span class="n">graph</span> <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">created</span><span class="o">.</span>
+    <span class="n">file_name</span><span class="p">:</span>
+        <span class="n">optional</span>
+        <span class="n">file</span> <span class="n">name</span> <span class="n">by</span> <span class="n">which</span> <span class="n">you</span> <span class="n">want</span> <span class="n">to</span> <span class="n">create</span> <span class="n">the</span> <span class="n">graph</span>
+
+    <span class="n">eg</span><span class="o">.</span> <span class="n">knol</span><span class="o">.</span><span class="n">get_graph_by_wikiarticle_list</span><span class="p">([</span><span class="s1">&#39;India&#39;</span><span class="p">,</span> <span class="s1">&#39;Pakistan&#39;</span><span class="p">],</span> <span class="n">file_name</span><span class="o">=</span><span class="s1">&#39;relation&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_countries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> \<span class="o">*</span><span class="n">args</span><span class="p">,</span> \<span class="o">*</span>\<span class="o">*</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="o">**</span><span class="n">Does</span> <span class="ow">not</span> <span class="n">require</span> <span class="n">dataset</span> <span class="n">download</span><span class="o">**</span>
+
+    <span class="n">This</span> <span class="n">method</span> <span class="n">creates</span> <span class="n">the</span> <span class="n">induced</span> <span class="n">subgraph</span> <span class="n">among</span> <span class="n">the</span> <span class="n">articles</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">the</span>
+    <span class="n">wikipedia</span> <span class="n">pages</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">countries</span> <span class="n">using</span> <span class="n">the</span> <span class="n">wikilinks</span><span class="o">.</span>
+
+    <span class="o">*</span><span class="n">Arguments</span><span class="o">*</span>
+
+    <span class="n">country_list</span><span class="p">:</span>
+        <span class="n">optional</span>
+        <span class="n">Type</span><span class="p">:</span> <span class="n">List</span> <span class="n">of</span> <span class="n">strings</span>
+        <span class="n">The</span> <span class="nb">list</span> <span class="n">of</span> <span class="n">countries</span> <span class="n">name</span> <span class="k">for</span> <span class="n">which</span> <span class="n">the</span> <span class="n">interwiki</span> <span class="n">graph</span> <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">created</span><span class="o">.</span>
+        <span class="n">When</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">,</span> <span class="n">the</span> <span class="n">graph</span> <span class="ow">is</span> <span class="n">created</span> <span class="k">for</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">countries</span>
+
+    <span class="n">e</span><span class="o">.</span><span class="n">g</span> <span class="n">knol</span><span class="o">.</span><span class="n">get_graph_by_wikiarticle_countries</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_cities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">):</span>
+
+    <span class="o">**</span><span class="n">Does</span> <span class="ow">not</span> <span class="n">require</span> <span class="n">dataset</span> <span class="n">download</span><span class="o">**</span>
+
+    <span class="n">This</span> <span class="n">method</span> <span class="n">creates</span> <span class="n">the</span> <span class="n">induced</span> <span class="n">subgraph</span> <span class="n">among</span> <span class="n">the</span> <span class="n">articles</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">the</span>
+    <span class="n">wikipedia</span> <span class="n">pages</span> <span class="n">of</span> <span class="nb">all</span> <span class="n">the</span> <span class="n">cities</span> <span class="n">of</span> <span class="n">a</span> <span class="n">given</span> <span class="n">country</span> <span class="n">using</span> <span class="n">the</span> <span class="n">wikilinks</span><span class="o">.</span>
+
+    <span class="o">*</span><span class="n">Arguments</span><span class="o">*</span>
+
+    <span class="n">country_name</span><span class="p">:</span>
+        <span class="n">Type</span><span class="p">:</span> <span class="n">string</span>
+        <span class="n">The</span> <span class="n">country</span> <span class="n">name</span> <span class="k">for</span> <span class="n">which</span> <span class="n">the</span> <span class="n">city</span> <span class="n">graph</span> <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">created</span><span class="o">.</span>
+
+
+    <span class="n">e</span><span class="o">.</span><span class="n">g</span> <span class="n">knol</span><span class="o">.</span><span class="n">get_graph_by_wikiarticle_cities</span><span class="p">(</span><span class="s1">&#39;United States&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
