@@ -10,6 +10,9 @@ This page contains the list of fucntions and their implementation details
 
 Graph Methods
 =============
+The following methods are used to create the wiki graph using the wikilinks of the articles. 
+Users can use one of these methods to create the wiki graph according to the requirement.
+
 .. code:: python
 
     def get_graph_by_wikiarticle(self, article_name):
