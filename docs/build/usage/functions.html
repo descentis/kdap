@@ -14,7 +14,6 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="API Reference" href="reference.html" />
     <link rel="prev" title="Getting Started" href="tutorial.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,67 +37,63 @@
 <div class="section" id="graph-methods">
 <h2>Graph Methods<a class="headerlink" href="#graph-methods" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><dl>
-<dt>def get_graph_by_wikiarticle(self, article_name):</dt><dd><p>'''
-<strong>Does not require dataset download</strong></p>
+<div><p>def get_graph_by_wikiarticle(self, article_name):</p>
+<blockquote>
+<div><p><strong>Does not require dataset download</strong></p>
 <p>This method takes an article name as an argument and creates the induced subgraph
 among the articles present in there.</p>
-<p><em>Arguments</em>
-article_name:</p>
-<blockquote>
-<div><p>Type: String
+<p><em>Arguments</em></p>
+<dl class="simple">
+<dt>article_name:</dt><dd><p>Type: String
 The name of the article for which the interwiki graph has to be created.</p>
-</div></blockquote>
-<p>e.g knol.get_graph_by_name('India')
-'''</p>
 </dd>
-<dt>def get_graph_by_wikiarticle_list(self, article_list, <a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwargs):</dt><dd><p>'''
-<strong>Does not require dataset download</strong></p>
+</dl>
+<p>e.g knol.get_graph_by_name('India')</p>
+</div></blockquote>
+<p>def get_graph_by_wikiarticle_list(self, article_list, *args, **kwargs):</p>
+<blockquote>
+<div><p><strong>Does not require dataset download</strong></p>
 <p>This method takes a list of articles name as an argument and creates the induced subgraph
 among the articles using the wikilinks.</p>
-<p><em>Arguments</em>
-article_list:</p>
-<blockquote>
-<div><p>Type: List of strings
-The list of articles name for which the interwiki graph has to be created.</p>
-</div></blockquote>
+<p><em>Arguments</em></p>
 <dl class="simple">
+<dt>article_list:</dt><dd><p>Type: List of strings
+The list of articles name for which the interwiki graph has to be created.</p>
+</dd>
 <dt>file_name:</dt><dd><p>optional
 file name by which you want to create the graph</p>
 </dd>
 </dl>
-<p>eg. knol.get_graph_by_wikiarticle_list(['India', 'Pakistan'], file_name='relation')
-'''</p>
-</dd>
-<dt>def get_graph_by_wikiarticle_countries(self, <a href="#id5"><span class="problematic" id="id6">*</span></a>args, <a href="#id7"><span class="problematic" id="id8">**</span></a>kwargs):</dt><dd><p>'''
-<strong>Does not require dataset download</strong></p>
+<p>eg. knol.get_graph_by_wikiarticle_list(['India', 'Pakistan'], file_name='relation')</p>
+</div></blockquote>
+<p>def get_graph_by_wikiarticle_countries(self, *args, **kwargs):</p>
+<blockquote>
+<div><p><strong>Does not require dataset download</strong></p>
 <p>This method creates the induced subgraph among the articles of all the
 wikipedia pages of all the countries using the wikilinks.</p>
-<p><em>Arguments</em>
-country_list:</p>
-<blockquote>
-<div><p>optional
+<p><em>Arguments</em></p>
+<dl class="simple">
+<dt>country_list:</dt><dd><p>optional
 Type: List of strings
 The list of countries name for which the interwiki graph has to be created.
 When not set, the graph is created for all the countries</p>
-</div></blockquote>
-<p>e.g knol.get_graph_by_wikiarticle_countries()</p>
-<p>'''</p>
-</dd>
-<dt>def get_graph_by_wikiarticle_cities(self, country_name):</dt><dd><p>'''
-<strong>Does not require dataset download</strong></p>
-<p>This method creates the induced subgraph among the articles of all the
-wikipedia pages of all the cities of a given country using the wikilinks.</p>
-<p><em>Arguments</em>
-country_name:</p>
-<blockquote>
-<div><p>Type: string
-The country name for which the city graph has to be created.</p>
-</div></blockquote>
-<p>e.g knol.get_graph_by_wikiarticle_cities('United States')</p>
-<p>'''</p>
 </dd>
 </dl>
+<p>e.g knol.get_graph_by_wikiarticle_countries()</p>
+</div></blockquote>
+<p>def get_graph_by_wikiarticle_cities(self, country_name):</p>
+<blockquote>
+<div><p><strong>Does not require dataset download</strong></p>
+<p>This method creates the induced subgraph among the articles of all the
+wikipedia pages of all the cities of a given country using the wikilinks.</p>
+<p><em>Arguments</em></p>
+<dl class="simple">
+<dt>country_name:</dt><dd><p>Type: string
+The country name for which the city graph has to be created.</p>
+</dd>
+</dl>
+<p>e.g knol.get_graph_by_wikiarticle_cities('United States')</p>
+</div></blockquote>
 </div></blockquote>
 </div>
 </div>
@@ -127,7 +122,6 @@ The country name for which the city graph has to be created.</p>
 <li class="toctree-l2"><a class="reference internal" href="#graph-methods">Graph Methods</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
 </ul>
 
 <div class="relations">
@@ -135,7 +129,6 @@ The country name for which the city graph has to be created.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="tutorial.html" title="previous chapter">Getting Started</a></li>
-      <li>Next: <a href="reference.html" title="next chapter">API Reference</a></li>
   </ul></li>
 </ul>
 </div>
