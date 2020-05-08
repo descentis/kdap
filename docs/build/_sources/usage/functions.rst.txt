@@ -28,7 +28,7 @@ Graph Methods
         e.g knol.get_graph_by_name('India')
         
 
-    def get_graph_by_wikiarticle_list(self, article_list, \*args, \*\*kwargs):
+    def get_graph_by_wikiarticle_list(self, article_list, *args, **kwargs):
         
         **Does not require dataset download**
         
@@ -47,7 +47,7 @@ Graph Methods
         eg. knol.get_graph_by_wikiarticle_list(['India', 'Pakistan'], file_name='relation')
         
 
-    def get_graph_by_wikiarticle_countries(self, \*args, \*\*kwargs):
+    def get_graph_by_wikiarticle_countries(self, *args, **kwargs):
         
         **Does not require dataset download**
         
