@@ -28,7 +28,7 @@ Users can use one of these methods to create the wiki graph according to the req
             Type: String
             The name of the article for which the interwiki graph has to be created.
         
-        e.g knol.get_graph_by_name('India')
+        e.g knol.get_graph_by_wikiarticle('India')
         
 
     def get_graph_by_wikiarticle_list(self, article_list, *args, **kwargs):
