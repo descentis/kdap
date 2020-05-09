@@ -33,10 +33,7 @@ import kdap.wiki_graph.graph_creater as gc
 
 class instances(object):
     
-    '''
-    creating the instance of each object.
-    The init function defined stores each instance's attribute which can be analyzed separately
-    '''
+
     def __init__(self,instance, title):
         #self.test = 'jsut to check the instances class'
         #print(self.test)
@@ -291,6 +288,25 @@ class knol(object):
     each instances can be analyzed separately and sequencially
     '''
     def frame(self, *args, **kwargs):
+        '''
+        **Requires dataset to be present**
+        This method takes file names as an argument and returns the list of frame objects
+        
+        *Arguments*
+        
+        file_name:
+            optional
+            Type: String
+            The name of the article for which the frame objects have to be created.
+        
+        dir_path:
+            optional
+            Type: String
+            The path of the directory containing the knolml files
+            
+        e.g frame = knol.frame()
+        
+        '''
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             self.file_name = file_name

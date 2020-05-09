@@ -8,6 +8,8 @@ Functions Overview
 
 This page contains the list of fucntions and their implementation details
 
+
+
 Graph Methods
 =============
 The following methods are used to create the wiki graph using the wikilinks of the articles. 
