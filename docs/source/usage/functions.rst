@@ -158,7 +158,7 @@ Users can use one of these methods to create the wiki graph according to the req
 .. code:: python
 
     def get_graph_by_wikiarticle(self, article_name):
-        
+        '''
         **Does not require dataset download**
         
         This method takes an article name as an argument and creates the induced subgraph
@@ -171,10 +171,10 @@ Users can use one of these methods to create the wiki graph according to the req
             The name of the article for which the interwiki graph has to be created.
         
         e.g knol.get_graph_by_wikiarticle('India')
-        
+        '''
 
     def get_graph_by_wikiarticle_list(self, article_list, *args, **kwargs):
-        
+        '''
         **Does not require dataset download**
         
         This method takes a list of articles name as an argument and creates the induced subgraph
@@ -190,10 +190,10 @@ Users can use one of these methods to create the wiki graph according to the req
             file name by which you want to create the graph
             
         eg. knol.get_graph_by_wikiarticle_list(['India', 'Pakistan'], file_name='relation')
-        
+        '''
 
     def get_graph_by_wikiarticle_countries(self, *args, **kwargs):
-        
+        '''
         **Does not require dataset download**
         
         This method creates the induced subgraph among the articles of all the 
@@ -208,10 +208,11 @@ Users can use one of these methods to create the wiki graph according to the req
             When not set, the graph is created for all the countries
         
         e.g knol.get_graph_by_wikiarticle_countries()
-
+        '''
 
     def get_graph_by_wikiarticle_cities(self, country_name):
         
+        '''
         **Does not require dataset download**
         
         This method creates the induced subgraph among the articles of all the 
@@ -225,3 +226,4 @@ Users can use one of these methods to create the wiki graph according to the req
             
         
         e.g knol.get_graph_by_wikiarticle_cities('United States')
+        '''
