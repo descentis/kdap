@@ -8,7 +8,32 @@ Functions Overview
 
 This page contains the list of fucntions and their implementation details
 
+Frame Methods
+=============
+The following methods are used to extract the knolml articles in frames and use them to analyze each instance/revision/thread saperately
 
+.. code:: python
+
+    def frame(self, *args, **kwargs):
+        '''
+        **Requires dataset to be present**
+        This method takes file names as an argument and returns the list of frame objects
+        
+        *Arguments*
+        
+        file_name:
+            optional
+            Type: String
+            The name of the article for which the frame objects have to be created.
+        
+        dir_path:
+            optional
+            Type: String
+            The path of the directory containing the knolml files
+            
+        e.g frame = knol.frame()
+        
+        '''
 
 Graph Methods
 =============

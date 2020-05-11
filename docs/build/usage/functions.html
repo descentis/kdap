@@ -34,6 +34,32 @@
   <div class="section" id="functions-overview">
 <h1>Functions Overview<a class="headerlink" href="#functions-overview" title="Permalink to this headline">¶</a></h1>
 <p>This page contains the list of fucntions and their implementation details</p>
+<div class="section" id="frame-methods">
+<h2>Frame Methods<a class="headerlink" href="#frame-methods" title="Permalink to this headline">¶</a></h2>
+<p>The following methods are used to extract the knolml articles in frames and use them to analyze each instance/revision/thread saperately</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    **Requires dataset to be present**</span>
+<span class="sd">    This method takes file names as an argument and returns the list of frame objects</span>
+
+<span class="sd">    *Arguments*</span>
+
+<span class="sd">    file_name:</span>
+<span class="sd">        optional</span>
+<span class="sd">        Type: String</span>
+<span class="sd">        The name of the article for which the frame objects have to be created.</span>
+
+<span class="sd">    dir_path:</span>
+<span class="sd">        optional</span>
+<span class="sd">        Type: String</span>
+<span class="sd">        The path of the directory containing the knolml files</span>
+
+<span class="sd">    e.g frame = knol.frame()</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="graph-methods">
 <h2>Graph Methods<a class="headerlink" href="#graph-methods" title="Permalink to this headline">¶</a></h2>
 <p>The following methods are used to create the wiki graph using the wikilinks of the articles.
@@ -132,6 +158,7 @@ Users can use one of these methods to create the wiki graph according to the req
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Overview / Install</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Getting Started</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functions Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#frame-methods">Frame Methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graph-methods">Graph Methods</a></li>
 </ul>
 </li>
