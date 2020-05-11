@@ -57,6 +57,120 @@
 <span class="sd">    e.g frame = knol.frame()</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">is_question</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns True if the instance is a question</span>
+<span class="sd">    Works with QnA based knolml dataset</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">is_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns True if the instance is an answer</span>
+<span class="sd">    Works with QnA based knolml dataset</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">is_comment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns True if the instance is a comment</span>
+<span class="sd">    Works with QnA based knolml dataset</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">is_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns True if the qna thread is closed</span>
+<span class="sd">    Works with QnA based knolml dataset</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_editor</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the edior details</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the title</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">instanceTitle</span>
+
+<span class="k">def</span> <span class="nf">get_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the tag details</span>
+<span class="sd">    Works for QnA dataset</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the timestamp details</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_score</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the score details</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the text data</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">get_bytes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the bytes detail</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">__count_words</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns number of words in the text</span>
+
+<span class="sd">    **Arguments**</span>
+<span class="sd">    text:</span>
+<span class="sd">        Type: string</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+<span class="k">def</span> <span class="nf">__get_emailid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the email ids in the text</span>
+
+<span class="sd">    **Arguments**</span>
+<span class="sd">    text:</span>
+<span class="sd">        Type: string</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">__get_url</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns all the the urls in the text</span>
+
+<span class="sd">    **Arguments**</span>
+<span class="sd">    text:</span>
+<span class="sd">        Type: string</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_text_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Retruns the email ids in the text</span>
+
+<span class="sd">    **Arguments**</span>
+<span class="sd">    title:</span>
+<span class="sd">        optional</span>
+<span class="sd">        Type: bool</span>
+
+<span class="sd">    count_words:</span>
+<span class="sd">        optional</span>
+<span class="sd">        type: string</span>
+
+<span class="sd">    email_id:</span>
+<span class="sd">        optional</span>
+<span class="sd">        type: string</span>
+
+<span class="sd">    url:</span>
+<span class="sd">        optional</span>
+<span class="sd">        type: string</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
 </pre></div>
 </div>
 </div>

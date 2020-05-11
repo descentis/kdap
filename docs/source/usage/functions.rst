@@ -35,6 +35,121 @@ The following methods are used to extract the knolml articles in frames and use 
         
         '''
 
+    def is_question(self):
+        '''
+        Retruns True if the instance is a question
+        Works with QnA based knolml dataset
+        '''
+        
+    def is_answer(self):
+        '''
+        Retruns True if the instance is an answer
+        Works with QnA based knolml dataset
+        '''
+        
+    def is_comment(self):
+        '''
+        Retruns True if the instance is a comment
+        Works with QnA based knolml dataset
+        '''
+    
+    def is_closed(self):
+        '''
+        Retruns True if the qna thread is closed
+        Works with QnA based knolml dataset
+        '''
+        
+    def get_editor(self):
+        '''
+        Retruns the edior details
+        '''
+    
+    def get_title(self):
+        '''
+        Retruns the title
+        '''
+        return self.instanceTitle
+    
+    def get_tags(self):
+        '''
+        Retruns the tag details
+        Works for QnA dataset
+        '''
+    
+    def get_timestamp(self):
+        '''
+        Retruns the timestamp details
+        '''  
+    
+    def get_score(self):
+        '''
+        Retruns the score details
+        '''
+        
+    def get_text(self, *args, **kwargs):
+        '''
+        Retruns the text data
+        '''
+
+    
+    def get_bytes(self):
+        '''
+        Retruns the bytes detail
+        '''
+                           
+
+    def __count_words(self, text):
+        '''
+        Retruns number of words in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
+                      
+    
+    def __get_emailid(self, text):
+        '''
+        Retruns the email ids in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
+    
+    def __get_url(self, text):
+        '''
+        Retruns all the the urls in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
+    
+    def get_text_stats(self, *args, **kwargs):
+        '''
+        Retruns the email ids in the text
+        
+        **Arguments**
+        title:
+            optional
+            Type: bool
+        
+        count_words:
+            optional
+            type: string
+        
+        email_id:
+            optional
+            type: string
+        
+        url:
+            optional
+            type: string
+                
+        '''
+
+
 Graph Methods
 =============
 The following methods are used to create the wiki graph using the wikilinks of the articles. 
