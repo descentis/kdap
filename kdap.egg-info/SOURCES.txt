@@ -12,6 +12,8 @@ kdap.egg-info/top_level.txt
 kdap/converter/__init__.py
 kdap/converter/qaConverter.py
 kdap/converter/wikiConverter.py
+kdap/wiki_graph/__init__.py
+kdap/wiki_graph/graph_creater.py
 kdap/wikiextract/WikiExtractor.py
 kdap/wikiextract/__init__.py
 kdap/wikiextract/knolml_wikiextractor.py

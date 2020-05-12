@@ -14,7 +14,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Functions:" href="functions.html" />
+    <link rel="next" title="Functions Overview" href="functions.html" />
     <link rel="prev" title="Overview / Install" href="installation.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -52,7 +52,7 @@ from each category of Wikipedia classes:</p>
 </div>
 <p>The above code will return the names of the Wikipedia articles randomly sampled from each category.
 With KnolMl dataset present in local system, you can perform various analysis on it. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">revisions</span> <span class="o">=</span> <span class="n">knol</span><span class="o">.</span><span class="n">get_num_instances</span><span class="p">(</span><span class="n">dir_path</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">granularity</span><span class="o">=</span><span class="s1">&#39;monthly&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">&#39;2015-07-01&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">revisions</span> <span class="o">=</span> <span class="n">knol</span><span class="o">.</span><span class="n">get_num_instances</span><span class="p">(</span><span class="n">file_list</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;India&#39;</span><span class="p">],</span> <span class="n">granularity</span><span class="o">=</span><span class="s1">&#39;monthly&#39;</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="s1">&#39;2015-07-01&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Will return a dictionary of month wise number of revisions for all the articles in the provided directory.</p>
@@ -89,8 +89,7 @@ With KnolMl dataset present in local system, you can perform various analysis on
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Overview / Install</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
-<li class="toctree-l1"><a class="reference internal" href="functions.html">Functions:</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Functions Overview</a></li>
 </ul>
 
 <div class="relations">
@@ -98,7 +97,7 @@ With KnolMl dataset present in local system, you can perform various analysis on
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
       <li>Previous: <a href="installation.html" title="previous chapter">Overview / Install</a></li>
-      <li>Next: <a href="functions.html" title="next chapter">Functions:</a></li>
+      <li>Next: <a href="functions.html" title="next chapter">Functions Overview</a></li>
   </ul></li>
 </ul>
 </div>

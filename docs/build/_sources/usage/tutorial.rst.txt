@@ -25,7 +25,7 @@ from each category of Wikipedia classes::
 The above code will return the names of the Wikipedia articles randomly sampled from each category.
 With KnolMl dataset present in local system, you can perform various analysis on it. For example::
 
-    revisions = knol.get_num_instances(dir_path='', granularity='monthly', start='2015-07-01')
+    revisions = knol.get_num_instances(file_list=['India'], granularity='monthly', start='2015-07-01')
 
 Will return a dictionary of month wise number of revisions for all the articles in the provided directory.
 
