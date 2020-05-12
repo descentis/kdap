@@ -98,17 +98,33 @@ class instances(object):
             
     
     def is_question(self):
+        '''
+        Retruns True if the instance is a question
+        Works with QnA based knolml dataset
+        '''
         if self.instanceType == 'Question':
             return True
         
     def is_answer(self):
+        '''
+        Retruns True if the instance is an answer
+        Works with QnA based knolml dataset
+        '''
         if self.instanceType == 'Answer':
             return True    
     def is_comment(self):
+        '''
+        Retruns True if the instance is a comment
+        Works with QnA based knolml dataset
+        '''
         if self.instanceType == 'Comments':
             return True
     
     def is_closed(self):
+        '''
+        Retruns True if the qna thread is closed
+        Works with QnA based knolml dataset
+        '''
         if self.instance_attrib['TimeStamp'].get('ClosedDate') == None:
             return True
         
@@ -118,6 +134,9 @@ class instances(object):
         print(self.instanceType)
         
     def get_editor(self):
+        '''
+        Retruns the edior details
+        '''
         di = {}
         if self.instance_attrib['Contributors'].get('OwnerUserId')!=None:
             di['OwnerUserId'] = self.instance_attrib['Contributors']['OwnerUserId']
@@ -128,15 +147,25 @@ class instances(object):
         return di
     
     def get_title(self):
+        '''
+        Retruns the title
+        '''
         return self.instanceTitle
     
     def get_tags(self):
+        '''
+        Retruns the tag details
+        Works for QnA dataset
+        '''
         if self.instance_attrib.get('Tags')!=None:
             return self.instance_attrib['Tags'].split('><')
         else:
             print("No tags are found")
     
     def get_timestamp(self):
+        '''
+        Retruns the timestamp details
+        '''
         di = {}
         if self.instance_attrib['TimeStamp'].get('CreationDate')!=None:
             di['CreationDate'] = self.instance_attrib['TimeStamp']['CreationDate']
@@ -151,6 +180,9 @@ class instances(object):
         return di        
     
     def get_score(self):
+        '''
+        Retruns the score details
+        '''
         if self.instance_attrib.get('Credit')==None:
             return 'Score value is not available'
         di = {}
@@ -167,6 +199,9 @@ class instances(object):
         return di  
         
     def get_text(self, *args, **kwargs):
+        '''
+        Retruns the text data
+        '''
         di = {}
             
         if self.instance_attrib['Body']['Text'].get('text') != None:
@@ -184,11 +219,21 @@ class instances(object):
         return di
     
     def get_bytes(self):
+        '''
+        Retruns the bytes detail
+        '''
         if self.instance_attrib['Body']['Text'].get('#Bytes') != None:
                return  int(self.instance_attrib['Body']['Text']['#Bytes'])
                            
 
     def __count_words(self, text):
+        '''
+        Retruns number of words in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
         text = text.lower()
         skips = [".", ",", ":", ";", "'", '"']
         for ch in skips:
@@ -197,14 +242,49 @@ class instances(object):
         return word_counts                           
     
     def __get_emailid(self, text):
+        '''
+        Retruns the email ids in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
         lst = re.findall('\S+@\S+',text)
         return lst
     
     def __get_url(self, text):
+        '''
+        Retruns all the the urls in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
         url = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', text)
         return url
     
     def get_text_stats(self, *args, **kwargs):
+        '''
+        Retruns the email ids in the text
+        
+        **Arguments**
+        title:
+            optional
+            Type: bool
+        
+        count_words:
+            optional
+            type: string
+        
+        email_id:
+            optional
+            type: string
+        
+        url:
+            optional
+            type: string
+                
+        '''
         title = False
         if kwargs.get('title')!=None:
             if kwargs['title'] == True:
@@ -572,26 +652,34 @@ class knol(object):
         #self.file_name = article_name.replace(' ','_')
         #self.file_name = self.file_name.replace('/','__')
         #self.file_name = self.file_name+'.knolml'
+        compress = False
         wiki_names = wikipedia.search(article_name)
         output_dir = 'output'
         if(kwargs.get('output_dir')!=None):
             output_dir = kwargs['output_dir']
                 
-        
+        if kwargs.get('compress')!=None:
+            compress = kwargs['compress']
         #self.file_name = output_dir+'/'+self.file_name
             
         if article_name in wiki_names:
-            wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
-            article_name = article_name.replace(' ', '_')
-            article_name = article_name.replace('/', '__')
-            wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+            if compress:
+                wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
+                article_name = article_name.replace(' ', '_')
+                article_name = article_name.replace('/', '__')
+                wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+            else:
+                wikiConverter.getArticle(file_name=article_name, output_dir=output_dir)
         else:
             print("Article name is not found. Taking '"+wiki_names[0]+"' as the article name")
             article_name = wiki_names[0]
-            wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
-            article_name = article_name.replace(' ', '_')
-            article_name = article_name.replace('/', '__')
-            wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+            if compress:
+                wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
+                article_name = article_name.replace(' ', '_')
+                article_name = article_name.replace('/', '__')
+                wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+            else:
+                wikiConverter.getArticle(file_name=article_name, output_dir=output_dir)
         
       
 
