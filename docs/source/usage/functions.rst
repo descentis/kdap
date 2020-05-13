@@ -8,6 +8,72 @@ Functions Overview
 
 This page contains the list of fucntions and their implementation details
 
+Extraction Methods
+================
+The following functions download/crawl/extract the data from collaborative knowledge building portals.
+Currently we support only the mining of Wikipedia and Stack Exchange network. the future release will support
+the extraction and analysis of portals such as GitHub, Reddit, and Quora.
+
+.. code:: python
+	def download_dataset(sitename, *args, **kwargs):
+		'''
+		Downloads the dataset of portal and stores it in KnolML format
+
+		**Arguments**
+		site_name:
+			Type: String
+			sitename for which you want to download the dataset e.g wikipedia
+		destdir:
+			optional
+			default: None
+			Type: String
+			full path of the directory where you want to store the dataset
+			e.g destdir='home/download'
+		download:
+			optional
+			default: True
+			Type: Bool
+			if set true, will download the dataset, e.g download=True
+		compress:
+			optional
+			default: False
+			Type: Bool
+			if set true, will compress the revision based data like Wikipedia
+			e.g compress=True
+		article_list:
+			optional
+			default: None
+			Type: List
+			list of articles for which full revision history needs to be extracted
+			works only when sitename='wikipedia'
+			e.g article_list=['India', 'Australia']
+		category_list:
+			optional
+			default: None
+			Type: List
+			List of categories for which wiki articles need to be downloaded
+			Works only if sitename='wikipedia' e.g. category_list=['Black Lives Matter']
+		template_list:
+			optional
+			default: None
+			Type: List
+			List of template for which wiki articles need to be downloaded
+			Works only if sitename='wikipedia' e.g. template_list=['Black Lives Matter']
+		wikipedia_dump:
+			optional
+			default: None
+			Type: String
+			full path of the directory containing the full Wikipedia bzip2 dump
+			Works only when sitename='wikipedia'
+		portal:
+			optional
+			default: None
+			Type String
+			portal name of the Stack Exchange site which needs to be downloaded
+			woeks only when sitename='stackexchange'
+			e.g. portal='anime'
+
+		'''
 Frame Methods
 =============
 The following methods are used to extract the knolml articles in frames and use them to analyze each instance/revision/thread saperately
