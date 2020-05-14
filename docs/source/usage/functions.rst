@@ -9,12 +9,13 @@ Functions Overview
 This page contains the list of fucntions and their implementation details
 
 Extraction Methods
-================
+==================
 The following functions download/crawl/extract the data from collaborative knowledge building portals.
 Currently we support only the mining of Wikipedia and Stack Exchange network. the future release will support
 the extraction and analysis of portals such as GitHub, Reddit, and Quora.
 
 .. code:: python
+
 	def download_dataset(sitename, *args, **kwargs):
 		'''
 		Downloads the dataset of portal and stores it in KnolML format
@@ -72,8 +73,8 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.
 			portal name of the Stack Exchange site which needs to be downloaded
 			woeks only when sitename='stackexchange'
 			e.g. portal='anime'
-
 		'''
+
 Frame Methods
 =============
 The following methods are used to extract the knolml articles in frames and use them to analyze each instance/revision/thread saperately
