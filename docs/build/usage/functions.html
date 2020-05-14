@@ -39,64 +39,90 @@
 <p>The following functions download/crawl/extract the data from collaborative knowledge building portals.
 Currently we support only the mining of Wikipedia and Stack Exchange network. the future release will support
 the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">download_dataset</span><span class="p">(</span><span class="n">sitename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Downloads the dataset of portal and stores it in KnolML format</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">def</span> <span class="nf">download_dataset</span><span class="p">(</span><span class="n">sitename</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Downloads the dataset of portal and stores it in KnolML format</span>
 
-<span class="sd">        **Arguments**</span>
-<span class="sd">        site_name:</span>
-<span class="sd">                Type: String</span>
-<span class="sd">                sitename for which you want to download the dataset e.g wikipedia</span>
-<span class="sd">        destdir:</span>
-<span class="sd">                optional</span>
-<span class="sd">                default: None</span>
-<span class="sd">                Type: String</span>
-<span class="sd">                full path of the directory where you want to store the dataset</span>
-<span class="sd">                e.g destdir=&#39;home/download&#39;</span>
-<span class="sd">        download:</span>
-<span class="sd">                optional</span>
-<span class="sd">                default: True</span>
-<span class="sd">                Type: Bool</span>
-<span class="sd">                if set true, will download the dataset, e.g download=True</span>
-<span class="sd">        compress:</span>
-<span class="sd">                optional</span>
-<span class="sd">                default: False</span>
-<span class="sd">                Type: Bool</span>
-<span class="sd">                if set true, will compress the revision based data like Wikipedia</span>
-<span class="sd">                e.g compress=True</span>
-<span class="sd">        article_list:</span>
-<span class="sd">                optional</span>
-<span class="sd">                default: None</span>
-<span class="sd">                Type: List</span>
-<span class="sd">                list of articles for which full revision history needs to be extracted</span>
-<span class="sd">                works only when sitename=&#39;wikipedia&#39;</span>
-<span class="sd">                e.g article_list=[&#39;India&#39;, &#39;Australia&#39;]</span>
-<span class="sd">        category_list:</span>
-<span class="sd">                optional</span>
-<span class="sd">                default: None</span>
-<span class="sd">                Type: List</span>
-<span class="sd">                List of categories for which wiki articles need to be downloaded</span>
-<span class="sd">                Works only if sitename=&#39;wikipedia&#39; e.g. category_list=[&#39;Black Lives Matter&#39;]</span>
-<span class="sd">        template_list:</span>
-<span class="sd">                optional</span>
-<span class="sd">                default: None</span>
-<span class="sd">                Type: List</span>
-<span class="sd">                List of template for which wiki articles need to be downloaded</span>
-<span class="sd">                Works only if sitename=&#39;wikipedia&#39; e.g. template_list=[&#39;Black Lives Matter&#39;]</span>
-<span class="sd">        wikipedia_dump:</span>
-<span class="sd">                optional</span>
-<span class="sd">                default: None</span>
-<span class="sd">                Type: String</span>
-<span class="sd">                full path of the directory containing the full Wikipedia bzip2 dump</span>
-<span class="sd">                Works only when sitename=&#39;wikipedia&#39;</span>
-<span class="sd">        portal:</span>
-<span class="sd">                optional</span>
-<span class="sd">                default: None</span>
-<span class="sd">                Type String</span>
-<span class="sd">                portal name of the Stack Exchange site which needs to be downloaded</span>
-<span class="sd">                woeks only when sitename=&#39;stackexchange&#39;</span>
-<span class="sd">                e.g. portal=&#39;anime&#39;</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">            **Arguments**</span>
+<span class="sd">            site_name:</span>
+<span class="sd">                    Type: String</span>
+<span class="sd">                    sitename for which you want to download the dataset e.g wikipedia</span>
+<span class="sd">            destdir:</span>
+<span class="sd">                    optional</span>
+<span class="sd">                    default: None</span>
+<span class="sd">                    Type: String</span>
+<span class="sd">                    full path of the directory where you want to store the dataset</span>
+<span class="sd">                    e.g destdir=&#39;home/download&#39;</span>
+<span class="sd">            download:</span>
+<span class="sd">                    optional</span>
+<span class="sd">                    default: True</span>
+<span class="sd">                    Type: Bool</span>
+<span class="sd">                    if set true, will download the dataset, e.g download=True</span>
+<span class="sd">            compress:</span>
+<span class="sd">                    optional</span>
+<span class="sd">                    default: False</span>
+<span class="sd">                    Type: Bool</span>
+<span class="sd">                    if set true, will compress the revision based data like Wikipedia</span>
+<span class="sd">                    e.g compress=True</span>
+<span class="sd">            article_list:</span>
+<span class="sd">                    optional</span>
+<span class="sd">                    default: None</span>
+<span class="sd">                    Type: List</span>
+<span class="sd">                    list of articles for which full revision history needs to be extracted</span>
+<span class="sd">                    works only when sitename=&#39;wikipedia&#39;</span>
+<span class="sd">                    e.g article_list=[&#39;India&#39;, &#39;Australia&#39;]</span>
+<span class="sd">            category_list:</span>
+<span class="sd">                    optional</span>
+<span class="sd">                    default: None</span>
+<span class="sd">                    Type: List</span>
+<span class="sd">                    List of categories for which wiki articles need to be downloaded</span>
+<span class="sd">                    Works only if sitename=&#39;wikipedia&#39; e.g. category_list=[&#39;Black Lives Matter&#39;]</span>
+<span class="sd">            template_list:</span>
+<span class="sd">                    optional</span>
+<span class="sd">                    default: None</span>
+<span class="sd">                    Type: List</span>
+<span class="sd">                    List of template for which wiki articles need to be downloaded</span>
+<span class="sd">                    Works only if sitename=&#39;wikipedia&#39; e.g. template_list=[&#39;Black Lives Matter&#39;]</span>
+<span class="sd">            wikipedia_dump:</span>
+<span class="sd">                    optional</span>
+<span class="sd">                    default: None</span>
+<span class="sd">                    Type: String</span>
+<span class="sd">                    full path of the directory containing the full Wikipedia bzip2 dump</span>
+<span class="sd">                    Works only when sitename=&#39;wikipedia&#39;</span>
+<span class="sd">            portal:</span>
+<span class="sd">                    optional</span>
+<span class="sd">                    default: None</span>
+<span class="sd">                    Type String</span>
+<span class="sd">                    portal name of the Stack Exchange site which needs to be downloaded</span>
+<span class="sd">                    woeks only when sitename=&#39;stackexchange&#39;</span>
+<span class="sd">                    e.g. portal=&#39;anime&#39;</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_wiki_article</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This method downloads the wikiarticle provided in the arguments</span>
+
+<span class="sd">    *Arguments*</span>
+
+<span class="sd">    article_name:</span>
+<span class="sd">        default: None</span>
+<span class="sd">        Type: String</span>
+<span class="sd">        name of the wiki article which needs to be downloaded in knolml format</span>
+<span class="sd">        e.g. &#39;Indian Institute of Technology Ropar&#39;</span>
+
+<span class="sd">    output_dir:</span>
+<span class="sd">        optional</span>
+<span class="sd">        default: None</span>
+<span class="sd">        Type: String</span>
+<span class="sd">        full path of the directory where the file needs to be stored</span>
+<span class="sd">        e.g. output_dir=&#39;/home/documents&#39;</span>
+<span class="sd">    compress:</span>
+<span class="sd">        optional:</span>
+<span class="sd">        default: False</span>
+<span class="sd">        Type: Bool</span>
+<span class="sd">        If true the file will be stored in compressed form</span>
+<span class="sd">        e.g. compress=True</span>
+<span class="sd">    &#39;&#39;&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -120,7 +146,7 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <span class="sd">        Type: String</span>
 <span class="sd">        The path of the directory containing the knolml files</span>
 
-<span class="sd">    e.g frame = knol.frame()</span>
+<span class="sd">    e.g frame = knol.frame(&#39;sample.knolml&#39;)</span>
 
 <span class="sd">    &#39;&#39;&#39;</span>
 

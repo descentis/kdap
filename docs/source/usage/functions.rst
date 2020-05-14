@@ -75,6 +75,32 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.
 			e.g. portal='anime'
 		'''
 
+    def get_wiki_article(self, article_name, *args, **kwargs):
+        '''
+        This method downloads the wikiarticle provided in the arguments
+        
+        *Arguments*
+        
+        article_name:
+            default: None
+            Type: String
+            name of the wiki article which needs to be downloaded in knolml format
+            e.g. 'Indian Institute of Technology Ropar'
+        
+        output_dir:
+            optional
+            default: None
+            Type: String
+            full path of the directory where the file needs to be stored
+            e.g. output_dir='/home/documents'
+        compress:
+            optional:
+            default: False
+            Type: Bool
+            If true the file will be stored in compressed form
+            e.g. compress=True            
+        '''
+
 Frame Methods
 =============
 The following methods are used to extract the knolml articles in frames and use them to analyze each instance/revision/thread saperately
@@ -98,7 +124,7 @@ The following methods are used to extract the knolml articles in frames and use 
             Type: String
             The path of the directory containing the knolml files
             
-        e.g frame = knol.frame()
+        e.g frame = knol.frame('sample.knolml')
         
         '''
 
