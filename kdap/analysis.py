@@ -30,6 +30,7 @@ from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
 from collections import Counter 
 import kdap.wiki_graph.graph_creater as gc
+import kdap.converter.wiki_clean as wikiClean
 
 class instances(object):
     
@@ -203,11 +204,15 @@ class instances(object):
         Retruns the text data
         '''
         di = {}
-            
+        clean = False    
         if self.instance_attrib['Body']['Text'].get('text') != None:
             di['text'] = self.instance_attrib['Body']['Text']['text']
         
         if kwargs.get('clean') != None:
+            clean = kwargs['clean']
+        if clean:
+            di['text'] = wikiClean.getCleanText(di['text'])
+            '''
             qe = QueryExecutor()
             qe.setOutputFileDirectoryName('lol')
             qe.setNumberOfProcesses(5)
@@ -215,6 +220,7 @@ class instances(object):
             qe.setTextValue(di['text'])
             qe.runQuery()
             return qe.result()
+            '''
         
         return di
     
