@@ -181,7 +181,14 @@ The following methods are used to extract the knolml articles in frames and use 
         
     def get_text(self, *args, **kwargs):
         '''
-        Retruns the text data
+        Retruns the dictionary of text data di['text']
+        **Arguments**
+        clean:
+            optional
+            Type: Bool
+            if true, returns the dictionary of clean text di['text']
+        
+        
         '''
 
     
