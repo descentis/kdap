@@ -1,0 +1,28 @@
+stackex_gini_coefficient_aq_ratio.py
+    get_correlation(['3dprinting.stackexchange.com', 'ai.stackexchange.com', 'anime.stackexchange.com',
+                       'arduino.stackexchange.com', 'boardgames.stackexchange.com', 'chemistry.stackexchange.com',
+                       'chess.stackexchange.com'])
+    119.32421875 MiB
+
+stackex_questions_with_accepted_answers.py
+    get_aa_questions()
+    40.22265625 MiB
+
+stackex_random_articles.py
+    random_questions(10000)
+    43.62890625 MiB
+
+wiki_changes_in_article_revisions.py
+    count_in_article('United States')
+    34.49609375 MiB
+
+    revision_changes("Indian Institute of Technology Ropar")
+    10.5546875
+
+wiki_get_5_articles_per_quality.py
+    get_articles()
+    4.0703125 MiB
+
+wiki_pageviews_and_revisions_correlation.py
+    find_correlation('United States')
+    9.69921875 MiB

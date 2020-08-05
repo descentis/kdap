@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="English">
+  <head>
+    <meta charset="utf-8" />
+    <title>Getting Started &#8212; KDAP 0.1.23 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Functions:" href="functions.html" />
+    <link rel="prev" title="Overview / Install" href="installation.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>Using PyDriller is very simple. You only need to create <cite>RepositoryMining</cite>: this class will receive in input the path to the repository and will return a generator that iterates over the commits. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">RepositoryMining</span><span class="p">(</span><span class="s1">&#39;path/to/the/repo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">traverse_commits</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Hash {}, author {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>will print the name of the developers for each commit.</p>
+<p>Inside <cite>RepositoryMining</cite>, you will have to configure which projects to analyze, for which commits, for which dates etc. For all the possible configurations, have a look at <span class="xref std std-ref">configuration_toplevel</span>.</p>
+<p>We can also pass a list of repositories (both local and remote), and PyDriller will analyze sequentially. In case of a remote repository, PyDriller will clone it in a temporary folder, and delete it afterwards. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">urls</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;repos/repo1&quot;</span><span class="p">,</span> <span class="s2">&quot;repos/repo2&quot;</span><span class="p">,</span> <span class="s2">&quot;https://github.com/ishepard/pydriller.git&quot;</span><span class="p">,</span> <span class="s2">&quot;repos/repo3&quot;</span><span class="p">,</span> <span class="s2">&quot;https://github.com/apache/hadoop.git&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">RepositoryMining</span><span class="p">(</span><span class="n">path_to_repo</span><span class="o">=</span><span class="n">urls</span><span class="p">)</span><span class="o">.</span><span class="n">traverse_commits</span><span class="p">():</span>
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Project {}, commit {}, date {}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+           <span class="n">commit</span><span class="o">.</span><span class="n">project_path</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">hash</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">author_date</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Let's make another example: print all the modified files for every commit. This does the magic:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">RepositoryMining</span><span class="p">(</span><span class="s1">&#39;path/to/the/repo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">traverse_commits</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">modification</span> <span class="ow">in</span> <span class="n">commit</span><span class="o">.</span><span class="n">modifications</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Author {} modified {} in commit {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">commit</span><span class="o">.</span><span class="n">author</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">modification</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">commit</span><span class="o">.</span><span class="n">hash</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>That's it!</p>
+<p>Behind the scenes, PyDriller opens the Git repository and extracts all the necessary information. Then, the framework returns a generator that can iterate over the commits.</p>
+<p>Furthermore, PyDriller can calculate structural metrics of every file changed in a commit. To calculate these metrics, Pydriller relies on <a class="reference external" href="https://github.com/terryyin/lizard">Lizard</a>, a powerful tool that can analyze source code of many different programming languages, both at class and method level!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">commit</span> <span class="ow">in</span> <span class="n">RepositoryMining</span><span class="p">(</span><span class="s1">&#39;path/to/the/repo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">traverse_commits</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">commit</span><span class="o">.</span><span class="n">modifications</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;{} has complexity of {}, and it contains {} methods&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+              <span class="n">mod</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mod</span><span class="o">.</span><span class="n">complexity</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">methods</span><span class="p">)))</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">KDAP</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Overview / Install</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="functions.html">Functions:</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Overview / Install</a></li>
+      <li>Next: <a href="functions.html" title="next chapter">Functions:</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Amit Arjun Verma.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/usage/tuitorial.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

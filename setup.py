@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 setuptools.setup(
     name='kdap',
-    version='0.1.21',
-    author="Amit Kumar Verma",
+    version='0.1.25',
+    author="Amit Arjun Verma",
     author_email="mt4descentis@gmail.com",
     description="KDAP is a package to analyze knowledge data",
     long_description=long_description,

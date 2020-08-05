@@ -1,0 +1,19 @@
+PycharmProjects/kdap-files/tasks/wiki_pageviews_and_revisions_correlation.py
+    F 7:0 find_correlation - B
+PycharmProjects/kdap-files/tasks/wiki_changes_in_article_revisions.py
+    F 67:0 count_in_article - C
+    F 51:0 remove_punctuation - A
+    F 57:0 filter_elements - A
+PycharmProjects/kdap-files/tasks/wiki_get_5_articles_per_quality.py
+    F 6:0 get_articles - B
+PycharmProjects/kdap-files/tasks/stackex_questions_with_accepted_answers.py
+    F 4:0 get_aa_questions - A
+PycharmProjects/kdap-files/tasks/stackex_random_articles.py
+    F 5:0 random_questions - C
+PycharmProjects/kdap-files/tasks/stackex_gini_coefficient_aq_ratio.py
+    F 6:0 get_gini_coefficient - B
+    F 35:0 get_answer_to_question_ratio - A
+    F 49:0 get_correlation - A
+
+10 blocks (classes, functions, methods) analyzed.
+Average complexity: B (6.2)

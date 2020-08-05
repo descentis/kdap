@@ -1,0 +1,15 @@
+requests==2.21.0
+internetarchive==1.8.5
+numpy
+wikipedia
+networkx
+pycountry
+mwparserfromhell==0.5.4
+nltk==3.4.5
+xmltodict
+matplotlib
+prettytable
+bx-python
+pyunpack
+mwviews
+patool

@@ -1,0 +1,6 @@
+70      stackex_gini_coefficient_aq_ratio.py
+36      stackex_questions_with_accepted_answers.py
+88      stackex_random_articles.py
+120     wiki_changes_in_article_revisions.py
+33      wiki_get_5_articles_per_quality.py
+45      wiki_pageviews_and_revisions_correlation.py

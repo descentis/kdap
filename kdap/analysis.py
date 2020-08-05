@@ -28,15 +28,13 @@ from kdap.wikiextract.wikiExtract import wikiExtract
 from mwviews.api import PageviewsClient
 from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
-import textstat
-from collections import Counter
-import inspect
-class instances(object):
+from collections import Counter 
+import kdap.wiki_graph.graph_creater as gc
+import kdap.converter.wiki_clean as wikiClean
 
-    '''
-    creating the instance of each object.
-    The init function defined stores each instance's attribute which can be analyzed separately
-    '''
+class instances(object):
+    
+
     def __init__(self,instance, title):
         #self.test = 'jsut to check the instances class'
         #print(self.test)
@@ -101,17 +99,33 @@ class instances(object):
 
 
     def is_question(self):
+        '''
+        Retruns True if the instance is a question
+        Works with QnA based knolml dataset
+        '''
         if self.instanceType == 'Question':
             return True
 
     def is_answer(self):
+        '''
+        Retruns True if the instance is an answer
+        Works with QnA based knolml dataset
+        '''
         if self.instanceType == 'Answer':
             return True
     def is_comment(self):
+        '''
+        Retruns True if the instance is a comment
+        Works with QnA based knolml dataset
+        '''
         if self.instanceType == 'Comments':
             return True
 
     def is_closed(self):
+        '''
+        Retruns True if the qna thread is closed
+        Works with QnA based knolml dataset
+        '''
         if self.instance_attrib['TimeStamp'].get('ClosedDate') == None:
             return True
 
@@ -121,6 +135,9 @@ class instances(object):
         print(self.instanceType)
 
     def get_editor(self):
+        '''
+        Retruns the edior details
+        '''
         di = {}
         if self.instance_attrib['Contributors'].get('OwnerUserId')!=None:
             di['OwnerUserId'] = self.instance_attrib['Contributors']['OwnerUserId']
@@ -131,15 +148,25 @@ class instances(object):
         return di
 
     def get_title(self):
+        '''
+        Retruns the title
+        '''
         return self.instanceTitle
 
     def get_tags(self):
+        '''
+        Retruns the tag details
+        Works for QnA dataset
+        '''
         if self.instance_attrib.get('Tags')!=None:
             return self.instance_attrib['Tags'].split('><')
         else:
             print("No tags are found")
 
     def get_timestamp(self):
+        '''
+        Retruns the timestamp details
+        '''
         di = {}
         if self.instance_attrib['TimeStamp'].get('CreationDate')!=None:
             di['CreationDate'] = self.instance_attrib['TimeStamp']['CreationDate']
@@ -154,6 +181,9 @@ class instances(object):
         return di
 
     def get_score(self):
+        '''
+        Retruns the score details
+        '''
         if self.instance_attrib.get('Credit')==None:
             return 'Score value is not available'
         di = {}
@@ -170,12 +200,19 @@ class instances(object):
         return di
 
     def get_text(self, *args, **kwargs):
+        '''
+        Retruns the text data
+        '''
         di = {}
-
+        clean = False    
         if self.instance_attrib['Body']['Text'].get('text') != None:
             di['text'] = self.instance_attrib['Body']['Text']['text']
 
         if kwargs.get('clean') != None:
+            clean = kwargs['clean']
+        if clean:
+            di['text'] = wikiClean.getCleanText(di['text'])
+            '''
             qe = QueryExecutor()
             qe.setOutputFileDirectoryName('lol')
             qe.setNumberOfProcesses(5)
@@ -183,15 +220,26 @@ class instances(object):
             qe.setTextValue(di['text'])
             qe.runQuery()
             return qe.result()
-
+            '''
+        
         return di
 
     def get_bytes(self):
+        '''
+        Retruns the bytes detail
+        '''
         if self.instance_attrib['Body']['Text'].get('#Bytes') != None:
                return  int(self.instance_attrib['Body']['Text']['#Bytes'])
 
 
     def __count_words(self, text):
+        '''
+        Retruns number of words in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
         text = text.lower()
         skips = [".", ",", ":", ";", "'", '"']
         for ch in skips:
@@ -200,14 +248,49 @@ class instances(object):
         return word_counts
 
     def __get_emailid(self, text):
+        '''
+        Retruns the email ids in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
         lst = re.findall('\S+@\S+',text)
         return lst
 
     def __get_url(self, text):
+        '''
+        Retruns all the the urls in the text
+        
+        **Arguments**
+        text:
+            Type: string
+        '''
         url = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', text)
         return url
 
     def get_text_stats(self, *args, **kwargs):
+        '''
+        Retruns the email ids in the text
+        
+        **Arguments**
+        title:
+            optional
+            Type: bool
+        
+        count_words:
+            optional
+            type: string
+        
+        email_id:
+            optional
+            type: string
+        
+        url:
+            optional
+            type: string
+                
+        '''
         title = False
         if kwargs.get('title')!=None:
             if kwargs['title'] == True:
@@ -312,6 +395,25 @@ class knol(object):
 
 
     def frame(self, *args, **kwargs):
+        '''
+        **Requires dataset to be present**
+        This method takes file names as an argument and returns the list of frame objects
+        
+        *Arguments*
+        
+        file_name:
+            optional
+            Type: String
+            The name of the article for which the frame objects have to be created.
+        
+        dir_path:
+            optional
+            Type: String
+            The path of the directory containing the knolml files
+            
+        e.g frame = knol.frame()
+        
+        '''
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             self.file_name = file_name
@@ -486,7 +588,7 @@ class knol(object):
                     for line in myFile:
                         l = line.split('#$*$#')
                         if l[0] in articles:
-                            print("article is found")
+                            print("Found hit for article "+l[0])
                             # file, art, index, home, key
                             self.extract_from_bzip(file=l[1],art=l[0],index=int(l[2]), home=home, key=key)
 
@@ -616,28 +718,36 @@ class knol(object):
         #self.file_name = article_name.replace(' ','_')
         #self.file_name = self.file_name.replace('/','__')
         #self.file_name = self.file_name+'.knolml'
+        compress = False
         wiki_names = wikipedia.search(article_name)
         output_dir = 'output'
         if(kwargs.get('output_dir')!=None):
             output_dir = kwargs['output_dir']
-
-
+                
+        if kwargs.get('compress')!=None:
+            compress = kwargs['compress']
         #self.file_name = output_dir+'/'+self.file_name
 
         if article_name in wiki_names:
-            wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
-            article_name = article_name.replace(' ', '_')
-            article_name = article_name.replace('/', '__')
-            wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+            if compress:
+                wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
+                article_name = article_name.replace(' ', '_')
+                article_name = article_name.replace('/', '__')
+                wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+            else:
+                wikiConverter.getArticle(file_name=article_name, output_dir=output_dir)
         else:
             print("Article name is not found. Taking '"+wiki_names[0]+"' as the article name")
             article_name = wiki_names[0]
-            wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
-            article_name = article_name.replace(' ', '_')
-            article_name = article_name.replace('/', '__')
-            wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
-
-
+            if compress:
+                wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
+                article_name = article_name.replace(' ', '_')
+                article_name = article_name.replace('/', '__')
+                wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+            else:
+                wikiConverter.getArticle(file_name=article_name, output_dir=output_dir)
+        
+      
 
     '''
     function to display the query on database
@@ -2999,17 +3109,88 @@ class knol(object):
         t2 = time.time()
         print(t2-t1)
         '''
-        return tagPosts
+        return tagPosts 
 
-k = knol()
-x = k.frame(file_name='test.knolml')
 
-print('TEST')
-print(type(k))
-'''
-l = list(x)
-print("!", l, len(l))
+    # Graph methods starts here. Please check the graph_creater function for more information
+    def get_graph_by_wikiarticle(self, article_name):
+        '''
+        **Does not require dataset download**
+        
+        This method takes an article name as an argument and creates the induced subgraph
+        among the articles present in there.
+        
+        *Arguments*
+        article_name:
+            Type: String
+            The name of the article for which the interwiki graph has to be created.
+        
+        e.g knol.get_graph_by_name('India')
+        '''
+        gc.get_graph_by_name(article_name)
+        
+        
+    def get_graph_by_wikiarticle_list(self, article_list, *args, **kwargs):
+        '''
+        **Does not require dataset download**
+        
+        This method takes a list of articles name as an argument and creates the induced subgraph
+        among the articles using the wikilinks.
+        
+        *Arguments*
+        article_list:
+            Type: List of strings
+            The list of articles name for which the interwiki graph has to be created.
+        file_name:
+            optional
+            file name by which you want to create the graph
+        eg. knol.get_graph_by_wikiarticle_list(['India', 'Pakistan'], file_name='relation')
+        '''
+        if kwargs.get('file_name')!=None:
+            file_name = kwargs['file_name']+'.graphml'
+            gc.get_inter_graph(article_list, file_name=file_name)
+        else:
+            gc.get_inter_graph(article_list)
 
-for i in x:
-    print(i.instanceId, type(i))
-'''
+
+    def get_graph_by_wikiarticle_countries(self, *args, **kwargs):
+        '''
+        **Does not require dataset download**
+        
+        This method creates the induced subgraph among the articles of all the 
+        wikipedia pages of all the countries using the wikilinks.
+        
+        *Arguments*
+        country_list:
+            optional
+            Type: List of strings
+            The list of countries name for which the interwiki graph has to be created.
+            When not set, the graph is created for all the countries
+        
+        e.g knol.get_graph_by_wikiarticle_countries()
+
+        '''
+        if kwargs.get('country_list')!=None:
+            country_list = kwargs['country_list']
+            gc.all_countries_graph(country_list=country_list)
+        else:
+            gc.all_countries_graph()
+            
+
+    def get_graph_by_wikiarticle_cities(self, country_name):
+        '''
+        **Does not require dataset download**
+        
+        This method creates the induced subgraph among the articles of all the 
+        wikipedia pages of all the cities of a given country using the wikilinks.
+        
+        *Arguments*
+        country_name:
+            Type: string
+            The country name for which the city graph has to be created.
+            
+        
+        e.g knol.get_graph_by_wikiarticle_cities('United States')
+
+        '''
+        gc.get_cities_by_country(country_name)
