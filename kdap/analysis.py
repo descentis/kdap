@@ -397,7 +397,6 @@ class knol(object):
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             self.file_name = file_name
-            self.get_knowledgeData(self.file_name)
         elif(kwargs.get('dir_path')!=None):
             self.dir = 1
             dir_path = kwargs['dir_path']
@@ -407,10 +406,9 @@ class knol(object):
                 self.file_list = sorted(glob.glob(dir_path+'/Posts/*.knolml'), key=self.numericalSort)
             else:
                 self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
-            self.get_knowledgeData(self.file_list[0])
         
         self.elem_counter = 0
-        return iter(self.Next)
+        return iter(self.Next())
 
     def get_knowledgeData(self, file_name, index=-1):
         tree = ET.parse(file_name)
@@ -453,36 +451,27 @@ class knol(object):
         return object_list
     
     def Next(self):
-        while True:
-            if self.dir == 1:
-                inst = self.get_knowledgeData(self.file_list[self.file_count], self.elem_counter)
-                self.elem_counter += 1
-                if inst is None:
-                    self.file_count += 1
-                    self.elem_counter = 0
-                    if self.file_count < len(self.file_list):
-                        inst = self.get_knowledgeData(self.file_list[self.file_count], self.elem_counter)
-                        self.elem_counter += 1
-                    else:
-                        break
-                yield inst
-            else:
-                inst = self.get_knowledgeData(self.file_name, self.elem_counter)
-                self.elem_counter += 1
-                if inst is not None:
-                    yield inst
-                else:
-                    break
-        '''
-        self.kcounter+=1
-        if(self.kcounter<len(self.knowledgeData_list)):
-            self.get_knowledgeData(self.knowledgeData_list[self.kcounter])
-        elif(self.dir==1):
-            self.file_count+=1
-            self.get_knowledgeData(self.file_list[self.file_count])
-        
-        return self.object_list
-        '''
+        if self.dir == 1:
+            for file_name in self.file_list:
+                title = ''
+                for event, elem in ET.iterparse(file_name):
+                    if elem.tag == 'KnowledgeData':
+                        title = ''
+                    elif elem.tag == 'Title':
+                        title = elem.text
+                    elif elem.tag == 'Instance':
+                        yield instances(elem, title)
+        else:
+            title = ''
+            for event, elem in ET.iterparse(self.file_name):
+                if elem.tag == 'KnowledgeData':
+                    title = ''
+                elif elem.tag == 'Title':
+                    title = elem.text
+                elif elem.tag == 'Instance':
+                    yield instances(elem, title)
+
+
     #******************methods related to frames ends here*****************************
         
     '''
