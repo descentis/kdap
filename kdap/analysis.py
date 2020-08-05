@@ -214,7 +214,7 @@ class instances(object):
             clean = kwargs['clean']
         if clean:
             di['text'] = wikiClean.getCleanText(di['text'])
-            '''
+            
             qe = QueryExecutor()
             qe.setOutputFileDirectoryName('lol')
             qe.setNumberOfProcesses(5)
@@ -408,18 +408,31 @@ class knol(object):
             else:
                 self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
             self.get_knowledgeData(self.file_list[0])
-            
-        return self.object_list
+        
+        self.elem_counter = 0
+        return iter(self.Next)
 
-    def get_knowledgeData(self,file_name):
+    def get_knowledgeData(self, file_name, index=-1):
         tree = ET.parse(file_name)
         
         root = tree.getroot()
-        for elem in root:
-            if 'KnowledgeData' in elem.tag:
-                self.knowledgeData_list.append(elem)
-        
-        self.object_list = self.get_frames(self.knowledgeData_list[self.kcounter])        
+        if index == -1:
+            for elem in root:
+                if 'KnowledgeData' in elem.tag:
+                    self.knowledgeData_list.append(elem)
+            
+            self.object_list = self.get_frames(self.knowledgeData_list[self.kcounter])        
+        else:
+            matches = root.findall('KnowledgeData')
+            for match in matches:
+                all_inst = match.findall('Instance')
+                if len(all_inst) <= index:
+                    index -= len(all_inst)
+                else:
+                    title = ''
+                    if match.find('Title') is not None:
+                        title = match.find('Title').text
+                    return instances(all_inst[index], title)
     
     
     def numericalSort(self, value):
@@ -440,6 +453,27 @@ class knol(object):
         return object_list
     
     def Next(self):
+        while True:
+            if self.dir == 1:
+                inst = self.get_knowledgeData(self.file_list[self.file_count], self.elem_counter)
+                self.elem_counter += 1
+                if inst is None:
+                    self.file_count += 1
+                    self.elem_counter = 0
+                    if self.file_count < len(self.file_list):
+                        inst = self.get_knowledgeData(self.file_list[self.file_count], self.elem_counter)
+                        self.elem_counter += 1
+                    else:
+                        break
+                yield inst
+            else:
+                inst = self.get_knowledgeData(self.file_name, self.elem_counter)
+                self.elem_counter += 1
+                if inst is not None:
+                    yield inst
+                else:
+                    break
+        '''
         self.kcounter+=1
         if(self.kcounter<len(self.knowledgeData_list)):
             self.get_knowledgeData(self.knowledgeData_list[self.kcounter])
@@ -448,7 +482,7 @@ class knol(object):
             self.get_knowledgeData(self.file_list[self.file_count])
         
         return self.object_list
-    
+        '''
     #******************methods related to frames ends here*****************************
         
     '''
