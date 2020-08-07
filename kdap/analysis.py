@@ -313,7 +313,6 @@ class instances(object):
 
 # please have a look @aayush
 
-        
 class knowledge_data(object):
     
     def __init__(self, *args, **kwargs):
@@ -359,7 +358,8 @@ class knowledge_data(object):
             return di  
         else:
             return 'file name not given'
-        
+
+
 class knol(object):
     
     def __init__(self):
@@ -375,25 +375,18 @@ class knol(object):
     each instances can be analyzed separately and sequencially
     '''
     def frame(self, *args, **kwargs):
-        '''
-        **Requires dataset to be present**
-        This method takes file names as an argument and returns the list of frame objects
-        
-        *Arguments*
-        
-        file_name:
-            optional
-            Type: String
+        """This method takes file names as an argument and returns the list of frame objects
+
+        Parameters
+        ----------
+        \*\*file_name : str, optional
             The name of the article for which the frame objects have to be created.
-        
-        dir_path:
-            optional
-            Type: String
+
+        \*\*dir_path : str, optional
             The path of the directory containing the knolml files
-            
-        e.g frame = knol.frame()
-        
-        '''
+
+        """
+
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             self.file_name = file_name
@@ -431,8 +424,7 @@ class knol(object):
                     if match.find('Title') is not None:
                         title = match.find('Title').text
                     return instances(all_inst[index], title)
-    
-    
+
     def numericalSort(self, value):
         parts = self.numbers.split(value)
         parts[1::2] = map(int, parts[1::2])
@@ -515,6 +507,14 @@ class knol(object):
             print("please provide the dump information")
 
     def get_article_name(self, article_list):
+        """Finds the correct name of articles present on Wikipedia
+
+        Parameters
+        ----------
+        article_list : list[str] or str
+            List of article names or single article name for which to find the correct name
+
+        """
         """
         article_list provides a list of articles to be searched
         this function finds the coorect name of the article which is present on wikipedia
@@ -560,17 +560,14 @@ class knol(object):
         # sitename = Portal name
         # article_list = [] List of article to be extracted
         # wikipedia_dump = directory of the wikipedia dump
-        '''Download dataset from site
+        """Download dataset from site
 
         Parameters
         ----------
         sitename : basestring
                    Portal name
-        '''
-        '''
-        sitename varibale contains the portal from which user wants to download the dataset.
-        Each sitename has various parameters which can be provided as optional argument
-        '''
+        """
+
         if kwargs.get('sitename') != None:
             sitename = kwargs['sitename'].lower()
         else:
@@ -689,6 +686,16 @@ class knol(object):
         #self.file_name = article_name.replace(' ','_')
         #self.file_name = self.file_name.replace('/','__')
         #self.file_name = self.file_name+'.knolml'
+        """Downloads the full revision history of an article in knol-ML format
+
+        Parameters
+        ----------
+        article_name : str
+            Name of the article to download revision history for
+        \*\*output_dir : str, optional
+            Output directory for generated knol-ML file
+
+        """
         compress = False
         wiki_names = wikipedia.search(article_name)
         output_dir = 'output'
