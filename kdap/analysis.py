@@ -28,13 +28,15 @@ from kdap.wikiextract.wikiExtract import wikiExtract
 from mwviews.api import PageviewsClient
 from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
+import textstat
 from collections import Counter 
-import kdap.wiki_graph.graph_creater as gc
-import kdap.converter.wiki_clean as wikiClean
 
 class instances(object):
     
-
+    '''
+    creating the instance of each object.
+    The init function defined stores each instance's attribute which can be analyzed separately
+    '''
     def __init__(self,instance, title):
         #self.test = 'jsut to check the instances class'
         #print(self.test)
@@ -204,7 +206,7 @@ class instances(object):
         Retruns the text data
         '''
         di = {}
-        clean = False    
+            
         if self.instance_attrib['Body']['Text'].get('text') != None:
             di['text'] = self.instance_attrib['Body']['Text']['text']
         
@@ -212,7 +214,7 @@ class instances(object):
             clean = kwargs['clean']
         if clean:
             di['text'] = wikiClean.getCleanText(di['text'])
-            '''
+            
             qe = QueryExecutor()
             qe.setOutputFileDirectoryName('lol')
             qe.setNumberOfProcesses(5)
@@ -220,7 +222,6 @@ class instances(object):
             qe.setTextValue(di['text'])
             qe.runQuery()
             return qe.result()
-            '''
         
         return di
     
@@ -396,7 +397,6 @@ class knol(object):
         if(kwargs.get('file_name')!=None):
             file_name = kwargs['file_name']
             self.file_name = file_name
-            self.get_knowledgeData(self.file_name)
         elif(kwargs.get('dir_path')!=None):
             self.dir = 1
             dir_path = kwargs['dir_path']
@@ -406,19 +406,31 @@ class knol(object):
                 self.file_list = sorted(glob.glob(dir_path+'/Posts/*.knolml'), key=self.numericalSort)
             else:
                 self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
-            self.get_knowledgeData(self.file_list[0])
-            
-        return self.object_list
+        
+        self.elem_counter = 0
+        return iter(self.Next())
 
-    def get_knowledgeData(self,file_name):
+    def get_knowledgeData(self, file_name, index=-1):
         tree = ET.parse(file_name)
         
         root = tree.getroot()
-        for elem in root:
-            if 'KnowledgeData' in elem.tag:
-                self.knowledgeData_list.append(elem)
-        
-        self.object_list = self.get_frames(self.knowledgeData_list[self.kcounter])        
+        if index == -1:
+            for elem in root:
+                if 'KnowledgeData' in elem.tag:
+                    self.knowledgeData_list.append(elem)
+            
+            self.object_list = self.get_frames(self.knowledgeData_list[self.kcounter])        
+        else:
+            matches = root.findall('KnowledgeData')
+            for match in matches:
+                all_inst = match.findall('Instance')
+                if len(all_inst) <= index:
+                    index -= len(all_inst)
+                else:
+                    title = ''
+                    if match.find('Title') is not None:
+                        title = match.find('Title').text
+                    return instances(all_inst[index], title)
     
     
     def numericalSort(self, value):
@@ -439,15 +451,27 @@ class knol(object):
         return object_list
     
     def Next(self):
-        self.kcounter+=1
-        if(self.kcounter<len(self.knowledgeData_list)):
-            self.get_knowledgeData(self.knowledgeData_list[self.kcounter])
-        elif(self.dir==1):
-            self.file_count+=1
-            self.get_knowledgeData(self.file_list[self.file_count])
-        
-        return self.object_list
-    
+        if self.dir == 1:
+            for file_name in self.file_list:
+                title = ''
+                for event, elem in ET.iterparse(file_name):
+                    if elem.tag == 'KnowledgeData':
+                        title = ''
+                    elif elem.tag == 'Title':
+                        title = elem.text
+                    elif elem.tag == 'Instance':
+                        yield instances(elem, title)
+        else:
+            title = ''
+            for event, elem in ET.iterparse(self.file_name):
+                if elem.tag == 'KnowledgeData':
+                    title = ''
+                elif elem.tag == 'Title':
+                    title = elem.text
+                elif elem.tag == 'Instance':
+                    yield instances(elem, title)
+
+
     #******************methods related to frames ends here*****************************
         
     '''
@@ -664,8 +688,7 @@ class knol(object):
         if(kwargs.get('output_dir')!=None):
             output_dir = kwargs['output_dir']
                 
-        if kwargs.get('compress')!=None:
-            compress = kwargs['compress']
+        
         #self.file_name = output_dir+'/'+self.file_name
             
         if article_name in wiki_names:
@@ -679,13 +702,10 @@ class knol(object):
         else:
             print("Article name is not found. Taking '"+wiki_names[0]+"' as the article name")
             article_name = wiki_names[0]
-            if compress:
-                wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
-                article_name = article_name.replace(' ', '_')
-                article_name = article_name.replace('/', '__')
-                wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
-            else:
-                wikiConverter.getArticle(file_name=article_name, output_dir=output_dir)
+            wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
+            article_name = article_name.replace(' ', '_')
+            article_name = article_name.replace('/', '__')
+            wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
         
       
 
@@ -3050,87 +3070,3 @@ class knol(object):
         print(t2-t1)
         '''
         return tagPosts 
-
-
-    # Graph methods starts here. Please check the graph_creater function for more information
-    def get_graph_by_wikiarticle(self, article_name):
-        '''
-        **Does not require dataset download**
-        
-        This method takes an article name as an argument and creates the induced subgraph
-        among the articles present in there.
-        
-        *Arguments*
-        article_name:
-            Type: String
-            The name of the article for which the interwiki graph has to be created.
-        
-        e.g knol.get_graph_by_name('India')
-        '''
-        gc.get_graph_by_name(article_name)
-        
-        
-    def get_graph_by_wikiarticle_list(self, article_list, *args, **kwargs):
-        '''
-        **Does not require dataset download**
-        
-        This method takes a list of articles name as an argument and creates the induced subgraph
-        among the articles using the wikilinks.
-        
-        *Arguments*
-        article_list:
-            Type: List of strings
-            The list of articles name for which the interwiki graph has to be created.
-        file_name:
-            optional
-            file name by which you want to create the graph
-        eg. knol.get_graph_by_wikiarticle_list(['India', 'Pakistan'], file_name='relation')
-        '''
-        if kwargs.get('file_name')!=None:
-            file_name = kwargs['file_name']+'.graphml'
-            gc.get_inter_graph(article_list, file_name=file_name)
-        else:
-            gc.get_inter_graph(article_list)
-
-
-    def get_graph_by_wikiarticle_countries(self, *args, **kwargs):
-        '''
-        **Does not require dataset download**
-        
-        This method creates the induced subgraph among the articles of all the 
-        wikipedia pages of all the countries using the wikilinks.
-        
-        *Arguments*
-        country_list:
-            optional
-            Type: List of strings
-            The list of countries name for which the interwiki graph has to be created.
-            When not set, the graph is created for all the countries
-        
-        e.g knol.get_graph_by_wikiarticle_countries()
-
-        '''
-        if kwargs.get('country_list')!=None:
-            country_list = kwargs['country_list']
-            gc.all_countries_graph(country_list=country_list)
-        else:
-            gc.all_countries_graph()
-            
-
-    def get_graph_by_wikiarticle_cities(self, country_name):
-        '''
-        **Does not require dataset download**
-        
-        This method creates the induced subgraph among the articles of all the 
-        wikipedia pages of all the cities of a given country using the wikilinks.
-        
-        *Arguments*
-        country_name:
-            Type: string
-            The country name for which the city graph has to be created.
-            
-        
-        e.g knol.get_graph_by_wikiarticle_cities('United States')
-
-        '''
-        gc.get_cities_by_country(country_name)
