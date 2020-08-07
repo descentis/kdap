@@ -17,7 +17,6 @@ setuptools.setup(
                       'internetarchive==1.8.5',
                       'numpy',
                       'wikipedia',
-                      'networkx',
                       'pycountry',
                       'mwparserfromhell==0.5.4',
                       'nltk==3.4.5',
