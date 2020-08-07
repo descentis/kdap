@@ -61,16 +61,16 @@ def get_graph_by_name(article_name):
     nx.write_graphml(G, article_name+'.graphml')
 
 def get_inter_graph(article_list, *args, **kwargs):
-    '''
+    """
     Returns the induced subgraph of wikiarticles provided in the 'article_list'
-    *Arguments*
-    
-    article_list:
+
+    Parameters
+    ----------
+    article_list: list[str]
         list of Wikipedia article names e.g ['India', 'United States']
-    file_name:
-        optional
+    file_name: str, optional
         name of the file by which you want to save the graph e.g file_name='sample'
-    '''
+    """
     G = nx.DiGraph()
     article_name = []
     for article in article_list:
@@ -123,13 +123,14 @@ def cities_by_country_graph():
     get_inter_graph(list_cities)
 
 def get_cities_by_country(country_name):
-    '''
+    """
     Creates a graph of city wikiarticles in the provided country name
-    *Arguments*
-    
-    country_name:
+
+    Parameters
+    ----------
+    country_name: str
         Name of the country for which you want to create the graph e.g "India"
-    '''
+    """
     article_name = 'List_of_cities_in_'+country_name+'_by_population'
     wiki_names = wikipedia.search(article_name)
     #print(wiki_names)

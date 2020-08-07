@@ -46,7 +46,16 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dd><p>Download dataset from site</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sitename</strong> (<em>basestring</em>) – Portal name</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sitename</strong> (<em>basestring</em>) – Name of portal to download from</p></li>
+<li><p><strong>article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of articles to download</p></li>
+<li><p><strong>destdir</strong> (<em>str</em>) – TODO</p></li>
+<li><p><strong>wikipedia_dump</strong> (<em>str</em>) – TODO</p></li>
+<li><p><strong>download</strong> (<em>str</em>) – TODO</p></li>
+<li><p><strong>category_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – TODO</p></li>
+<li><p><strong>template_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – TODO</p></li>
+<li><p><strong>portal</strong> (<em>str</em>) – TODO</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -81,6 +90,133 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<p><code class="docutils literal notranslate"><span class="pre">frame</span></code> returns a generator function that sequentially yields <code class="docutils literal notranslate"><span class="pre">instances</span></code> class objects to analyse each revision/thread separately</p>
+<dl class="py class">
+<dt id="kdap.analysis.instances">
+<em class="property">class </em><code class="sig-prename descclassname">kdap.analysis.</code><code class="sig-name descname">instances</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">instance</span></em>, <em class="sig-param"><span class="n">title</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>creating the instance of each object.
+The init function defined stores each instance’s attribute which can be analyzed separately</p>
+<dl class="py method">
+<dt id="kdap.analysis.instances._instances__count_words">
+<code class="sig-name descname">_instances__count_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__count_words" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns number of words in the text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances._instances__get_emailid">
+<code class="sig-name descname">_instances__get_emailid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__get_emailid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the email ids in the text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances._instances__get_url">
+<code class="sig-name descname">_instances__get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__get_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all the the urls in the text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.get_bytes">
+<code class="sig-name descname">get_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_bytes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the bytes detail</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.get_editor">
+<code class="sig-name descname">get_editor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_editor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the edior details</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.get_score">
+<code class="sig-name descname">get_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the score details</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.get_tags">
+<code class="sig-name descname">get_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_tags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the tag details
+Works for QnA dataset</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.get_text">
+<code class="sig-name descname">get_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the text data</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.get_text_stats">
+<code class="sig-name descname">get_text_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_text_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the email ids in the text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>count_words</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>url</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.get_timestamp">
+<code class="sig-name descname">get_timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the timestamp details</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.get_title">
+<code class="sig-name descname">get_title</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the title</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.is_answer">
+<code class="sig-name descname">is_answer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_answer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the instance is an answer
+Works with QnA based knolml dataset</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.is_closed">
+<code class="sig-name descname">is_closed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the qna thread is closed
+Works with QnA based knolml dataset</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.is_comment">
+<code class="sig-name descname">is_comment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the instance is a comment
+Works with QnA based knolml dataset</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="kdap.analysis.instances.is_question">
+<code class="sig-name descname">is_question</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_question" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if the instance is a question
+Works with QnA based knolml dataset</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>

@@ -31,6 +31,7 @@ from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
 import textstat
 from collections import Counter 
 
+
 class instances(object):
     
     '''
@@ -98,11 +99,10 @@ class instances(object):
                         self.instance_attrib['Credit']['AnswerCount'] = ch2.text
                     if 'FavouriteCount' in ch2.tag:
                         self.instance_attrib['Credit']['FavouriteCount'] = ch2.text
-            
     
     def is_question(self):
         '''
-        Retruns True if the instance is a question
+        Returns True if the instance is a question
         Works with QnA based knolml dataset
         '''
         if self.instanceType == 'Question':
@@ -110,14 +110,15 @@ class instances(object):
         
     def is_answer(self):
         '''
-        Retruns True if the instance is an answer
+        Returns True if the instance is an answer
         Works with QnA based knolml dataset
         '''
         if self.instanceType == 'Answer':
             return True    
+
     def is_comment(self):
         '''
-        Retruns True if the instance is a comment
+        Returns True if the instance is a comment
         Works with QnA based knolml dataset
         '''
         if self.instanceType == 'Comments':
@@ -125,7 +126,7 @@ class instances(object):
     
     def is_closed(self):
         '''
-        Retruns True if the qna thread is closed
+        Returns True if the qna thread is closed
         Works with QnA based knolml dataset
         '''
         if self.instance_attrib['TimeStamp'].get('ClosedDate') == None:
@@ -138,7 +139,7 @@ class instances(object):
         
     def get_editor(self):
         '''
-        Retruns the edior details
+        Returns the edior details
         '''
         di = {}
         if self.instance_attrib['Contributors'].get('OwnerUserId')!=None:
@@ -151,13 +152,13 @@ class instances(object):
     
     def get_title(self):
         '''
-        Retruns the title
+        Returns the title
         '''
         return self.instanceTitle
     
     def get_tags(self):
         '''
-        Retruns the tag details
+        Returns the tag details
         Works for QnA dataset
         '''
         if self.instance_attrib.get('Tags')!=None:
@@ -167,7 +168,7 @@ class instances(object):
     
     def get_timestamp(self):
         '''
-        Retruns the timestamp details
+        Returns the timestamp details
         '''
         di = {}
         if self.instance_attrib['TimeStamp'].get('CreationDate')!=None:
@@ -184,7 +185,7 @@ class instances(object):
     
     def get_score(self):
         '''
-        Retruns the score details
+        Returns the score details
         '''
         if self.instance_attrib.get('Credit')==None:
             return 'Score value is not available'
@@ -203,7 +204,7 @@ class instances(object):
         
     def get_text(self, *args, **kwargs):
         '''
-        Retruns the text data
+        Returns the text data
         '''
         di = {}
             
@@ -227,20 +228,19 @@ class instances(object):
     
     def get_bytes(self):
         '''
-        Retruns the bytes detail
+        Returns the bytes detail
         '''
         if self.instance_attrib['Body']['Text'].get('#Bytes') != None:
                return  int(self.instance_attrib['Body']['Text']['#Bytes'])
-                           
 
     def __count_words(self, text):
-        '''
-        Retruns number of words in the text
-        
-        **Arguments**
-        text:
-            Type: string
-        '''
+        """Returns number of words in the text
+
+        Parameters
+        ----------
+        text : str
+            TODO
+        """
         text = text.lower()
         skips = [".", ",", ":", ";", "'", '"']
         for ch in skips:
@@ -249,49 +249,43 @@ class instances(object):
         return word_counts                           
     
     def __get_emailid(self, text):
-        '''
-        Retruns the email ids in the text
-        
-        **Arguments**
-        text:
-            Type: string
-        '''
+        """Returns the email ids in the text
+
+        Parameters
+        ----------
+        text : str
+            TODO
+
+        """
         lst = re.findall('\S+@\S+',text)
         return lst
     
     def __get_url(self, text):
-        '''
-        Retruns all the the urls in the text
-        
-        **Arguments**
-        text:
-            Type: string
-        '''
+        """
+        Returns all the the urls in the text
+
+        Parameters
+        ----------
+        text : str
+            TODO
+
+        """
         url = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\), ]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', text)
         return url
     
     def get_text_stats(self, *args, **kwargs):
-        '''
-        Retruns the email ids in the text
-        
-        **Arguments**
-        title:
-            optional
-            Type: bool
-        
-        count_words:
-            optional
-            type: string
-        
-        email_id:
-            optional
-            type: string
-        
-        url:
-            optional
-            type: string
-                
-        '''
+        """
+        Returns the email ids in the text
+
+        Parameters
+        ----------
+        title : bool, optional
+
+        count_words : str, optional
+
+        url : str, optional
+
+        """
         title = False
         if kwargs.get('title')!=None:
             if kwargs['title'] == True:
@@ -515,10 +509,6 @@ class knol(object):
             List of article names or single article name for which to find the correct name
 
         """
-        """
-        article_list provides a list of articles to be searched
-        this function finds the coorect name of the article which is present on wikipedia
-        """
         if type(article_list) == list:
             articles = []
             for article in article_list:
@@ -565,7 +555,22 @@ class knol(object):
         Parameters
         ----------
         sitename : basestring
-                   Portal name
+            Name of portal to download from
+        article_list : list[str]
+            List of articles to download
+        destdir: str
+            TODO
+        wikipedia_dump: str
+            TODO
+        download : str
+            TODO
+        category_list : list[str]
+            TODO
+        template_list : list[str]
+            TODO
+        portal : str
+            TODO
+
         """
 
         if kwargs.get('sitename') != None:
@@ -738,6 +743,18 @@ class knol(object):
     following function queries the database to extract the articles based on category namme
     '''
     def get_wiki_article_by_class(self, *args, **kwargs):
+        """Query database to extract articles based on category name
+
+        Description
+
+        Parameters
+        ----------
+        wikiproject : str
+            TODO
+        wiki_class : str
+            TODO
+
+        """
         home = expanduser("~")
         if not os.path.exists(home+'/knolml_dataset/articleDescdb.db'):
             download('knolml_dataset', verbose=True, glob_pattern='articleDescdb.db', destdir=home)
@@ -866,6 +883,19 @@ class knol(object):
         return instance_date
     
     def get_pageviews(self, site_name, *args, **kwargs):
+        """Get pageviews for a particular article
+
+        Parameters
+        ----------
+        site_name : str
+            Site to get pageviews from
+        granularity : str
+            Granularity of pageviews data e.g. monthly
+        start : str
+            Date to start counting pageviews from
+        end : str
+            Date to count pageviews till
+        """
         if site_name.lower() == 'wikipedia':
             start = ''
             end = ''
@@ -1556,16 +1586,26 @@ class knol(object):
         return (l[i:i+n] for i in range(0, len(l), n))
 
     def get_author_edits(self, *args, **kwargs):
-        '''
+        """Get the edits of particular users for articles
+
         get_author_edits(site_name,[article_list, dir_path, editor_list, all_wiki=False])
         The following function is used to get the edits of each user
-        all_wiki = if site_name = wikipedia then setting this varible True will get all the edits of the users of article
-        article_list = list of file names (in knolml format)
-        dir_path = path of the directory where all the files are present (in knolml format)
-        editor_list = list of editor usernames for which edits are required
-        type = type of edit to be measured e.g. bytes, edits, sentences. bytes by default
-        ordered_by = means of ordering e.g. editor, questions, answers or article
-        '''
+
+        Parameters
+        ----------
+        all_wiki : str
+            if `site_name` = wikipedia then setting this variable True will get all the edits of the users of article
+        article_list : list[str]
+            list of file names (in knolml format)
+        dir_path : str
+            path of the directory where all the files are present (in knolml format)
+        editor_list : list[str]
+            list of editor usernames for which edits are required
+        type : str
+            type of edit to be measured e.g. bytes, edits, sentences. bytes by default
+        ordered_by : str
+            means of ordering e.g. editor, questions, answers or article
+        """
 
         all_wiki = False
         if kwargs.get('article_list')!=None:

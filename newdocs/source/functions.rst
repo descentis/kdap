@@ -22,10 +22,21 @@ The following methods are used to extract the knolml articles in frames and use 
 
 .. autofunction:: frame
 
+``frame`` returns a generator function that sequentially yields ``instances`` class objects to analyse each revision/thread separately
+
+.. autoclass:: kdap.analysis.instances
+   :members:
+   :private-members:
+
 Graph Methods
 =============
 The following methods are used to create the wiki graph using the wikilinks of the articles.
 Users can use one of these methods to create the wiki graph according to the requirement.
+
+.. autofunction:: get_graph_by_wikiarticle
+.. autofunction:: get_graph_by_wikiarticle_list
+.. autofunction:: get_graph_by_wikiarticle_countries
+.. autofunction:: get_graph_by_wikiarticle_cities
 
 .. code:: python
 
