@@ -28,7 +28,6 @@ from kdap.wikiextract.wikiExtract import wikiExtract
 from mwviews.api import PageviewsClient
 from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
-import textstat
 from collections import Counter 
 
 
@@ -476,8 +475,8 @@ class knol(object):
             f = SeekableBzip2File(self.dump_directory+'/'+file, filet)
             f.seek(int(index))
             strData = f.read(chunk).decode("utf-8")
-            artName = art.replace(" ","_")
-            artName = artName.replace("/","__")
+            artName = art.replace(" ", "_")
+            artName = artName.replace("/", "__")
             if not os.path.isdir(home+'/knolml_dataset/output/'+key):
                 os.makedirs(home+'/knolml_dataset/output/'+key)
             if not os.path.exists(home+'/knolml_dataset/output/'+key+'/'+artName+".xml"):

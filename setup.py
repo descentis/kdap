@@ -12,6 +12,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://kdap.github.io/",
     packages=setuptools.find_packages(),
+    python_requires='>=3.6',
     install_requires=['requests==2.21.0',
                       'internetarchive==1.8.5',
                       'numpy',
