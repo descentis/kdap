@@ -38,7 +38,7 @@ StackExchange portals, specified in the list ``stack_list``::
     for portal in stack_list:
         knol.download_dataset(sitename='stackexchange', portal=portal)
         questions = knol.get_num_instances(dir_path=portal+'/Posts', instance_type='question')
-        answers = knol.get_num_instances(dir_path=portal+'/Posts', instance_type='answer')   
+        answers = knol.get_num_instances(dir_path=portal+'/Posts', instance_type='answer')
         atoq_ratio.append(questions['questions']/answers['answers'])
 
 

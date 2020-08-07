@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Functions Overview &#8212; kdap 0.1.25 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Getting Started" href="tutorial.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="functions-overview">
+<span id="functions-toplevel"></span><h1>Functions Overview<a class="headerlink" href="#functions-overview" title="Permalink to this headline">¶</a></h1>
+<p>This page contains the list of functions and their implementation details</p>
+<div class="section" id="extraction-methods">
+<h2>Extraction Methods<a class="headerlink" href="#extraction-methods" title="Permalink to this headline">¶</a></h2>
+<p>The following functions download/crawl/extract the data from collaborative knowledge building portals.
+Currently we support only the mining of Wikipedia and Stack Exchange network. the future release will support
+the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
+<dl class="py class">
+<dt id="kdap.analysis.knol">
+<em class="property">class </em><code class="sig-prename descclassname">kdap.analysis.</code><code class="sig-name descname">knol</code><a class="headerlink" href="#kdap.analysis.knol" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="py method">
+<dt id="kdap.analysis.knol.download_dataset">
+<code class="sig-name descname">download_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sitename</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.download_dataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>sitename varibale contains the portal from which user wants to download the dataset.
+Each sitename has various parameters which can be provided as optional argument</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="frame-methods">
+<h2>Frame Methods<a class="headerlink" href="#frame-methods" title="Permalink to this headline">¶</a></h2>
+<p>The following methods are used to extract the knolml articles in frames and use them to analyze each instance/revision/thread saperately</p>
+<dl class="py class">
+<dt id="id0">
+<em class="property">class </em><code class="sig-prename descclassname">kdap.analysis.</code><code class="sig-name descname">knol</code><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="graph-methods">
+<h2>Graph Methods<a class="headerlink" href="#graph-methods" title="Permalink to this headline">¶</a></h2>
+<p>The following methods are used to create the wiki graph using the wikilinks of the articles.
+Users can use one of these methods to create the wiki graph according to the requirement.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_graph_by_wikiarticle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_name</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    **Does not require dataset download**</span>
+
+<span class="sd">    This method takes an article name as an argument and creates the induced subgraph</span>
+<span class="sd">    among the articles present in there.</span>
+
+<span class="sd">    *Arguments*</span>
+
+<span class="sd">    article_name:</span>
+<span class="sd">        Type: String</span>
+<span class="sd">        The name of the article for which the interwiki graph has to be created.</span>
+
+<span class="sd">    e.g knol.get_graph_by_wikiarticle(&#39;India&#39;)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_list</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    **Does not require dataset download**</span>
+
+<span class="sd">    This method takes a list of articles name as an argument and creates the induced subgraph</span>
+<span class="sd">    among the articles using the wikilinks.</span>
+
+<span class="sd">    *Arguments*</span>
+
+<span class="sd">    article_list:</span>
+<span class="sd">        Type: List of strings</span>
+<span class="sd">        The list of articles name for which the interwiki graph has to be created.</span>
+<span class="sd">    file_name:</span>
+<span class="sd">        optional</span>
+<span class="sd">        file name by which you want to create the graph</span>
+
+<span class="sd">    eg. knol.get_graph_by_wikiarticle_list([&#39;India&#39;, &#39;Pakistan&#39;], file_name=&#39;relation&#39;)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_countries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    **Does not require dataset download**</span>
+
+<span class="sd">    This method creates the induced subgraph among the articles of all the</span>
+<span class="sd">    wikipedia pages of all the countries using the wikilinks.</span>
+
+<span class="sd">    *Arguments*</span>
+
+<span class="sd">    country_list:</span>
+<span class="sd">        optional</span>
+<span class="sd">        Type: List of strings</span>
+<span class="sd">        The list of countries name for which the interwiki graph has to be created.</span>
+<span class="sd">        When not set, the graph is created for all the countries</span>
+
+<span class="sd">    e.g knol.get_graph_by_wikiarticle_countries()</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_cities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    **Does not require dataset download**</span>
+
+<span class="sd">    This method creates the induced subgraph among the articles of all the</span>
+<span class="sd">    wikipedia pages of all the cities of a given country using the wikilinks.</span>
+
+<span class="sd">    *Arguments*</span>
+
+<span class="sd">    country_name:</span>
+<span class="sd">        Type: string</span>
+<span class="sd">        The country name for which the city graph has to be created.</span>
+
+
+<span class="sd">    e.g knol.get_graph_by_wikiarticle_cities(&#39;United States&#39;)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">kdap</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Overview / Install</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Functions Overview</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#extraction-methods">Extraction Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#frame-methods">Frame Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#graph-methods">Graph Methods</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="tutorial.html" title="previous chapter">Getting Started</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Amit Arjun Verma.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/functions.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -515,10 +515,10 @@ class knol(object):
             print("please provide the dump information")
 
     def get_article_name(self, article_list):
-        '''
+        """
         article_list provides a list of articles to be searched
         this function finds the coorect name of the article which is present on wikipedia
-        '''
+        """
         if type(article_list) == list:
             articles = []
             for article in article_list:
@@ -560,6 +560,13 @@ class knol(object):
         # sitename = Portal name
         # article_list = [] List of article to be extracted
         # wikipedia_dump = directory of the wikipedia dump
+        '''Download dataset from site
+
+        Parameters
+        ----------
+        sitename : basestring
+                   Portal name
+        '''
         '''
         sitename varibale contains the portal from which user wants to download the dataset.
         Each sitename has various parameters which can be provided as optional argument
