@@ -378,6 +378,9 @@ class knol(object):
         \*\*dir_path : str, optional
             The path of the directory containing the knolml files
 
+        \*\*get_bulk : bool, optional
+            If this is true, all the frames are returned as a list instead of an iterator. This will require extra memory
+
         """
 
         if(kwargs.get('file_name')!=None):
@@ -394,46 +397,15 @@ class knol(object):
                 self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
         
         self.elem_counter = 0
-        return iter(self.Next())
-
-    def get_knowledgeData(self, file_name, index=-1):
-        tree = ET.parse(file_name)
-        
-        root = tree.getroot()
-        if index == -1:
-            for elem in root:
-                if 'KnowledgeData' in elem.tag:
-                    self.knowledgeData_list.append(elem)
-            
-            self.object_list = self.get_frames(self.knowledgeData_list[self.kcounter])        
+        if kwargs.get('get_bulk') is None or not kwargs.get('get_bulk'):
+            return iter(self.Next())
         else:
-            matches = root.findall('KnowledgeData')
-            for match in matches:
-                all_inst = match.findall('Instance')
-                if len(all_inst) <= index:
-                    index -= len(all_inst)
-                else:
-                    title = ''
-                    if match.find('Title') is not None:
-                        title = match.find('Title').text
-                    return instances(all_inst[index], title)
+            return list(self.Next())
 
     def numericalSort(self, value):
         parts = self.numbers.split(value)
         parts[1::2] = map(int, parts[1::2])
         return parts
-    
-    def get_frames(self, elem):        
-        object_list = []
-        title = ''
-        for ch1 in elem:
-            if 'Title' in ch1.tag:
-                title = ch1.text
-            if 'Instance' in ch1.tag:
-                instance = ch1
-                object_list.append(instances(instance, title))
-        
-        return object_list
     
     def Next(self):
         if self.dir == 1:
