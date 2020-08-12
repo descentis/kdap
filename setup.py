@@ -18,6 +18,7 @@ setuptools.setup(
                       'numpy',
                       'wikipedia',
                       'pycountry',
+                      'psutil>=5.6.6',
                       'mwparserfromhell==0.5.4',
                       'nltk==3.4.5',
                       'xmltodict',

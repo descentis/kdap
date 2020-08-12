@@ -37,19 +37,20 @@ extensions = ['sphinx.ext.autodoc',
               ]
 
 autodoc_mock_imports = ['requests==2.21.0',
-                      'internetarchive==1.8.5',
-                      'numpy',
-                      'wikipedia',
-                      'pycountry',
-                      'mwparserfromhell==0.5.4',
-                      'nltk==3.4.5',
-                      'xmltodict',
-                      'matplotlib',
-                      'prettytable',
-                      'bx-python',
-                      'pyunpack',
-                      'mwviews',
-                      'patool']
+                        'internetarchive==1.8.5',
+                        'numpy',
+                        'wikipedia',
+                        'pycountry',
+                        'psutil>=5.6.6',
+                        'mwparserfromhell==0.5.4',
+                        'nltk==3.4.5',
+                        'xmltodict',
+                        'matplotlib',
+                        'prettytable',
+                        'bx-python',
+                        'pyunpack',
+                        'mwviews',
+                        'patool']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
