@@ -43,14 +43,36 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dl class="py function">
 <dt id="kdap.analysis.knol.download_dataset">
 <code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">download_dataset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.download_dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>sitename varibale contains the portal from which user wants to download the dataset.
-Each sitename has various parameters which can be provided as optional argument</p>
+<dd><p>Download dataset from site</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sitename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">basestring</span></code>) – Name of portal to download from</p></li>
+<li><p><strong>article_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – List of articles to download</p></li>
+<li><p><strong>destdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p></li>
+<li><p><strong>wikipedia_dump</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p></li>
+<li><p><strong>download</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p></li>
+<li><p><strong>category_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – TODO</p></li>
+<li><p><strong>template_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – TODO</p></li>
+<li><p><strong>portal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="kdap.analysis.knol.get_wiki_article">
 <code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_wiki_article</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">article_name</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_article" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Downloads the full revision history of an article in knol-ML format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>article_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the article to download revision history for</p></li>
+<li><p><strong>**output_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – Output directory for generated knol-ML file</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="frame-methods">
@@ -59,109 +81,99 @@ Each sitename has various parameters which can be provided as optional argument<
 <dl class="py function">
 <dt id="kdap.analysis.knol.frame">
 <code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">frame</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.frame" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>Requires dataset to be present</strong>
-This method takes file names as an argument and returns the list of frame objects</p>
-<p><em>Arguments</em></p>
-<dl class="simple">
-<dt>file_name:</dt><dd><p>optional
-Type: String
-The name of the article for which the frame objects have to be created.</p>
-</dd>
-<dt>dir_path:</dt><dd><p>optional
-Type: String
-The path of the directory containing the knolml files</p>
+<dd><p>This method takes file names as an argument and returns the list of frame objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – The name of the article for which the frame objects have to be created.</p></li>
+<li><p><strong>**dir_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – The path of the directory containing the knolml files</p></li>
+<li><p><strong>**get_bulk</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>optional</em>) – If this is true, all the frames are returned as a list instead of an iterator. This will require extra memory</p></li>
+</ul>
 </dd>
 </dl>
-<p>e.g frame = knol.frame()</p>
 </dd></dl>
 
 <p><code class="docutils literal notranslate"><span class="pre">frame</span></code> returns a generator function that sequentially yields <code class="docutils literal notranslate"><span class="pre">instances</span></code> class objects to analyse each revision/thread separately</p>
 <dl class="py class">
 <dt id="kdap.analysis.instances">
 <em class="property">class </em><code class="sig-prename descclassname">kdap.analysis.</code><code class="sig-name descname">instances</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">instance</span></em>, <em class="sig-param"><span class="n">title</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<dd><p>creating the instance of each object.
+The init function defined stores each instance’s attribute which can be analyzed separately</p>
+<dl class="py method">
 <dt id="kdap.analysis.instances.__count_words">
 <code class="sig-name descname">__count_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__count_words" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns number of words in the text</p>
-<p><strong>Arguments</strong>
-text:</p>
-<blockquote>
-<div><p>Type: string</p>
-</div></blockquote>
+<dd><p>Returns number of words in the text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.__get_emailid">
 <code class="sig-name descname">__get_emailid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__get_emailid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the email ids in the text</p>
-<p><strong>Arguments</strong>
-text:</p>
-<blockquote>
-<div><p>Type: string</p>
-</div></blockquote>
+<dd><p>Returns the email ids in the text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.__get_url">
 <code class="sig-name descname">__get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__get_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns all the the urls in the text</p>
-<p><strong>Arguments</strong>
-text:</p>
-<blockquote>
-<div><p>Type: string</p>
-</div></blockquote>
+<dd><p>Returns all the the urls in the text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_bytes">
 <code class="sig-name descname">get_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_bytes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the bytes detail</p>
+<dd><p>Returns the bytes detail</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_editor">
 <code class="sig-name descname">get_editor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_editor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the edior details</p>
+<dd><p>Returns the edior details</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_score">
 <code class="sig-name descname">get_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the score details</p>
+<dd><p>Returns the score details</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_tags">
 <code class="sig-name descname">get_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_tags" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the tag details
+<dd><p>Returns the tag details
 Works for QnA dataset</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_text">
 <code class="sig-name descname">get_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_text" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the text data</p>
+<dd><p>Returns the text data</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_text_stats">
 <code class="sig-name descname">get_text_stats</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_text_stats" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the email ids in the text</p>
-<p><strong>Arguments</strong>
-title:</p>
-<blockquote>
-<div><p>optional
-Type: bool</p>
-</div></blockquote>
-<dl class="simple">
-<dt>count_words:</dt><dd><p>optional
-type: string</p>
-</dd>
-<dt>email_id:</dt><dd><p>optional
-type: string</p>
-</dd>
-<dt>url:</dt><dd><p>optional
-type: string</p>
+<dd><p>Returns the email ids in the text</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>optional</em>) – </p></li>
+<li><p><strong>count_words</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – </p></li>
+<li><p><strong>url</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – </p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -169,40 +181,40 @@ type: string</p>
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_timestamp">
 <code class="sig-name descname">get_timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_timestamp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the timestamp details</p>
+<dd><p>Returns the timestamp details</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_title">
 <code class="sig-name descname">get_title</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_title" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns the title</p>
+<dd><p>Returns the title</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.is_answer">
 <code class="sig-name descname">is_answer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_answer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns True if the instance is an answer
+<dd><p>Returns True if the instance is an answer
 Works with QnA based knolml dataset</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.is_closed">
 <code class="sig-name descname">is_closed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_closed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns True if the qna thread is closed
+<dd><p>Returns True if the qna thread is closed
 Works with QnA based knolml dataset</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.is_comment">
 <code class="sig-name descname">is_comment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_comment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns True if the instance is a comment
+<dd><p>Returns True if the instance is a comment
 Works with QnA based knolml dataset</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.is_question">
 <code class="sig-name descname">is_question</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_question" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retruns True if the instance is a question
+<dd><p>Returns True if the instance is a question
 Works with QnA based knolml dataset</p>
 </dd></dl>
 
@@ -218,10 +230,21 @@ subgraph.</p>
 <dl class="py function">
 <dt id="kdap.wiki_graph.graph_creater.get_cities_by_country">
 <code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_cities_by_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_cities_by_country" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a graph of city wikiarticles in the provided country name
-<em>Arguments</em></p>
-<dl class="simple">
-<dt>country_name:</dt><dd><p>Name of the country for which you want to create the graph e.g “India”</p>
+<dd><p>Creates a graph of city wikiarticles in the provided country name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>country_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the country for which you want to create the graph e.g “India”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.wiki_graph.graph_creater.get_graphi_by_list">
+<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_graphi_by_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_graphi_by_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create induced subgraph based on list of articles provided</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>article_names</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – List of articles to use for subgraph</p>
 </dd>
 </dl>
 </dd></dl>
@@ -229,13 +252,13 @@ subgraph.</p>
 <dl class="py function">
 <dt id="kdap.wiki_graph.graph_creater.get_inter_graph">
 <code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_inter_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_list</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_inter_graph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the induced subgraph of wikiarticles provided in the ‘article_list’
-<em>Arguments</em></p>
-<dl class="simple">
-<dt>article_list:</dt><dd><p>list of Wikipedia article names e.g [‘India’, ‘United States’]</p>
-</dd>
-<dt>file_name:</dt><dd><p>optional
-name of the file by which you want to save the graph e.g file_name=’sample’</p>
+<dd><p>Returns the induced subgraph of wikiarticles provided in the ‘article_list’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>article_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – list of Wikipedia article names e.g [‘India’, ‘United States’]</p></li>
+<li><p><strong>file_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – name of the file by which you want to save the graph e.g file_name=’sample’</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

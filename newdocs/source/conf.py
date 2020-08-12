@@ -27,7 +27,6 @@ author = 'Amit Arjun Verma'
 # The full version, including alpha/beta/rc tags
 release = '0.1.25'
 
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -35,7 +34,22 @@ release = '0.1.25'
 # ones.
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.napoleon'
-]
+              ]
+
+autodoc_mock_imports = ['requests==2.21.0',
+                      'internetarchive==1.8.5',
+                      'numpy',
+                      'wikipedia',
+                      'pycountry',
+                      'mwparserfromhell==0.5.4',
+                      'nltk==3.4.5',
+                      'xmltodict',
+                      'matplotlib',
+                      'prettytable',
+                      'bx-python',
+                      'pyunpack',
+                      'mwviews',
+                      'patool']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -44,7 +58,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
-
 
 # -- Options for HTML output -------------------------------------------------
 
