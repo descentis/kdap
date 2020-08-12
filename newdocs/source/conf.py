@@ -15,6 +15,7 @@
 # sys.path.insert(0, os.path.abspath('.'))
 import sys
 import os
+import mock
 
 sys.path.insert(0, os.path.abspath('./../..'))
 
@@ -33,17 +34,18 @@ release = '0.1.25'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.napoleon'
+              'sphinx.ext.napoleon',
+              'sphinx.builders.linkcheck'
               ]
 
-autodoc_mock_imports = ['requests==2.21.0',
-                        'internetarchive==1.8.5',
+autodoc_mock_imports = ['requests',
+                        'internetarchive',
                         'numpy',
                         'wikipedia',
                         'pycountry',
-                        'psutil>=5.6.6',
-                        'mwparserfromhell==0.5.4',
-                        'nltk==3.4.5',
+                        'psutil',
+                        'mwparserfromhell',
+                        'nltk',
                         'xmltodict',
                         'matplotlib',
                         'prettytable',
@@ -51,6 +53,10 @@ autodoc_mock_imports = ['requests==2.21.0',
                         'pyunpack',
                         'mwviews',
                         'patool']
+
+if os.environ.get('READTHEDOCS') is True:
+    for name in autodoc_mock_imports:
+        sys.modules[name] = mock.Mock()
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
