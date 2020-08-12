@@ -4,7 +4,7 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Functions Overview &#8212; kdap 0.1.25 documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -47,14 +47,14 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sitename</strong> (<em>basestring</em>) – Name of portal to download from</p></li>
-<li><p><strong>article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of articles to download</p></li>
-<li><p><strong>destdir</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>wikipedia_dump</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>download</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>category_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – TODO</p></li>
-<li><p><strong>template_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – TODO</p></li>
-<li><p><strong>portal</strong> (<em>str</em>) – TODO</p></li>
+<li><p><strong>sitename</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">basestring</span></code>) – Name of portal to download from</p></li>
+<li><p><strong>article_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – List of articles to download</p></li>
+<li><p><strong>destdir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p></li>
+<li><p><strong>wikipedia_dump</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p></li>
+<li><p><strong>download</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p></li>
+<li><p><strong>category_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – TODO</p></li>
+<li><p><strong>template_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – TODO</p></li>
+<li><p><strong>portal</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p></li>
 </ul>
 </dd>
 </dl>
@@ -67,8 +67,8 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>article_name</strong> (<em>str</em>) – Name of the article to download revision history for</p></li>
-<li><p><strong>**output_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory for generated knol-ML file</p></li>
+<li><p><strong>article_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the article to download revision history for</p></li>
+<li><p><strong>**output_dir</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – Output directory for generated knol-ML file</p></li>
 </ul>
 </dd>
 </dl>
@@ -85,8 +85,9 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>**file_name</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the article for which the frame objects have to be created.</p></li>
-<li><p><strong>**dir_path</strong> (<em>str</em><em>, </em><em>optional</em>) – The path of the directory containing the knolml files</p></li>
+<li><p><strong>**file_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – The name of the article for which the frame objects have to be created.</p></li>
+<li><p><strong>**dir_path</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – The path of the directory containing the knolml files</p></li>
+<li><p><strong>**get_bulk</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>optional</em>) – If this is true, all the frames are returned as a list instead of an iterator. This will require extra memory</p></li>
 </ul>
 </dd>
 </dl>
@@ -99,34 +100,34 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dd><p>creating the instance of each object.
 The init function defined stores each instance’s attribute which can be analyzed separately</p>
 <dl class="py method">
-<dt id="kdap.analysis.instances._instances__count_words">
-<code class="sig-name descname">_instances__count_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__count_words" title="Permalink to this definition">¶</a></dt>
+<dt id="kdap.analysis.instances.__count_words">
+<code class="sig-name descname">__count_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__count_words" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns number of words in the text</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
+<dd class="field-odd"><p><strong>text</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="kdap.analysis.instances._instances__get_emailid">
-<code class="sig-name descname">_instances__get_emailid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__get_emailid" title="Permalink to this definition">¶</a></dt>
+<dt id="kdap.analysis.instances.__get_emailid">
+<code class="sig-name descname">__get_emailid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__get_emailid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the email ids in the text</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
+<dd class="field-odd"><p><strong>text</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="kdap.analysis.instances._instances__get_url">
-<code class="sig-name descname">_instances__get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__get_url" title="Permalink to this definition">¶</a></dt>
+<dt id="kdap.analysis.instances.__get_url">
+<code class="sig-name descname">__get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__get_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the the urls in the text</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
+<dd class="field-odd"><p><strong>text</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – TODO</p>
 </dd>
 </dl>
 </dd></dl>
@@ -169,9 +170,9 @@ Works for QnA dataset</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>title</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>count_words</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>url</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
+<li><p><strong>title</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>, <em>optional</em>) – </p></li>
+<li><p><strong>count_words</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – </p></li>
+<li><p><strong>url</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – </p></li>
 </ul>
 </dd>
 </dl>
@@ -224,78 +225,44 @@ Works with QnA based knolml dataset</p>
 <h2>Graph Methods<a class="headerlink" href="#graph-methods" title="Permalink to this headline">¶</a></h2>
 <p>The following methods are used to create the wiki graph using the wikilinks of the articles.
 Users can use one of these methods to create the wiki graph according to the requirement.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_graph_by_wikiarticle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_name</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download*</span>
+<span class="target" id="module-kdap.wiki_graph.graph_creater"></span><p>Given a set of wikipedia articles, this program creates the Wikipedia induced
+subgraph.</p>
+<dl class="py function">
+<dt id="kdap.wiki_graph.graph_creater.get_cities_by_country">
+<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_cities_by_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_cities_by_country" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a graph of city wikiarticles in the provided country name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>country_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the country for which you want to create the graph e.g “India”</p>
+</dd>
+</dl>
+</dd></dl>
 
-<span class="sd">    This method takes an article name as an argument and creates the induced subgraph</span>
-<span class="sd">    among the articles present in there.</span>
+<dl class="py function">
+<dt id="kdap.wiki_graph.graph_creater.get_graphi_by_list">
+<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_graphi_by_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_graphi_by_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create induced subgraph based on list of articles provided</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>article_names</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – List of articles to use for subgraph</p>
+</dd>
+</dl>
+</dd></dl>
 
-<span class="sd">    *Arguments*</span>
+<dl class="py function">
+<dt id="kdap.wiki_graph.graph_creater.get_inter_graph">
+<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_inter_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_list</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_inter_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the induced subgraph of wikiarticles provided in the ‘article_list’</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>article_list</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">list[str]</span></code>) – list of Wikipedia article names e.g [‘India’, ‘United States’]</p></li>
+<li><p><strong>file_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <em>optional</em>) – name of the file by which you want to save the graph e.g file_name=’sample’</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
-<span class="sd">    article_name:</span>
-<span class="sd">        Type: String</span>
-<span class="sd">        The name of the article for which the interwiki graph has to be created.</span>
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle(&#39;India&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_list</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method takes a list of articles name as an argument and creates the induced subgraph</span>
-<span class="sd">    among the articles using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    article_list:</span>
-<span class="sd">        Type: List of strings</span>
-<span class="sd">        The list of articles name for which the interwiki graph has to be created.</span>
-<span class="sd">    file_name:</span>
-<span class="sd">        optional</span>
-<span class="sd">        file name by which you want to create the graph</span>
-
-<span class="sd">    eg. knol.get_graph_by_wikiarticle_list([&#39;India&#39;, &#39;Pakistan&#39;], file_name=&#39;relation&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_countries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method creates the induced subgraph among the articles of all the</span>
-<span class="sd">    wikipedia pages of all the countries using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    country_list:</span>
-<span class="sd">        optional</span>
-<span class="sd">        Type: List of strings</span>
-<span class="sd">        The list of countries name for which the interwiki graph has to be created.</span>
-<span class="sd">        When not set, the graph is created for all the countries</span>
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle_countries()</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_cities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">):</span>
-
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method creates the induced subgraph among the articles of all the</span>
-<span class="sd">    wikipedia pages of all the cities of a given country using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    country_name:</span>
-<span class="sd">        Type: string</span>
-<span class="sd">        The country name for which the city graph has to be created.</span>
-
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle_cities(&#39;United States&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-</pre></div>
-</div>
 </div>
 </div>
 
@@ -361,7 +328,7 @@ Users can use one of these methods to create the wiki graph according to the req
       &copy;2020, Amit Arjun Verma.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.1.2</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.2.0</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |
