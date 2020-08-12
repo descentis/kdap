@@ -11,3 +11,5 @@ matplotlib
 prettytable
 bx-python
 pyunpack
+mwviews
+patool
