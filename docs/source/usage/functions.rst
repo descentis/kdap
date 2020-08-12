@@ -1,12 +1,11 @@
 .. _functions_toplevel:
 
-.. highlight:: python
 
 ==================
 Functions Overview
 ==================
 
-This page contains the list of fucntions and their implementation details
+This page contains the list of functions and their implementation details
 
 Extraction Methods
 ==================
@@ -14,92 +13,8 @@ The following functions download/crawl/extract the data from collaborative knowl
 Currently we support only the mining of Wikipedia and Stack Exchange network. the future release will support
 the extraction and analysis of portals such as GitHub, Reddit, and Quora.
 
-.. code:: python
-
-	def download_dataset(sitename, *args, **kwargs):
-		'''
-		Downloads the dataset of portal and stores it in KnolML format
-
-		**Arguments**
-		site_name:
-			Type: String
-			sitename for which you want to download the dataset e.g wikipedia
-		destdir:
-			optional
-			default: None
-			Type: String
-			full path of the directory where you want to store the dataset
-			e.g destdir='home/download'
-		download:
-			optional
-			default: True
-			Type: Bool
-			if set true, will download the dataset, e.g download=True
-		compress:
-			optional
-			default: False
-			Type: Bool
-			if set true, will compress the revision based data like Wikipedia
-			e.g compress=True
-		article_list:
-			optional
-			default: None
-			Type: List
-			list of articles for which full revision history needs to be extracted
-			works only when sitename='wikipedia'
-			e.g article_list=['India', 'Australia']
-		category_list:
-			optional
-			default: None
-			Type: List
-			List of categories for which wiki articles need to be downloaded
-			Works only if sitename='wikipedia' e.g. category_list=['Black Lives Matter']
-		template_list:
-			optional
-			default: None
-			Type: List
-			List of template for which wiki articles need to be downloaded
-			Works only if sitename='wikipedia' e.g. template_list=['Black Lives Matter']
-		wikipedia_dump:
-			optional
-			default: None
-			Type: String
-			full path of the directory containing the full Wikipedia bzip2 dump
-			Works only when sitename='wikipedia'
-		portal:
-			optional
-			default: None
-			Type String
-			portal name of the Stack Exchange site which needs to be downloaded
-			woeks only when sitename='stackexchange'
-			e.g. portal='anime'
-		'''
-
-    def get_wiki_article(self, article_name, *args, **kwargs):
-        '''
-        This method downloads the wikiarticle provided in the arguments
-        
-        *Arguments*
-        
-        article_name:
-            default: None
-            Type: String
-            name of the wiki article which needs to be downloaded in knolml format
-            e.g. 'Indian Institute of Technology Ropar'
-        
-        output_dir:
-            optional
-            default: None
-            Type: String
-            full path of the directory where the file needs to be stored
-            e.g. output_dir='/home/documents'
-        compress:
-            optional:
-            default: False
-            Type: Bool
-            If true the file will be stored in compressed form
-            e.g. compress=True            
-        '''
+.. autoclass:: kdap.analysis.knol
+   :members:
 
 Frame Methods
 =============

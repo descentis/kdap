@@ -30,22 +30,18 @@ Installing kdap is easily done using `pip`_. Assuming it is installed, just run 
 Source Code
 ===========
 
-kdap's git repo is available on GitHub, which can be browsed at:
-
- * https://github.com/descentis/kdap
-
-and cloned using::
+kdap's git repo is available on `GitHub <https://github.com/descentis/kdap>`_, and can be cloned using::
 
     $ git clone https://github.com/descentis/kdap
     $ cd kdap
 
 Optionally (but suggested), make use of virtualenv::
-    
+
     $ virtualenv -p python3 venv
     $ source venv/bin/activate
 
 Install the requirements::
-    
+
     $ pip install -r requirements.txt
     $ pip install -r test-requirements.txt
     $ unzip test-repos.zip
