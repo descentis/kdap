@@ -15,6 +15,7 @@
 # sys.path.insert(0, os.path.abspath('.'))
 import sys
 import os
+import mock
 
 sys.path.insert(0, os.path.abspath('./../..'))
 
@@ -27,15 +28,36 @@ author = 'Amit Arjun Verma'
 # The full version, including alpha/beta/rc tags
 release = '0.1.25'
 
-
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
+master_doc = 'index'
 extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.napoleon'
-]
+              'sphinx.ext.napoleon',
+              'sphinx.builders.linkcheck'
+              ]
+
+autodoc_mock_imports = ['requests',
+                        'internetarchive',
+                        'numpy',
+                        'wikipedia',
+                        'pycountry',
+                        'psutil',
+                        'mwparserfromhell',
+                        'nltk',
+                        'xmltodict',
+                        'matplotlib',
+                        'prettytable',
+                        'bx-python',
+                        'pyunpack',
+                        'mwviews',
+                        'patool']
+
+if os.environ.get('READTHEDOCS') is True:
+    for name in autodoc_mock_imports:
+        sys.modules[name] = mock.Mock()
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -44,7 +66,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
-
 
 # -- Options for HTML output -------------------------------------------------
 
