@@ -1,5 +1,8 @@
 [![Build Status](https://travis-ci.org/descentis/kdap.svg?branch=master)](https://travis-ci.org/descentis/kdap)
 [![BCH compliance](https://bettercodehub.com/edge/badge/descentis/kdap?branch=master)](https://bettercodehub.com/)
+[![PyPI version](https://badge.fury.io/py/kdap.svg)](https://badge.fury.io/py/kdap)
+[![Documentation Status](https://readthedocs.org/projects/kdap/badge/?version=latest)](https://kdap.readthedocs.io/en/latest/?badge=latest)
+
 
 # Knowledge Data Analysis and Processing Platform
 This library contains a collection of utilities for efficiently processing and anlyzing the data of Wiki-based and QnA-based portals (eg., Wikipedia, Wikia, Stack Exchange, etc.). The function takes Knol-ML files as input. Most of the functions of this library are implemented in such a way that parallel processing can be achieved.
