@@ -10,4 +10,4 @@ import kdap
 
 knol = kdap.knol()
 
-knol.download_dataset(sitename='stackexchange', portal='3dprinting')
+revisions = knol.get_num_instances(dir_path='/Users/Main/Documents/research/kdap/output', granularity='monthly', start='2015-07-01')
