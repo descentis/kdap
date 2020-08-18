@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: kdap
-Version: 0.1.25
+Version: 0.1.26
 Summary: KDAP is a package to analyze knowledge data
 Home-page: https://kdap.github.io/
 Author: Amit Arjun Verma
@@ -23,4 +23,5 @@ Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3
 Classifier: License :: OSI Approved :: BSD License
 Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
 Description-Content-Type: text/markdown
