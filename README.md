@@ -11,6 +11,8 @@ The library is currently in the development phase, feel free to raise an issue. 
 Please check our webpage for more details [GitHub Page](https://kdap.github.io/)
 
 
+![Alt Text](https://github.com/descentis/kdap/blob/master/kdap_doc.gif)
+
 ## Table of contents
 * **[Requirements](#requirements)**
 * **[Install](#install)**
