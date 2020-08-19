@@ -40,10 +40,11 @@ The list of dependencies is shown in `./requirements.txt`, however the installer
 
 ## INSTALL
 
-Installing PyDriller is easily done using pip. Assuming it is installed, just run the following from the command-line:
+Installing KDAP is easily done using pip. Assuming it is installed, just run the
+ following from the command-line:
 
 ```
-pip install pydriller
+pip install kdap
 ```
 This will also install the necessary dependencies.
 
@@ -66,6 +67,11 @@ Fork the project and follow the instructions on how to get started with [source 
 This software is licensed under the BSD 3-Clause License.
 
 This project has received funding from the CSRI, Department of Science and Technology India via grant no. SR/CSRI/344/2016
+
+## Authors
++ Amit Arjun Verma - Author - [descentis](https://github.com/descentis)
++ Aayush Sabharwal - Contributor - [AayushSabharwal](https://github.com/AayushSabharwal)
+
 
 ## Knol-ML data dump
 
