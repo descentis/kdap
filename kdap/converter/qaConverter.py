@@ -85,8 +85,31 @@ class qaConverter(object):
             if(i=='>'):
                 body = body.replace(i,", ")
         return body
-    
-    
+   
+    @staticmethod
+    def write_body(myFile, elem):
+        t = '\t'
+        if(elem.attrib.get('Text')!=None):        
+            Body = t+t+t+"<Body>\n"
+            myFile.write(Body)
+            text_field = t+t+t+t+"<Text Type= "+'"'+"text"+'"'+" Bytes="+'"'+str(len(elem.attrib['Text']))+'">\n'
+            myFile.write(text_field)
+            if(elem.attrib['PostHistoryTypeId']=="3" or elem.attrib['PostHistoryTypeId']=="6"):            
+                body_text = elem.attrib['Text']
+                body_text = qaConverter.tag_remover(body_text)
+                text_body = textwrap.indent(text=body_text, prefix=t+t+t+t+t)
+                text_body = html.escape(text_body)
+            else:
+                text_body = textwrap.indent(text=elem.attrib['Text'], prefix=t+t+t+t+t)
+                text_body = html.escape(text_body)
+            Body_text = text_body+"\n"
+            myFile.write(Body_text)
+            text_field = t+t+t+t+"</Text>\n"
+            myFile.write(text_field)        
+            Body = t+t+t+"</Body>\n"
+            myFile.write(Body)
+
+        
     @staticmethod
     def writeHistoryData(*args, **kwargs):
         elem = kwargs['elem']
@@ -167,28 +190,8 @@ class qaConverter(object):
                     '''
                     Writing the body/text part
                     '''
-                    if(elem.attrib.get('Text')!=None):        
-                        Body = t+t+t+"<Body>\n"
-                        myFile.write(Body)
-                        text_field = t+t+t+t+"<Text Type= "+'"'+"text"+'"'+" Bytes="+'"'+str(len(elem.attrib['Text']))+'">\n'
-                        myFile.write(text_field)
-                        if(elem.attrib['PostHistoryTypeId']=="3" or elem.attrib['PostHistoryTypeId']=="6"):            
-                            body_text = elem.attrib['Text']
-                            body_text = qaConverter.tag_remover(body_text)
-                            text_body = textwrap.indent(text=body_text, prefix=t+t+t+t+t)
-                            text_body = html.escape(text_body)
-                        else:
-                            text_body = textwrap.indent(text=elem.attrib['Text'], prefix=t+t+t+t+t)
-                            text_body = html.escape(text_body)
-                        Body_text = text_body+"\n"
-                        myFile.write(Body_text)
-                        text_field = t+t+t+t+"</Text>\n"
-                        myFile.write(text_field)        
-                        Body = t+t+t+"</Body>\n"
-                        myFile.write(Body)
-        
-
-                    
+                    qaConverter.write_body(myFile, elem)
+                            
                     Instance = t+t+"</Instance>\n"
                     myFile.write(Instance)
                      
@@ -241,25 +244,7 @@ class qaConverter(object):
                     '''
                     Writing the body/text part
                     '''
-                    if(elem.attrib.get('Text')!=None):        
-                        Body = t+t+t+"<Body>\n"
-                        myFile.write(Body)
-                        text_field = t+t+t+t+"<Text Type= "+'"'+"text"+'"'+" Bytes="+'"'+str(len(elem.attrib['Text']))+'">\n'
-                        myFile.write(text_field)
-                        if(elem.attrib['PostHistoryTypeId']=="3" or elem.attrib['PostHistoryTypeId']=="6"):            
-                            body_text = elem.attrib['Text']
-                            body_text = qaConverter.tag_remover(body_text)
-                            text_body = textwrap.indent(text=body_text, prefix=t+t+t+t+t)
-                            text_body = html.escape(text_body)
-                        else:
-                            text_body = textwrap.indent(text=elem.attrib['Text'], prefix=t+t+t+t+t)
-                            text_body = html.escape(text_body)
-                        Body_text = text_body+"\n"
-                        myFile.write(Body_text)
-                        text_field = t+t+t+t+"</Text>\n"
-                        myFile.write(text_field)        
-                        Body = t+t+t+"</Body>\n"
-                        myFile.write(Body)
+                    qaConverter.write_body(myFile, elem)
         
                     '''
                     PostHistory might have a comment associated with each entry.
@@ -926,6 +911,29 @@ class qaConverter(object):
                     myFile.write("\t</KnowledgeData>\n")
                     myFile.write("</KnolML>\n")                 
                 
+    @staticmethod
+    def call_7z(post_arg, name):
+        '''
+        calling the KML converter for Stack_exchange
+        '''
+        
+        if(post_arg.get('posthistory')!=None):
+            ph = post_arg['posthistory']
+            if(ph):
+                print("Converting PostHistory of "+name+" Stack Exchange into knolml")
+                qaConverter.make_path(name+"/PostHistory")
+                namePh = name+"/PostHistory"
+                qaConverter.commentsConversion(namePh,0)
+                print("PostHistory conversion completed for "+name+" Stack Exchange")
+        if(post_arg.get('post')!=None):
+            p = post_arg['post']
+            if(p):
+                print("Converting Posts of "+name+" Stack Exchange into knolml")
+                qaConverter.make_path(name+"/Posts")
+                nameP = name+"/Posts"
+                qaConverter.commentsConversion(nameP,1)
+                print("Posts conversion completed for "+name+" Stack Exchange")        
+
     
     @staticmethod            
     def convert(*args, **kwargs):
@@ -1133,23 +1141,7 @@ class qaConverter(object):
                 '''
                 calling the KML converter for Stack_exchange
                 '''
-                
-                if(kwargs.get('posthistory')!=None):
-                    ph = kwargs['posthistory']
-                    if(ph):
-                        print("Converting PostHistory of "+name+" Stack Exchange into knolml")
-                        qaConverter.make_path(name+"/PostHistory")
-                        namePh = name+"/PostHistory"
-                        qaConverter.commentsConversion(namePh,0)
-                        print("PostHistory conversion completed for "+name+" Stack Exchange")
-                if(kwargs.get('post')!=None):
-                    p = kwargs['post']
-                    if(p):
-                        print("Converting Posts of "+name+" Stack Exchange into knolml")
-                        qaConverter.make_path(name+"/Posts")
-                        nameP = name+"/Posts"
-                        qaConverter.commentsConversion(nameP,1)
-                        print("Posts conversion completed for "+name+" Stack Exchange")
+                call_7z(kwargs, name)
                 
             else:
                 '''
@@ -1161,21 +1153,6 @@ class qaConverter(object):
 
                 call(["7z","x",'stackexchange/'+siteName,'-o'+name])
                 
-                if(kwargs.get('posthistory')!=None):
-                    ph = kwargs['posthistory']
-                    if(ph):
-                        print("Converting PostHistory of "+name+" Stack Exchange into knolml")
-                        qaConverter.make_path(name+"/PostHistory")
-                        namePh = name+"/PostHistory"
-                        qaConverter.commentsConversion(namePh,0)
-                        print("PostHistory conversion completed for "+name+" Stack Exchange")
-
-                if(kwargs.get('post')!=None):
-                    p = kwargs['post']
-                    if(p):
-                        print("Converting Posts of "+name+" Stack Exchange into knolml")
-                        qaConverter.make_path(name+"/Posts")
-                        nameP = name+"/Posts"
-                        qaConverter.commentsConversion(nameP,1)
-                        print("Posts conversion completed for "+name+" Stack Exchange")
+                call_7z(kwargs, name)
+                
                 
