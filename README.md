@@ -40,9 +40,8 @@ The list of dependencies is shown in `./requirements.txt`, however the installer
 
 ## INSTALL
 
-Installing KDAP is easily done using pip. Assuming it is installed, just run the
- following from the command-line:
 
+Installing kdap is easily done using pip. Assuming it is installed, just run the following from the command-line:
 ```
 pip install kdap
 ```

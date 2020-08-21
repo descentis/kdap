@@ -10,12 +10,9 @@ import mwparserfromhell as mw
 
 
 def get_graphi_by_list(article_names): # to create the induced subgraph using article names as list
-    """Create induced subgraph based on list of articles provided
+    """Create induced subgraph based on list of articles provided in the parameters
 
-    Parameters
-    ----------
-    article_names : list[str]
-        List of articles to use for subgraph
+    :param list article_names: list of articles for which the induced subgraph has to be created
 
     """
     adj_list = {}
