@@ -69,7 +69,7 @@ This project has received funding from the CSRI, Department of Science and Techn
 
 ## Authors
 + Amit Arjun Verma - Author - [descentis](https://github.com/descentis)
-+ S.R.S Iyengar - Author - [descentis](https://github.com/sudarshansudarshan)
++ S.R.S Iyengar - Author - [sudarshansudarshan](https://github.com/sudarshansudarshan)
 + Aayush Sabharwal - Contributor - [AayushSabharwal](https://github.com/AayushSabharwal)
 
 
