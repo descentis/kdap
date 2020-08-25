@@ -1,5 +1,6 @@
-Copyright (C) 2019, KDAP Developer
+Copyright (C) 2019, KDAP Developers
 Amit Arjun Verma <mt4descentis@gmail.com>
+S.R.S Iyengar <sudarshan@iitrpr.ac.in>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
