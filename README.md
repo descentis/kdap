@@ -17,6 +17,7 @@ Please check our webpage for more details [GitHub Page](https://kdap.github.io/)
 * **[Requirements](#requirements)**
 * **[Install](#install)**
 * **[Source code](#source-code)**
+* **[Tutorial](#Tutorial)**
 * **[How to contribute](#how-to-contribute)**
 * **[Knol-ML data dump](#Knol-ML-data-dump)**
 
@@ -56,6 +57,12 @@ First, clone the repo:
 > git clone https://github.com/descentis/kdap.git
 > cd kdap
 ```
+## TUTORIAL
+For information on how to use KDAP, refer to the official documentation:
+
+- [http://kdap.readthedocs.io](http://kdap.readthedocs.io)
+- Soon we will provide a video Tutorial, till then please watch our teaser on Youtube: [https://youtu.be/-3boFWHB5oM](https://youtu.be/-3boFWHB5oM)
+
 
 ## How to contribute
 Fork the project and follow the instructions on how to get started with [source code](#source-code). I will be updating the test cases on which you can test your code. Stay tuned.
@@ -69,6 +76,7 @@ This project has received funding from the CSRI, Department of Science and Techn
 
 ## Authors
 + Amit Arjun Verma - Author - [descentis](https://github.com/descentis)
++ S.R.S Iyengar - Author - [sudarshansudarshan](https://github.com/sudarshansudarshan)
 + Aayush Sabharwal - Contributor - [AayushSabharwal](https://github.com/AayushSabharwal)
 
 
