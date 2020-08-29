@@ -301,11 +301,11 @@ class instances(object):
                 return self.__get_url(self.title)
         else:
             if kwargs.get('count_words')!=None:
-                return self.__count_words(self.get_text['text'])
+                return self.__count_words(self.get_text(clean=True)['text'])
             if kwargs.get('email_id')!=None:
-                return self.__get_emailid(self.get_text['text'])
+                return self.__get_emailid(self.get_text()['text'])
             if kwargs.get('url')!=None:
-                return self.__get_url(self.get_text['text'])
+                return self.__get_url(self.get_text()['text'])
 
 # please have a look @aayush
 
