@@ -15,7 +15,6 @@ kdap/converter/wikiConverter.py
 kdap/converter/wiki_clean.py
 kdap/wiki_graph/__init__.py
 kdap/wiki_graph/graph_creater.py
-kdap/wikiextract/WikiExtractor.py
 kdap/wikiextract/__init__.py
 kdap/wikiextract/knolml_wikiextractor.py
 kdap/wikiextract/sampleExtractdb.py

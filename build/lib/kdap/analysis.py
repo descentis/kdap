@@ -28,7 +28,6 @@ from kdap.wikiextract.wikiExtract import wikiExtract
 from mwviews.api import PageviewsClient
 from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
-from kdap.converter.wiki_clean import getCleanText
 from collections import Counter 
 
 
@@ -214,9 +213,8 @@ class instances(object):
         if kwargs.get('clean') != None:
             clean = kwargs['clean']
         if clean:
-            di['text'] = getCleanText(di['text'])
+            di['text'] = wikiClean.getCleanText(di['text'])
             
-            '''
             qe = QueryExecutor()
             qe.setOutputFileDirectoryName('lol')
             qe.setNumberOfProcesses(5)
@@ -224,7 +222,6 @@ class instances(object):
             qe.setTextValue(di['text'])
             qe.runQuery()
             return qe.result()
-            '''
         
         return di
     
