@@ -10,4 +10,6 @@ import kdap
 
 knol = kdap.knol()
 
-revisions = knol.get_num_instances(dir_path='/Users/Main/Documents/research/kdap/output', granularity='monthly', start='2015-07-01')
+#knol.get_wiki_article('Indian Institute of Technology Ropar')
+fr = knol.frame(file_name='output/Indian_Institute_of_Technology_Ropar.knolml', get_bulk=False)
+#revisions = knol.get_num_instances(dir_path='/Users/Main/Documents/research/kdap/output', granularity='monthly', start='2015-07-01')
