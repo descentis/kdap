@@ -38,14 +38,14 @@ class instances(object):
     creating the instance of each object.
     The init function defined stores each instance's attribute which can be analyzed separately
     """
-    def __init__(self,instance, title):
+    def __init__(self, instance, title):
         #self.test = 'jsut to check the instances class'
         #print(self.test)
         #print(instance.tag)
         self.instanceId = instance.attrib['Id']
         self.instanceType = instance.attrib['InstanceType']
         self.instanceTitle = title
-        if(instance.attrib.get('RevisionId')!=None):
+        if instance.attrib.get('RevisionId') is not None:
             self.revId = instance.attrib['RevisionId']
         self.instance_attrib = {}
         for ch1 in instance:
@@ -62,7 +62,6 @@ class instances(object):
                         self.instance_attrib['TimeStamp']['CommunityOwnedDate'] = ch2.text
                     if 'ClosedDate' in ch2.tag:
                         self.instance_attrib['TimeStamp']['ClosedDate'] = ch2.text
-
 
             if 'Contributors' in ch1.tag:
                 self.instance_attrib['Contributors'] = {}
@@ -306,52 +305,6 @@ class instances(object):
                 return self.__get_emailid(self.get_text()['text'])
             if kwargs.get('url') is not None:
                 return self.__get_url(self.get_text()['text'])
-
-
-class knowledge_data(object):
-
-    def __init__(self, *args, **kwargs):
-        self.file_name = ''
-        self.dir_path = ''
-        self.kcounter = 0
-        self.knowledgeData_list = []
-        self.dir = 0
-        if(kwargs.get('file_name')!=None):
-            self.file_name = kwargs['file_name']
-        elif(kwargs.get('dir_path')!=None):
-            self.dir = 1
-            self.dir_path= kwargs['dir_path']
-            self.number = re.compile(r'(\d+)')
-            if os.path.isdir(self.dir_path+'/Posts'):
-                self.file_list = sorted(glob.glob(self.dir_path+'/Posts/*.knolml'), key=self.numericalSort)
-            else:
-                self.file_list = sorted(glob.glob(self.dir_path+'/*.knolml'), key=self.numericalSort)
-
-    def numericalSort(self, value):
-        parts = self.numbers.split(value)
-        parts[1::2] = map(int, parts[1::2])
-        return parts
-
-    def count_instances(self):
-        if self.file_name != '':
-            tree = ET.parse(self.file_name)
-            r = tree.getroot()
-            di = {}
-            knowledgeDataList = []
-            for child in r:
-                if 'KnowledgeData' in child.tag:
-                    #root = child
-                    for ch in child:
-                        if 'Title' in ch:
-                            title = ch.text
-                    knowledgeDataList.append([title, child])
-            for kn in knowledgeDataList:
-                length = len(kn[1].findall('Instance'))
-                di[kn[0]] = length
-
-            return di
-        else:
-            return 'file name not given'
 
 
 class knol(object):
