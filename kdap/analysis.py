@@ -33,15 +33,15 @@ from collections import Counter
 
 
 class instances(object):
-
     """
     creating the instance of each object.
     The init function defined stores each instance's attribute which can be analyzed separately
     """
+
     def __init__(self, instance, title):
-        #self.test = 'jsut to check the instances class'
-        #print(self.test)
-        #print(instance.tag)
+        # self.test = 'jsut to check the instances class'
+        # print(self.test)
+        # print(instance.tag)
         self.instanceId = instance.attrib['Id']
         self.instanceType = instance.attrib['InstanceType']
         self.instanceTitle = title
@@ -232,7 +232,7 @@ class instances(object):
         Returns the bytes detail
         """
         if self.instance_attrib['Body']['Text'].get('#Bytes') is not None:
-               return int(self.instance_attrib['Body']['Text']['#Bytes'])
+            return int(self.instance_attrib['Body']['Text']['#Bytes'])
 
     def __count_words(self, text):
         """Returns number of words in the text
@@ -258,7 +258,7 @@ class instances(object):
             TODO
 
         """
-        lst = re.findall('\S+@\S+',text)
+        lst = re.findall('\S+@\S+', text)
         return lst
 
     def __get_url(self, text):
@@ -341,10 +341,10 @@ class knol(object):
             dir_path = kwargs['dir_path']
             self.numbers = re.compile(r'(\d+)')
             self.file_count = 0
-            if os.path.isdir(dir_path+'/Posts'):
-                self.file_list = sorted(glob.glob(dir_path+'/Posts/*.knolml'), key=self.numericalSort)
+            if os.path.isdir(dir_path + '/Posts'):
+                self.file_list = sorted(glob.glob(dir_path + '/Posts/*.knolml'), key=self.numericalSort)
             else:
-                self.file_list = sorted(glob.glob(dir_path+'/*.knolml'), key=self.numericalSort)
+                self.file_list = sorted(glob.glob(dir_path + '/*.knolml'), key=self.numericalSort)
 
         self.elem_counter = 0
         if kwargs.get('get_bulk') is None or not kwargs.get('get_bulk'):
@@ -378,12 +378,12 @@ class knol(object):
                 elif elem.tag == 'Instance':
                     yield instances(elem, title)
 
-
-    #******************methods related to frames ends here*****************************
+    # ******************methods related to frames ends here*****************************
 
     '''
     Following methods are used to download the relavent dataset from archive in Knol-ML format
     '''
+
     def extract_from_bzip(self, *args, **kwargs):
         # file, art, index, home, key
         file = kwargs['file']
@@ -391,26 +391,25 @@ class knol(object):
         index = kwargs['index']
         home = kwargs['home']
         key = kwargs['key']
-        filet = home+"/knolml_dataset/bz2t/"+file+'t'
+        filet = home + "/knolml_dataset/bz2t/" + file + 't'
         chunk = 1000
         try:
-            f = SeekableBzip2File(self.dump_directory+'/'+file, filet)
+            f = SeekableBzip2File(self.dump_directory + '/' + file, filet)
             f.seek(int(index))
             strData = f.read(chunk).decode("utf-8")
             artName = art.replace(" ", "_")
             artName = artName.replace("/", "__")
-            if not os.path.isdir(home+'/knolml_dataset/output/'+key):
-                os.makedirs(home+'/knolml_dataset/output/'+key)
-            if not os.path.exists(home+'/knolml_dataset/output/'+key+'/'+artName+".xml"):
-                article = open(home+'/knolml_dataset/output/'+key+'/'+artName+".xml", 'w+')
+            if not os.path.isdir(home + '/knolml_dataset/output/' + key):
+                os.makedirs(home + '/knolml_dataset/output/' + key)
+            if not os.path.exists(home + '/knolml_dataset/output/' + key + '/' + artName + ".xml"):
+                article = open(home + '/knolml_dataset/output/' + key + '/' + artName + ".xml", 'w+')
                 article.write('<mediawiki>\n')
                 article.write('<page>\n')
-                article.write('\t\t<title>'+art+'</title>\n')
-                #article.write(strData)
-                while '</page>' not in strData :
+                article.write('\t\t<title>' + art + '</title>\n')
+                # article.write(strData)
+                while '</page>' not in strData:
                     article.write(strData)
-                    strData = f.read(chunk).decode("utf-8", errors = "ignore")
-
+                    strData = f.read(chunk).decode("utf-8", errors="ignore")
 
                 end = strData.find('</page>')
                 article.write(strData[:end])
@@ -438,7 +437,9 @@ class knol(object):
                     articles.append(article)
                     pass
                 else:
-                    print("The same name article: '"+article+"' has not been found. Using the name as: "+wiki_names[0])
+                    print(
+                        "The same name article: '" + article + "' has not been found. Using the name as: " + wiki_names[
+                            0])
                     articles.append(wiki_names[0])
             return articles
         else:
@@ -446,55 +447,53 @@ class knol(object):
             if article_list in wiki_names:
                 return article_list
             else:
-                print("The same name article: '"+article_list+"' has not been found. Using the name as: "+wiki_names[0])
+                print("The same name article: '" + article_list + "' has not been found. Using the name as: " +
+                      wiki_names[0])
                 return wiki_names[0]
 
     def download_from_dump(self, home, articles, key):
-        if not os.path.isdir(home+'/knolml_dataset/phase_details'):
+        if not os.path.isdir(home + '/knolml_dataset/phase_details'):
             download('knolml_dataset', verbose=True, glob_pattern='phase_details.7z', destdir=home)
             Archive('~/knolml_dataset/phase_details.7z').extractall('~/knolml_dataset')
-        if not os.path.isdir(home+'/knolml_dataset/bz2t'):
+        if not os.path.isdir(home + '/knolml_dataset/bz2t'):
             download('knolml_dataset', verbose=True, glob_pattern='bz2t.7z', destdir=home)
-            Archive('~/knolml_dataset/bz2t.7z').extractall(home+'/knolml_dataset')
-        fileList = glob.glob(home+'/knolml_dataset/phase_details/*.txt')
+            Archive('~/knolml_dataset/bz2t.7z').extractall(home + '/knolml_dataset')
+        fileList = glob.glob(home + '/knolml_dataset/phase_details/*.txt')
         for files in fileList:
-            if('phase' in files):
-                with open(files,'r') as myFile:
+            if 'phase' in files:
+                with open(files, 'r') as myFile:
                     for line in myFile:
                         l = line.split('#$*$#')
                         if l[0] in articles:
-                            print("Found hit for article "+l[0])
+                            print("Found hit for article " + l[0])
                             # file, art, index, home, key
-                            self.extract_from_bzip(file=l[1],art=l[0],index=int(l[2]), home=home, key=key)
+                            self.extract_from_bzip(file=l[1], art=l[0], index=int(l[2]), home=home, key=key)
 
     def download_dataset(self, *args, **kwargs):
-        # sitename = Portal name
-        # article_list = [] List of article to be extracted
-        # wikipedia_dump = directory of the wikipedia dump
         """Download dataset from site
 
         Parameters
         ----------
-        sitename : basestring
+        \*\*sitename : basestring
             Name of portal to download from
-        article_list : list[str]
+        \*\*article_list : list[str]
             List of articles to download
-        destdir: str
+        \*\*destdir: str
             TODO
-        wikipedia_dump: str
+        \*\*wikipedia_dump: str
             TODO
-        download : str
+        \*\*download : str
             TODO
-        category_list : list[str]
+        \*\*category_list : list[str]
             TODO
-        template_list : list[str]
+        \*\*template_list : list[str]
             TODO
-        portal : str
+        \*\*portal : str
             TODO
 
         """
 
-        if kwargs.get('sitename') != None:
+        if kwargs.get('sitename') is not None:
             sitename = kwargs['sitename'].lower()
         else:
             print('add sitename')
@@ -506,38 +505,44 @@ class knol(object):
         sitename = sitename.lower()
         home = expanduser("~")
         download_data = True
-        if kwargs.get('destdir') != None:
+        if kwargs.get('destdir') is not None:
             destdir = kwargs['destdir']
         else:
-            if not os.path.isdir(home+'/knolml_dataset/wikipedia_articles'):
-                os.makedirs(home+'/knolml_dataset/wikipedia_articles')
-            destdir = home+'/knolml_dataset/wikipedia_articles'
+            if not os.path.isdir(home + '/knolml_dataset/wikipedia_articles'):
+                os.makedirs(home + '/knolml_dataset/wikipedia_articles')
+            destdir = home + '/knolml_dataset/wikipedia_articles'
 
-        if kwargs.get('wikipedia_dump')!=None:
+        if kwargs.get('wikipedia_dump') is not None:
             self.dump_directory = kwargs['wikipedia_dump']
 
-        if kwargs.get('convert')!=None:
+        if kwargs.get('convert') is not None:
             convert = kwargs['convert']
         else:
             convert = True
 
         if sitename == 'wikipedia':
-            if kwargs.get('article_list')!=None:
+            if kwargs.get('article_list') is not None:
                 article_list = kwargs['article_list']
                 key = 'article_list'
-                #articles = self.get_article_name(article_list)
+                # articles = self.get_article_name(article_list)
                 self.download_from_dump(home, article_list, key)
 
                 if convert:
                     if compress_bool:
-                        wikiConverter.compressAll(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                        wikiConverter.compressAll(home + '/knolml_dataset/output/' + key,
+                                                  output_dir=destdir + '/' + key)
                     else:
                         print("conversion started")
-                        wikiConverter.convertall(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
-            if kwargs.get('download')!=None:
+                        wikiConverter.convertall(home + '/knolml_dataset/output/' + key, output_dir=destdir + '/' + key)
+
+                if not kwargs.get('wikipedia_dump'):
+                    for article in article_list:
+                        self.get_wiki_article(article, kwargs)
+
+            if kwargs.get('download') is not None:
                 download_data = kwargs['download']
 
-            if kwargs.get('category_list')!= None:
+            if kwargs.get('category_list') is not None:
                 category_list = kwargs['category_list']
                 final_category_list = []
                 final_category = {}
@@ -545,8 +550,7 @@ class knol(object):
                 we = wikiExtract()
                 for category_name in category_list:
                     category_title = we.get_articles_by_category(category_name)
-                    #print(category_title)
-                    for key,val in category_title.items():
+                    for key, val in category_title.items():
                         if key != 'extra#@#category':
                             final_category[key] = val
                             if download_data:
@@ -556,15 +560,17 @@ class knol(object):
                                 articles = self.get_article_name(download_list)
                                 self.download_from_dump(home, articles, key)
                                 if compress_bool:
-                                    wikiConverter.compressAll(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                                    wikiConverter.compressAll(home + '/knolml_dataset/output/' + key,
+                                                              output_dir=destdir + '/' + key)
                                 else:
                                     print("conversion started")
-                                    wikiConverter.convertall(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                                    wikiConverter.convertall(home + '/knolml_dataset/output/' + key,
+                                                             output_dir=destdir + '/' + key)
                         else:
                             li = []
                             for el in category_title[key]:
-                                category_list.append(el['title'].replace('Category:',''))
-                                li.append(el['title'].replace('Category:',''))
+                                category_list.append(el['title'].replace('Category:', ''))
+                                li.append(el['title'].replace('Category:', ''))
 
                             sub_category[category_name] = li
                 final_category_list.append(final_category)
@@ -572,7 +578,7 @@ class knol(object):
 
                 return final_category_list
 
-            if kwargs.get('template_list')!= None:
+            if kwargs.get('template_list') is not None:
                 template_list = kwargs['template_list']
                 final_template_list = []
                 final_template = {}
@@ -580,8 +586,8 @@ class knol(object):
                 we = wikiExtract()
                 for template_name in template_list:
                     template_title = we.get_articles_by_template(template_name)
-                    #print(category_title)
-                    for key,val in template_title.items():
+                    # print(category_title)
+                    for key, val in template_title.items():
                         if key != 'extra#@#category':
                             final_template[key] = val
                             if download_data:
@@ -591,15 +597,17 @@ class knol(object):
                                 articles = self.get_article_name(download_list)
                                 self.download_from_dump(home, articles, key)
                                 if compress_bool:
-                                    wikiConverter.compressAll(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                                    wikiConverter.compressAll(home + '/knolml_dataset/output/' + key,
+                                                              output_dir=destdir + '/' + key)
                                 else:
                                     print("conversion started")
-                                    wikiConverter.convertall(home+'/knolml_dataset/output/'+key,output_dir=destdir+'/'+key)
+                                    wikiConverter.convertall(home + '/knolml_dataset/output/' + key,
+                                                             output_dir=destdir + '/' + key)
                         else:
                             li = []
                             for el in template_title[key]:
-                                template_list.append(el['title'].replace('Category:',''))
-                                li.append(el['title'].replace('Category:',''))
+                                template_list.append(el['title'].replace('Category:', ''))
+                                li.append(el['title'].replace('Category:', ''))
 
                             sub_template[category_name] = li
                 final_template_list.append(final_template)
@@ -607,17 +615,11 @@ class knol(object):
 
                 return final_template_list
         elif sitename == 'stackexchange':
-            if kwargs.get('portal')!=None:
+            if kwargs.get('portal') is not None:
                 portal = kwargs['portal']
                 qaConverter.convert(name=portal, download=True, post=True)
 
-    '''
-    get_article method downloads the full revision history of an article in knol-ML format
-    '''
     def get_wiki_article(self, article_name, *args, **kwargs):
-        #self.file_name = article_name.replace(' ','_')
-        #self.file_name = self.file_name.replace('/','__')
-        #self.file_name = self.file_name+'.knolml'
         """Downloads the full revision history of an article in knol-ML format
 
         Parameters
@@ -631,44 +633,46 @@ class knol(object):
         compress = False
         wiki_names = wikipedia.search(article_name)
         output_dir = 'output'
-        if(kwargs.get('output_dir')!=None):
+        if kwargs.get('output_dir') is not None:
             output_dir = kwargs['output_dir']
-
-
-        #self.file_name = output_dir+'/'+self.file_name
 
         if article_name in wiki_names:
             if compress:
                 wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
                 article_name = article_name.replace(' ', '_')
                 article_name = article_name.replace('/', '__')
-                wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+                wikiConverter.compress('outputD/' + article_name + '.knolml', output_dir)
             else:
                 wikiConverter.getArticle(file_name=article_name, output_dir=output_dir)
         else:
-            print("Article name is not found. Taking '"+wiki_names[0]+"' as the article name")
+            print("Article name is not found. Taking '" + wiki_names[0] + "' as the article name")
             article_name = wiki_names[0]
             wikiConverter.getArticle(file_name=article_name, output_dir='outputD')
             article_name = article_name.replace(' ', '_')
             article_name = article_name.replace('/', '__')
-            wikiConverter.compress('outputD/'+article_name+'.knolml', output_dir)
+            wikiConverter.compress('outputD/' + article_name + '.knolml', output_dir)
 
-
-
-    '''
-    function to display the query on database
-    '''
     def display_data(self, query, conn):
+        """Display the query on database
+
+        Parameters
+        ----------
+        query :
+            TODO
+        conn :
+            TODO
+
+        Returns
+        -------
+            TODO
+        """
         cursor = conn.execute(query)
         displayList = []
         for row in cursor:
-             displayList.append(row)
+            displayList.append(row)
 
         return displayList
 
-    '''
-    following function queries the database to extract the articles based on category namme
-    '''
     def get_wiki_article_by_class(self, *args, **kwargs):
         """Query database to extract articles based on category name
 
@@ -676,38 +680,41 @@ class knol(object):
 
         Parameters
         ----------
-        wikiproject : str
+        \*\*wikiproject : str
             TODO
-        wiki_class : str
+        \*\*wiki_class : str
             TODO
 
         """
         home = expanduser("~")
-        if not os.path.exists(home+'/knolml_dataset/articleDescdb.db'):
+        if not os.path.exists(home + '/knolml_dataset/articleDescdb.db'):
             download('knolml_dataset', verbose=True, glob_pattern='articleDescdb.db', destdir=home)
         try:
-            conn = sqlite3.connect(home+'/knolml_dataset/articleDescdb.db')		#connecting to database
+            conn = sqlite3.connect(home + '/knolml_dataset/articleDescdb.db')  # connecting to database
             print("Connection made")
         except:
             print("connection refused")
 
-        if kwargs.get('wikiproject')!=None:
+        if kwargs.get('wikiproject') is not None:
             wikiproject = kwargs['wikiproject'].lower()
 
             article_id = []
-            if wikiproject.lower()!='mathematics':
-                article_ids = self.display_data("select article_nm,project from wiki_project where project='"+wikiproject.lower()+"';",conn)
+            if wikiproject.lower() != 'mathematics':
+                article_ids = self.display_data(
+                    "select article_nm,project from wiki_project where project='" + wikiproject.lower() + "';", conn)
                 for i in article_ids:
                     article_id.append(i[0])
                 article_id = str(tuple(article_id))
 
-                articles = self.display_data("select article_nm from article_desc where article_id in "+article_id+";", conn)
+                articles = self.display_data(
+                    "select article_nm from article_desc where article_id in " + article_id + ";", conn)
             else:
-                articles = self.download_dataset('wikipedia', category_list=['WikiProject Mathematics articles'], download=False)
+                articles = self.download_dataset('wikipedia', category_list=['WikiProject Mathematics articles'],
+                                                 download=False)
 
-        if kwargs.get('wiki_class')!=None:
+        if kwargs.get('wiki_class') is not None:
             c = kwargs['wiki_class'].lower()
-            if c=='fa':
+            if c == 'fa':
                 c = 'FA'
             elif c == 'ga':
                 c = 'GA'
@@ -722,16 +729,16 @@ class knol(object):
             elif c == 'stub':
                 c = 'Stub'
 
-            articles = self.display_data("select article_id, article_nm from article_desc where class ='"+c+"';", conn)
+            articles = self.display_data("select article_id, article_nm from article_desc where class ='" + c + "';",
+                                         conn)
         return articles
-
 
     # All the analysis functions are written after this
     def __instance_date(self, *args, **kwargs):
-        if kwargs.get('file_list') != None:
+        if kwargs.get('file_list') is not None:
             file_list = kwargs['file_list']
         for file_name in file_list:
-            context_wiki = ET.iterparse(file_name, events=("start","end"))
+            context_wiki = ET.iterparse(file_name, events=("start", "end"))
             # Turning it into an iterator
             context_wiki = iter(context_wiki)
 
@@ -745,67 +752,67 @@ class knol(object):
                             if 'TimeStamp' in ch1.tag:
                                 for ch2 in ch1:
                                     if 'CreationDate' in ch2.tag:
-                                        d = ch2.text.replace('-','')
+                                        d = ch2.text.replace('-', '')
                                         date.append(d.split('T')[0])
                         elem.clear()
                         root_wiki.clear()
             except:
-                print('problem with file parsing: '+file_name)
+                print('problem with file parsing: ' + file_name)
 
-            if(kwargs.get('instance_date')!=None):
-                if kwargs.get('dir_path')!=None:
-                    file_name = file_name.replace(kwargs['dir_path']+'/','')
+            if (kwargs.get('instance_date') != None):
+                if kwargs.get('dir_path') != None:
+                    file_name = file_name.replace(kwargs['dir_path'] + '/', '')
                 else:
                     file_name = file_name.split('/')[-1]
                 file_name = file_name[:-7].replace('_', ' ')
                 file_name = file_name.replace('__', '/')
                 kwargs['instance_date'][file_name] = date
 
-
     def get_instance_date(self, *args, **kwargs):
         '''
         This piece of code is to ensure the multiprocessing
         '''
-        if(kwargs.get('file_list')!=None):
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
         else:
-            cnum = 4           # Bydefault it is 4
+            cnum = 4  # Bydefault it is 4
 
         fileNum = len(file_list)
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
 
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
         manager = Manager()
         instance_date = manager.dict()
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=self.__instance_date, kwargs={'file_list':fileList[i], 'instance_date': instance_date,'l': l})
+            processDict[i + 1] = Process(target=self.__instance_date,
+                                         kwargs={'file_list': fileList[i], 'instance_date': instance_date, 'l': l})
 
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return instance_date
 
@@ -826,41 +833,40 @@ class knol(object):
         if site_name.lower() == 'wikipedia':
             start = ''
             end = ''
-            granularity='monthly'
-            if kwargs.get('article_name')!=None:
+            granularity = 'monthly'
+            if kwargs.get('article_name') != None:
                 article_name = kwargs['article_name']
             article_name = self.get_article_name(article_name)
-            if kwargs.get('start')!=None:
-                start = kwargs['start'].replace('-','')
+            if kwargs.get('start') != None:
+                start = kwargs['start'].replace('-', '')
 
-            if kwargs.get('end')!=None:
-                end = kwargs['end'].replace('-','')
+            if kwargs.get('end') != None:
+                end = kwargs['end'].replace('-', '')
 
-            if kwargs.get('granularity')!=None:
+            if kwargs.get('granularity') != None:
                 granularity = kwargs['granularity']
 
             p = PageviewsClient(user_agent="<person@organization.org>")
 
-            if start=='':
+            if start == '':
                 return p.article_views('en.wikipedia', article_name, granularity=granularity)
-            elif end=='':
+            elif end == '':
                 return p.article_views('en.wikipedia', article_name, granularity=granularity, start=start, end=start)
             else:
                 return p.article_views('en.wikipedia', article_name, granularity=granularity, start=start, end=end)
 
     @staticmethod
     def get_diff_match(revisionsDict, length, n):
-        #n = int(input(str(length)+" Revisons found, enter the revision number to be loaded: "))
+        # n = int(input(str(length)+" Revisons found, enter the revision number to be loaded: "))
         returnResult = []
         original = n
-        m = int((math.log(length)) ** 2)+1
-        if n%m != 0:
-            interval = n - (n%m) + 1
+        m = int((math.log(length)) ** 2) + 1
+        if n % m != 0:
+            interval = n - (n % m) + 1
             n = n - interval + 1
         else:
-            interval = n - (m-1)
+            interval = n - (m - 1)
             n = n - interval + 1
-
 
         count = interval
         prev_str = revisionsDict[count]
@@ -870,9 +876,9 @@ class knol(object):
             count += 1
             s = [x.replace("\n", "`").replace("-", "^") for x in prev_str.split(" ")]
             i = 0
-            while(True):
+            while True:
                 if i == len(s):
-                    break;
+                    break
                 if s[i].isspace() or s[i] == '':
                     del s[i]
                 else:
@@ -881,9 +887,9 @@ class knol(object):
             next_rev = revisionsDict[count]
             s2 = next_rev.split(" ")
             i = 0
-            while(True):
+            while True:
                 if i == len(s2):
-                    break;
+                    break
                 if s2[i].isspace() or s2[i] == '':
                     del s2[i]
                 else:
@@ -893,17 +899,17 @@ class knol(object):
             result = ""
             for x in s2:
                 if x.isdigit():
-                    for i in range(index, index+int(x)):
+                    for i in range(index, index + int(x)):
                         result += s[i].replace("`", "\n").replace("^", "-")
                         result += " "
                         index += 1
                 elif x[0] == "'" and x[-1] == "'" and x[1:-1].isdigit():
 
-                        result += x[1:-1].replace("`", "\n			").replace("^", "-")
-                        result += " "
+                    result += x[1:-1].replace("`", "\n			").replace("^", "-")
+                    result += " "
                 else:
                     if x[0] == '-':
-                        for i in range(index, index+int(x[1:])):
+                        for i in range(index, index + int(x[1:])):
                             index += 1
                     else:
                         result += x.replace("`", "\n			").replace("^", "-")
@@ -914,15 +920,13 @@ class knol(object):
 
         return returnResult
 
-
-
     @classmethod
-    def wikiRetrieval(cls,file_name,n):
+    def wikiRetrieval(cls, file_name, n):
         tree = ET.parse(file_name)
         r = tree.getroot()
         revisionsDict = {}
         for child in r:
-            if('KnowledgeData' in child.tag):
+            if ('KnowledgeData' in child.tag):
                 root = child
         length = len(root.findall('Instance'))
         for each in root.iter('Instance'):
@@ -934,9 +938,7 @@ class knol(object):
         returnResult = knol.get_diff_match(revisionsDict, length, n)
         return returnResult
 
-
-    def allRevisions(self,file_name,root,tree):
-
+    def allRevisions(self, file_name, root, tree):
 
         '''
         for child in r:
@@ -944,10 +946,9 @@ class knol(object):
                 root = child
         '''
 
-
         for child in root:
-            if('KnowledgeData' in child.tag):
-                if('Wiki' in child.attrib['Type']):
+            if ('KnowledgeData' in child.tag):
+                if ('Wiki' in child.attrib['Type']):
                     length = len(child.findall('Instance'))
                     if length == 1:
                         print("No revisions found, generate revisions from xmltoknml.py first")
@@ -955,56 +956,49 @@ class knol(object):
 
                     revisionList = []
                     k = int((math.log(length)) ** 2)
-                    for i in range(k+1,(math.ceil(length/(k+1))-1)*(k+1)+1,(k+1)):
+                    for i in range(k + 1, (math.ceil(length / (k + 1)) - 1) * (k + 1) + 1, (k + 1)):
                         revisionList.append(i)
 
                     revisionList.append(length)
-                #print(revisionList)
-
-
-
+                # print(revisionList)
 
         return revisionList
 
-
     @classmethod
-    def getAllRevisions(cls,file_name):
+    def getAllRevisions(cls, file_name):
         tree = ET.parse(file_name)
         root = tree.getroot()
 
-
         for child in root:
-            if('KnowledgeData' in child.tag):
-                #print(child.attrib['Type'])
-                if('Wiki' in child.attrib['Type']):
-                    revisionsList = cls.allRevisions(cls,file_name,root,tree)
-                elif('QA' in child.attrib['Type']):
+            if ('KnowledgeData' in child.tag):
+                # print(child.attrib['Type'])
+                if ('Wiki' in child.attrib['Type']):
+                    revisionsList = cls.allRevisions(cls, file_name, root, tree)
+                elif ('QA' in child.attrib['Type']):
                     revisionsList = child
 
         return revisionsList
 
-
     '''
     This is dummy function to refer how to get all the revisions of wiki    
     '''
+
     def getRev(self, file_name):
         cRev = 1
-        #print(revisionList)
+        # print(revisionList)
         revisionList = self.getAllRevisions(file_name)
         for rev in revisionList:
-            revisions = self.wikiRetrieval(file_name,rev)
-            #print(len(revisions))
+            revisions = self.wikiRetrieval(file_name, rev)
+            # print(len(revisions))
             for revision in revisions:
                 # write your analysis for each revision
                 x = 0
 
-                with open('dummy.txt','a') as myFile:
-                    myFile.write(revision+'\n')
-                    myFile.write(str(cRev)+'\n')
+                with open('dummy.txt', 'a') as myFile:
+                    myFile.write(revision + '\n')
+                    myFile.write(str(cRev) + '\n')
 
-                cRev+=1
-
-
+                cRev += 1
 
     '''
     This function can be used to get knol from a knolml file.
@@ -1014,21 +1008,19 @@ class knol(object):
 
     # Yet to add the function
 
-
-
     def __countRev(self, *args, **kwargs):
         if kwargs.get('file_list') != None:
             file_list = kwargs['file_list']
         if kwargs.get('l') != None:
             l = kwargs['l']
         for file_name in file_list:
-            context_wiki = ET.iterparse(file_name, events=("start","end"))
+            context_wiki = ET.iterparse(file_name, events=("start", "end"))
             # Turning it into an iterator
             context_wiki = iter(context_wiki)
             if kwargs.get('granularity') != None:
                 d_form = '%Y-%m-%d'
                 start = datetime.strptime(kwargs['start'], d_form)
-                if kwargs.get('end')!=None:
+                if kwargs.get('end') != None:
                     if kwargs['end'] != '':
                         end = datetime.strptime(kwargs['end'], d_form)
                 m1 = start.month
@@ -1043,24 +1035,24 @@ class knol(object):
                 for event, elem in context_wiki:
                     if event == "end" and 'Instance' in elem.tag:
                         if kwargs.get('instance_type') != None:
-                            if kwargs['instance_type'] == 'question' and elem.attrib['InstanceType']=='Question':
+                            if kwargs['instance_type'] == 'question' and elem.attrib['InstanceType'] == 'Question':
                                 l.acquire()
-                                if(kwargs.get('revisionLength')!=None):
+                                if (kwargs.get('revisionLength') != None):
                                     if kwargs['revisionLength'].get('questions') == None:
                                         kwargs['revisionLength']['questions'] = 1
                                     else:
                                         kwargs['revisionLength']['questions'] += 1
                                 l.release()
-                            elif kwargs['instance_type'] == 'answer' and elem.attrib['InstanceType']=='Answer':
+                            elif kwargs['instance_type'] == 'answer' and elem.attrib['InstanceType'] == 'Answer':
                                 l.acquire()
-                                if(kwargs.get('revisionLength')!=None):
+                                if (kwargs.get('revisionLength') != None):
                                     if kwargs['revisionLength'].get('answers') == None:
                                         kwargs['revisionLength']['answers'] = 1
                                     else:
                                         kwargs['revisionLength']['answers'] += 1
                                 l.release()
 
-                        total_rev+=1
+                        total_rev += 1
                         for ch1 in elem:
                             if 'TimeStamp' in ch1.tag:
                                 for ch2 in ch1:
@@ -1069,17 +1061,17 @@ class knol(object):
                                         if kwargs.get('granularity') != None:
                                             if kwargs['granularity'].lower() == 'monthly':
                                                 t = datetime.strptime(t, date_format)
-                                                if t>= start:
-                                                    if total_rev_dict.get(t.year)==None:
+                                                if t >= start:
+                                                    if total_rev_dict.get(t.year) == None:
                                                         total_rev_dict[t.year] = {}
                                                         total_rev_dict[t.year][t.month] = 1
-                                                    elif total_rev_dict[t.year].get(t.month)==None:
+                                                    elif total_rev_dict[t.year].get(t.month) == None:
                                                         total_rev_dict[t.year][t.month] = 1
                                                     else:
                                                         total_rev_dict[t.year][t.month] += 1
                                             if kwargs['granularity'].lower() == 'yearly':
-                                                if t>=start:
-                                                    if total_rev_dict.get(t.year)==None:
+                                                if t >= start:
+                                                    if total_rev_dict.get(t.year) == None:
                                                         total_rev_dict[t.year] = 1
                                                     else:
                                                         total_rev_dict[t.year] += 1
@@ -1087,12 +1079,12 @@ class knol(object):
                         elem.clear()
                         root_wiki.clear()
             except:
-                print('problem with file parsing: '+file_name)
-            #print(total_rev_dict)
-            #return total_rev_dict
-            if(kwargs.get('revisionLength')!=None and kwargs['instance_type']==''):
-                if kwargs.get('dir_path')!=None:
-                    file_name = file_name.replace(kwargs['dir_path']+'/','')
+                print('problem with file parsing: ' + file_name)
+            # print(total_rev_dict)
+            # return total_rev_dict
+            if (kwargs.get('revisionLength') != None and kwargs['instance_type'] == ''):
+                if kwargs.get('dir_path') != None:
+                    file_name = file_name.replace(kwargs['dir_path'] + '/', '')
                 file_name = file_name[:-7].replace('_', ' ')
                 file_name = file_name.replace('__', '/')
                 if kwargs.get('granularity') != None:
@@ -1100,42 +1092,40 @@ class knol(object):
                 else:
                     kwargs['revisionLength'][file_name] = total_rev
 
-
-
     def get_num_instances(self, *args, **kwargs):
         '''
         This piece of code is to ensure the multiprocessing
         Enter a date in YYYY-MM-DD format for start and end dates
         '''
-        if kwargs.get('instance_type')!=None:
+        if kwargs.get('instance_type') != None:
             instance_type = kwargs['instance_type']
         else:
             instance_type = ''
 
-        if(kwargs.get('file_list')!=None):
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
         else:
-            cnum = 4           # Bydefault it is 4
+            cnum = 4  # Bydefault it is 4
 
         fileNum = len(file_list)
 
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
 
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
 
@@ -1144,7 +1134,7 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
@@ -1152,19 +1142,24 @@ class knol(object):
             if kwargs.get('granularity') != None:
                 granularity = kwargs['granularity']
                 start = kwargs['start']
-                if kwargs.get('end')!=None:
+                if kwargs.get('end') != None:
                     end = kwargs['end']
                 else:
                     end = ''
-                processDict[i+1] = Process(target=self.__countRev, kwargs={'file_list':fileList[i], 'revisionLength': revisionLength, 'dir_path': dir_path, 'granularity': granularity, 'start': start, 'end':end, 'instance_type':instance_type, 'l': l})
+                processDict[i + 1] = Process(target=self.__countRev,
+                                             kwargs={'file_list': fileList[i], 'revisionLength': revisionLength,
+                                                     'dir_path': dir_path, 'granularity': granularity, 'start': start,
+                                                     'end': end, 'instance_type': instance_type, 'l': l})
 
             else:
-                processDict[i+1] = Process(target=self.__countRev, kwargs={'file_list':fileList[i], 'revisionLength': revisionLength, 'dir_path': dir_path, 'instance_type':instance_type,'l': l})
+                processDict[i + 1] = Process(target=self.__countRev,
+                                             kwargs={'file_list': fileList[i], 'revisionLength': revisionLength,
+                                                     'dir_path': dir_path, 'instance_type': instance_type, 'l': l})
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return revisionLength
 
@@ -1173,13 +1168,14 @@ class knol(object):
             for line in myFile:
                 if '<KnowledgeData' in line and 'QA' in line:
                     return True
+
     def get_instance_id(self, *args, **kwargs):
         if kwargs.get('file_path') != None:
             file_name = kwargs['file_path']
             f = file_name.split('/')[-1]
             instance = {}
 
-            context_wiki = ET.iterparse(file_name, events=("start","end"))
+            context_wiki = ET.iterparse(file_name, events=("start", "end"))
             # Turning it into an iterator
             context_wiki = iter(context_wiki)
             event_wiki, root_wiki = next(context_wiki)
@@ -1196,12 +1192,12 @@ class knol(object):
         if kwargs.get('dir_path') != None:
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
             instance = {}
             if self.__is_qa(file_list[0]):
                 for files in file_list:
                     f = files.split('/')[-1]
-                    context_wiki = ET.iterparse(files, events=("start","end"))
+                    context_wiki = ET.iterparse(files, events=("start", "end"))
                     # Turning it into an iterator
                     context_wiki = iter(context_wiki)
                     event_wiki, root_wiki = next(context_wiki)
@@ -1211,7 +1207,7 @@ class knol(object):
                                 instance[f] = []
                                 instance[f].append(elem['Id'])
                             elif kwargs['type'] == 'accepted answer':
-                                if elem.attrib.get('AcceptedAnswerId')!=None:
+                                if elem.attrib.get('AcceptedAnswerId') != None:
                                     instance[f] = []
                                     instance[f].append(elem.attrib['Id'])
                             elem.clear()
@@ -1219,21 +1215,20 @@ class knol(object):
 
             return instance
 
-
     def get_wiki_talk_instance(self, *args, **kwargs):
-        if kwargs.get('file_path')!=None:
+        if kwargs.get('file_path') != None:
             file_name = kwargs['file_path']
             rev = wikiExtract.get_wiki_revision(file_name)
             revisions = {}
             revisions[file_name.split('/')[-1]] = rev
 
-        if kwargs.get('file_list')!=None:
+        if kwargs.get('file_list') != None:
             for file_name in kwargs['file_list']:
                 rev = wikiExtract.get_wiki_revision(file_name)
 
-                if(kwargs.get('revisions')!=None):
-                    if kwargs.get('dir_path')!=None:
-                        file_name = file_name.replace(kwargs['dir_path']+'/','')
+                if (kwargs.get('revisions') != None):
+                    if kwargs.get('dir_path') != None:
+                        file_name = file_name.replace(kwargs['dir_path'] + '/', '')
                     file_name = file_name[:-7].replace('_', ' ')
                     file_name = file_name.replace('__', '/')
                     kwargs['revisions'][file_name] = rev
@@ -1243,29 +1238,29 @@ class knol(object):
         This piece of code is to ensure the multiprocessing
         Enter a date in YYYY-MM-DD format for start and end dates
         '''
-        if(kwargs.get('file_list')!=None):
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
         else:
-            cnum = 4           # Bydefault it is 4
+            cnum = 4  # Bydefault it is 4
 
         fileNum = len(file_list)
 
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
 
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
 
@@ -1274,45 +1269,46 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
         for i in range(pNum):
-
-            processDict[i+1] = Process(target=self.get_wiki_talk_instance, kwargs={'file_list':fileList[i], 'revisions': revisions, 'dir_path': dir_path,'l': l})
+            processDict[i + 1] = Process(target=self.get_wiki_talk_instance,
+                                         kwargs={'file_list': fileList[i], 'revisions': revisions, 'dir_path': dir_path,
+                                                 'l': l})
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return revisions
 
     def __get_editor(self, *args, **kwargs):
-        #print(file_name)
-        if(kwargs.get('file_path')!=None):
+        # print(file_name)
+        if (kwargs.get('file_path') != None):
             file_name = kwargs['file_path']
             tree = ET.parse(file_name)
             root = tree.getroot()
 
             uList = []
             for child in root:
-                if('KnowledgeData' in child.tag):
+                if ('KnowledgeData' in child.tag):
                     for ch in child:
-                        if('Instance' in ch.tag):
+                        if ('Instance' in ch.tag):
                             for newch in ch:
-                                if('Contributors' in newch.tag):
+                                if ('Contributors' in newch.tag):
                                     for chi in newch:
-                                        if('OwnerUserId' in chi.tag):
-                                            if(chi.text not in uList):
+                                        if ('OwnerUserId' in chi.tag):
+                                            if (chi.text not in uList):
                                                 uList.append(chi.text)
             return uList
 
-        elif(kwargs.get('file_name')!=None):
+        elif (kwargs.get('file_name') != None):
             file_name = kwargs['file_name']
             for f in file_name:
-                context_wiki = ET.iterparse(f, events=("start","end"))
+                context_wiki = ET.iterparse(f, events=("start", "end"))
                 # Turning it into an iterator
                 context_wiki = iter(context_wiki)
                 event_wiki, root_wiki = next(context_wiki)
@@ -1322,75 +1318,75 @@ class knol(object):
                 try:
                     for event, elem in context_wiki:
                         if event == "end" and 'Instance' in elem.tag:
-                                for newch in elem:
-                                    if 'TimeStamp' in newch.tag:
-                                        for ch1 in newch:
-                                            if 'CreationDate' in ch1.tag:
-                                                date_format = "%Y-%m-%dT%H:%M:%S.%f"
-                                                t = datetime.strptime(ch1.text, date_format)
-                                                if kwargs.get('granularity')!=None:
-                                                    if kwargs.get('start')!=None:
-                                                        s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
-                                                        if t>s:
-                                                            editor_bool = 1
-                                                    if kwargs.get('end')!=None:
-                                                        e = datetime.strptime(kwargs['end'], '%Y-%m-%d')
-                                                        if t>e:
-                                                            editor_bool = 0
-                                                            continue
-                                                    if kwargs['granularity'].lower() == 'monthly':
-                                                        if editor_dict.get(t.year)==None:
-                                                            editor_dict[t.year] = {}
-                                                            editor_dict[t.year][t.month] = []
-                                                        elif editor_dict[t.year].get(t.month)==None:
-                                                            editor_dict[t.year][t.month] = []
-                                                    elif kwargs['granularity'].lower() == 'yearly':
-                                                            if editor_dict.get(t.year)==None:
-                                                                editor_dict[t.year] = []
-                                                    elif kwargs['granularity'].lower() == 'daily':
-                                                            if editor_dict.get(t.year)==None:
-                                                                editor_dict[t.year] = {}
-                                                                editor_dict[t.year][t.month] = {}
-                                                                editor_dict[t.year][t.month][t.day] = []
-                                                            elif editor_dict[t.year].get(t.month)==None:
-                                                                editor_dict[t.year][t.month] = {}
-                                                                editor_dict[t.year][t.month][t.day] = []
-                                                            elif editor_dict[t.year][t.month].get(t.day)==None:
-                                                                editor_dict[t.year][t.month][t.day] = []
+                            for newch in elem:
+                                if 'TimeStamp' in newch.tag:
+                                    for ch1 in newch:
+                                        if 'CreationDate' in ch1.tag:
+                                            date_format = "%Y-%m-%dT%H:%M:%S.%f"
+                                            t = datetime.strptime(ch1.text, date_format)
+                                            if kwargs.get('granularity') != None:
+                                                if kwargs.get('start') != None:
+                                                    s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
+                                                    if t > s:
+                                                        editor_bool = 1
+                                                if kwargs.get('end') != None:
+                                                    e = datetime.strptime(kwargs['end'], '%Y-%m-%d')
+                                                    if t > e:
+                                                        editor_bool = 0
+                                                        continue
+                                                if kwargs['granularity'].lower() == 'monthly':
+                                                    if editor_dict.get(t.year) == None:
+                                                        editor_dict[t.year] = {}
+                                                        editor_dict[t.year][t.month] = []
+                                                    elif editor_dict[t.year].get(t.month) == None:
+                                                        editor_dict[t.year][t.month] = []
+                                                elif kwargs['granularity'].lower() == 'yearly':
+                                                    if editor_dict.get(t.year) == None:
+                                                        editor_dict[t.year] = []
+                                                elif kwargs['granularity'].lower() == 'daily':
+                                                    if editor_dict.get(t.year) == None:
+                                                        editor_dict[t.year] = {}
+                                                        editor_dict[t.year][t.month] = {}
+                                                        editor_dict[t.year][t.month][t.day] = []
+                                                    elif editor_dict[t.year].get(t.month) == None:
+                                                        editor_dict[t.year][t.month] = {}
+                                                        editor_dict[t.year][t.month][t.day] = []
+                                                    elif editor_dict[t.year][t.month].get(t.day) == None:
+                                                        editor_dict[t.year][t.month][t.day] = []
 
-                                    if('Contributors' in newch.tag):
-                                        for chi in newch:
-                                            if('OwnerUserName' in chi.tag):
-                                                U = chi.text
+                                if ('Contributors' in newch.tag):
+                                    for chi in newch:
+                                        if ('OwnerUserName' in chi.tag):
+                                            U = chi.text
 
-                                            if editor_bool:
+                                        if editor_bool:
 
-                                                if kwargs['granularity'].lower() != None:
-                                                    if kwargs['granularity'].lower() == 'monthly':
+                                            if kwargs['granularity'].lower() != None:
+                                                if kwargs['granularity'].lower() == 'monthly':
 
-                                                        if U not in editor_dict[t.year][t.month]:
-                                                            editor_dict[t.year][t.month].append(U)
+                                                    if U not in editor_dict[t.year][t.month]:
+                                                        editor_dict[t.year][t.month].append(U)
 
-                                                    elif kwargs['granularity'].lower() == 'daily':
-                                                        if U not in editor_dict[t.year][t.month][t.day]:
-                                                            editor_dict[t.year][t.month][t.day].append(U)
+                                                elif kwargs['granularity'].lower() == 'daily':
+                                                    if U not in editor_dict[t.year][t.month][t.day]:
+                                                        editor_dict[t.year][t.month][t.day].append(U)
 
-                                                    elif kwargs['granularity'].lower() == 'yearly':
-                                                        if U not in editor_dict[t.year]:
-                                                            editor_dict[t.year].append(U)
-                                            else:
-                                                if(U not in uList):
-                                                    uList.append(U)
-                                elem.clear()
-                                root_wiki.clear()
+                                                elif kwargs['granularity'].lower() == 'yearly':
+                                                    if U not in editor_dict[t.year]:
+                                                        editor_dict[t.year].append(U)
+                                        else:
+                                            if (U not in uList):
+                                                uList.append(U)
+                            elem.clear()
+                            root_wiki.clear()
                 except:
-                    print('problem with file parsing: '+f)
-                if(kwargs.get('users')!=None):
-                    if kwargs.get('dir_path')!=None:
-                        f = f.replace(kwargs['dir_path']+'/','')
+                    print('problem with file parsing: ' + f)
+                if (kwargs.get('users') != None):
+                    if kwargs.get('dir_path') != None:
+                        f = f.replace(kwargs['dir_path'] + '/', '')
                     f = f[:-7].replace('_', ' ')
                     f = f.replace('__', '/')
-                    if kwargs.get('granularity')==None:
+                    if kwargs.get('granularity') == None:
                         kwargs['users'][f] = uList
                     else:
                         kwargs['users'][f] = editor_dict
@@ -1398,43 +1394,40 @@ class knol(object):
         else:
             print("No arguments provided")
 
-
     def get_editors(self, *args, **kwargs):
 
-        if(kwargs.get('file_list')!=None):
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
-
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
         else:
-            cnum = 24           # Bydefault it is 24
+            cnum = 24  # Bydefault it is 24
 
         fileNum = len(file_list)
 
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
 
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
-
 
         manager = Manager()
         usersList = manager.dict()
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
@@ -1443,15 +1436,20 @@ class knol(object):
                 granularity = kwargs['granularity']
                 start = kwargs['start']
                 end = kwargs['end']
-                processDict[i+1] = Process(target=self.__get_editor, kwargs={'file_name':fileList[i],'users': usersList, 'granularity':granularity, 'start':start, 'end':end, 'dir_path': dir_path, 'l': l})
+                processDict[i + 1] = Process(target=self.__get_editor,
+                                             kwargs={'file_name': fileList[i], 'users': usersList,
+                                                     'granularity': granularity, 'start': start, 'end': end,
+                                                     'dir_path': dir_path, 'l': l})
             else:
-                processDict[i+1] = Process(target=self.__get_editor, kwargs={'file_name':fileList[i],'users': usersList, 'dir_path': dir_path, 'l': l})
+                processDict[i + 1] = Process(target=self.__get_editor,
+                                             kwargs={'file_name': fileList[i], 'users': usersList, 'dir_path': dir_path,
+                                                     'l': l})
 
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return usersList
 
@@ -1459,18 +1457,18 @@ class knol(object):
         '''
         This defination can be used to get the edits of a user in wikipedia
         '''
-        if group=='bots':
-            B = self.download_dataset('wikipedia',download=False, category_list=['All Wikipedia bots'])
+        if group == 'bots':
+            B = self.download_dataset('wikipedia', download=False, category_list=['All Wikipedia bots'])
             bot_list = []
             for i in B[0]['All Wikipedia bots']:
-                bot_list.append(i['title'].replace('User:',''))
+                bot_list.append(i['title'].replace('User:', ''))
             return bot_list
 
     def get_author_similarity(self, editors, *args, **kwargs):
-        if kwargs.get('similarity')!=None:
+        if kwargs.get('similarity') != None:
             similar = kwargs['similarity']
 
-        if similar.lower()=='jaccard':
+        if similar.lower() == 'jaccard':
             s1 = []
             s2 = []
             similarity = {}
@@ -1483,9 +1481,9 @@ class knol(object):
                     continue
                 for date in range(start, end):
                     similarity[article][date] = {}
-                    for month in range(1,13):
+                    for month in range(1, 13):
                         similarity[article][date][month] = {}
-                        for day in range(1,32):
+                        for day in range(1, 32):
                             try:
                                 s1 = editors[article][date][month][day]
                             except:
@@ -1493,24 +1491,24 @@ class knol(object):
                             stotal = []
                             sinter = []
                             for page, val in editors.items():
-                                if page!=article:
+                                if page != article:
                                     try:
                                         s2 = editors[page][date][month][day]
                                     except:
                                         s2 = []
 
-                                    sinter = sinter+s2
+                                    sinter = sinter + s2
 
-                            stotal = stotal+s1
+                            stotal = stotal + s1
                             try:
-                                similarity[article][date][month][day] = len(set(s1) & set(sinter))/len(stotal)
+                                similarity[article][date][month][day] = len(set(s1) & set(sinter)) / len(stotal)
                             except:
                                 similarity[article][date][month][day] = 0
             return similarity
 
     def __chunks(self, l, n):
         n = max(1, n)
-        return (l[i:i+n] for i in range(0, len(l), n))
+        return (l[i:i + n] for i in range(0, len(l), n))
 
     def get_author_edits(self, *args, **kwargs):
         """Get the edits of particular users for articles
@@ -1535,39 +1533,39 @@ class knol(object):
         """
 
         all_wiki = False
-        if kwargs.get('article_list')!=None:
+        if kwargs.get('article_list') != None:
             article_list = kwargs['article_list']
-        elif kwargs.get('dir_path')!=None:
-            article_list = glob.glob(kwargs['dir_path']+'/*.knolml')
-        elif kwargs.get('editor_list')!=None:
+        elif kwargs.get('dir_path') != None:
+            article_list = glob.glob(kwargs['dir_path'] + '/*.knolml')
+        elif kwargs.get('editor_list') != None:
             editor_list = kwargs['editor_list']
             all_wiki = True
         author_contrib = {}
-        if kwargs.get('type')!=None:
+        if kwargs.get('type') != None:
             type = kwargs['type']
         else:
             type = 'bytes'
 
-        if kwargs.get('ordered_by')!=None:
+        if kwargs.get('ordered_by') != None:
             order = kwargs['ordered_by']
         else:
             order = 'editor'
         if not all_wiki:
             for article in article_list:
-                context_wiki = ET.iterparse(article, events=("start","end"))
+                context_wiki = ET.iterparse(article, events=("start", "end"))
                 # Turning it into an iterator
                 context_wiki = iter(context_wiki)
                 event_wiki, root_wiki = next(context_wiki)
                 edit_bytes = 0
                 editor = ''
-                if kwargs.get('dir_path')!=None:
+                if kwargs.get('dir_path') != None:
                     article_key = article.replace(kwargs['dir_path'], '')
                     article_key = article_key.replace('/', '')
                 else:
                     article_key = article
-                if order=='article':
+                if order == 'article':
                     author_contrib[article_key] = {}
-                #try:
+                # try:
                 for event, elem in context_wiki:
                     if event == "end" and 'Instance' in elem.tag:
                         editor_flag = 0
@@ -1578,32 +1576,32 @@ class knol(object):
                                         author = ch2.text
                                     elif 'OwnerUserId' in ch2.tag:
                                         author = ch2.text
-                                        if order=='editor':
+                                        if order == 'editor':
                                             editor_flag = 1
-                                            if author_contrib.get(author)==None:
+                                            if author_contrib.get(author) == None:
                                                 author_contrib[author] = {}
                                                 author_contrib[author][article_key] = 0
-                                            elif author_contrib[author].get(article_key)==None:
+                                            elif author_contrib[author].get(article_key) == None:
                                                 author_contrib[author][article_key] = 0
 
-                                        elif order=='questions' and elem.attrib['InstanceType'] == 'Question':
+                                        elif order == 'questions' and elem.attrib['InstanceType'] == 'Question':
                                             editor_flag = 1
-                                            if author_contrib.get(author)==None:
+                                            if author_contrib.get(author) == None:
                                                 author_contrib[author] = 1
 
-                                        elif order=='answers' and elem.attrib['InstanceType'] == 'Answer':
+                                        elif order == 'answers' and elem.attrib['InstanceType'] == 'Answer':
                                             editor_flag = 1
-                                            if author_contrib.get(author)==None:
+                                            if author_contrib.get(author) == None:
                                                 author_contrib[author] = 1
 
-                                        elif order=='article':
+                                        elif order == 'article':
                                             editor_flag = 1
-                                            if author_contrib[article_key].get(author)==None:
+                                            if author_contrib[article_key].get(author) == None:
                                                 author_contrib[article_key][author] = 0
                                         editor = author
 
-                            if 'Body' in ch1.tag and editor_flag==1:
-                                if type=='bytes':
+                            if 'Body' in ch1.tag and editor_flag == 1:
+                                if type == 'bytes':
                                     for ch2 in ch1:
                                         if 'Text' in ch2.tag:
                                             diff = int(ch2.attrib['Bytes']) - edit_bytes
@@ -1616,30 +1614,30 @@ class knol(object):
                                             elif order == 'article':
                                                 author_contrib[article_key][editor] += diff
                                             edit_bytes = int(ch2.attrib['Bytes'])
-                                elif type=='edits':
+                                elif type == 'edits':
                                     if order == 'editor':
                                         author_contrib[editor][article_key] += 1
                                     elif order == 'questions':
                                         author_contrib[editor] += 1
                                     elif order == 'answer':
                                         author_contrib[editor] += 1
-                                    elif order=='article':
+                                    elif order == 'article':
                                         author_contrib[article_key][editor] += 1
 
                         elem.clear()
                         root_wiki.clear()
-                #except:
-                    #print("error with file: "+article)
+                # except:
+                # print("error with file: "+article)
 
         else:
             we = wikiExtract()
             editor_extract = []
             for editor in editor_list:
-                if len(editor.split('.')) > 3 or len(editor.split(':'))>3:
+                if len(editor.split('.')) > 3 or len(editor.split(':')) > 3:
                     pass
                 else:
                     editor_extract.append(editor)
-            editors_name = self.__chunks(editor_extract,50)
+            editors_name = self.__chunks(editor_extract, 50)
             final_list = []
             for e in editors_name:
                 final_list += we.get_author_wiki_edits(e)
@@ -1649,7 +1647,7 @@ class knol(object):
 
     def __get_reverts(self, file_name):
 
-        context_wiki = ET.iterparse(file_name, events=("start","end"))
+        context_wiki = ET.iterparse(file_name, events=("start", "end"))
         # Turning it into an iterator
         context_wiki = iter(context_wiki)
         event_wiki, root_wiki = next(context_wiki)
@@ -1662,32 +1660,31 @@ class knol(object):
                     for ch1 in elem:
                         if 'Knowl' in ch1.tag:
                             if ch1.attrib['key'] == 'sha':
-                                if sha_dict.get(ch1.text)==None:
+                                if sha_dict.get(ch1.text) == None:
                                     sha_dict[ch1.text] = 0
                                 else:
-                                    reverts_count+=1
+                                    reverts_count += 1
 
-                    id+=1
+                    id += 1
                     elem.clear()
                     root_wiki.clear()
         except:
-            print("error in file parsing "+ file_name)
+            print("error in file parsing " + file_name)
         return reverts_count
 
     def get_wiki_revert(self, *args, **kwargs):
-        if kwargs.get('file_path')!=None:
+        if kwargs.get('file_path') != None:
             file_name = kwargs['file_path']
             reverts_count = self.__get_reverts(file_name)
 
-
-        if kwargs.get('file_list')!=None:
+        if kwargs.get('file_list') != None:
             for file_name in kwargs['file_list']:
 
                 reverts_count = self.__get_reverts(file_name)
 
-                if(kwargs.get('reverts')!=None):
-                    if kwargs.get('dir_path')!=None:
-                        file_name = file_name.replace(kwargs['dir_path']+'/','')
+                if (kwargs.get('reverts') != None):
+                    if kwargs.get('dir_path') != None:
+                        file_name = file_name.replace(kwargs['dir_path'] + '/', '')
                     file_name = file_name[:-7].replace('_', ' ')
                     file_name = file_name.replace('__', '/')
 
@@ -1695,30 +1692,29 @@ class knol(object):
 
     def get_wiki_reverts(self, *args, **kwargs):
 
-        if(kwargs.get('file_list')!=None):
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
-
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
         else:
-            cnum = 4           # Bydefault it is 4
+            cnum = 4  # Bydefault it is 4
 
         fileNum = len(file_list)
 
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
 
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
 
@@ -1727,31 +1723,31 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
         for i in range(pNum):
-
-            processDict[i+1] = Process(target=self.get_wiki_revert, kwargs={'file_list':fileList[i],'reverts': revertList, 'dir_path': dir_path, 'l': l})
-
-        for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1] = Process(target=self.get_wiki_revert,
+                                         kwargs={'file_list': fileList[i], 'reverts': revertList, 'dir_path': dir_path,
+                                                 'l': l})
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].start()
+
+        for i in range(pNum):
+            processDict[i + 1].join()
 
         return revertList
 
-
     def getKnowledgeAge(self, *args, **kwargs):
 
-        if(kwargs.get('l')!=None):
+        if (kwargs.get('l') != None):
             l = kwargs['l']
 
-        if(kwargs.get('file_path')!=None):
+        if (kwargs.get('file_path') != None):
             file_name = kwargs['file_path']
-            context_wiki = ET.iterparse(file_name, events=("start","end"))
+            context_wiki = ET.iterparse(file_name, events=("start", "end"))
             # Turning it into an iterator
             context_wiki = iter(context_wiki)
             event_wiki, root_wiki = next(context_wiki)
@@ -1766,7 +1762,7 @@ class knol(object):
                                         firstDate = ch1.text
                                         firstDate = datetime.strptime(date_format, ch1.text)
                                         flag = 1
-                        if(flag):
+                        if (flag):
                             break
                 currentDate = datetime.strptime(datetime.today().strftime(date_format), date_format)
 
@@ -1776,10 +1772,10 @@ class knol(object):
 
             return articleAge
 
-        elif(kwargs.get('file_name')!=None):
+        elif (kwargs.get('file_name') != None):
             file_name = kwargs['file_name']
             for f in file_name:
-                context_wiki = ET.iterparse(f, events=("start","end"))
+                context_wiki = ET.iterparse(f, events=("start", "end"))
                 # Turning it into an iterator
                 context_wiki = iter(context_wiki)
                 event_wiki, root_wiki = next(context_wiki)
@@ -1795,12 +1791,12 @@ class knol(object):
                                         if 'CreationDate' in ch1.tag:
                                             firstDate = datetime.strptime(ch1.text, date_format)
                                             flag = 1
-                            if(flag):
+                            if (flag):
                                 break
                     currentDate = datetime.strptime(datetime.today().strftime(date_format), date_format)
 
                     articleAge = currentDate - firstDate
-                    if kwargs.get('date')!=None:
+                    if kwargs.get('date') != None:
                         currentDate = datetime.strptime(kwargs['date'], '%Y-%m-%d')
                     else:
                         currentDate = datetime.strptime(datetime.today().strftime(date_format), date_format)
@@ -1808,75 +1804,70 @@ class knol(object):
                     articleAge = currentDate - firstDate
                 except:
                     print("problem with file ", f)
-                if(kwargs.get('articleAge')!=None):
-
+                if (kwargs.get('articleAge') != None):
                     f = f.split('/')[-1]
                     f = f[:-7].replace('_', ' ')
                     f = f.replace('__', '/')
                     kwargs['articleAge'][f] = articleAge
-
-
 
     def get_age_of_knowledge(self, *args, **kwargs):
 
         '''
         This piece of code is to ensure the multiprocessing
         '''
-        if(kwargs.get('file_list')!=None):
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
         fileNum = len(file_list)
 
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
-        elif(fileNum<24):
-            cnum = fileNum+1           # Bydefault it is 24
+        elif (fileNum < 24):
+            cnum = fileNum + 1  # Bydefault it is 24
         else:
             cnum = 24
 
-
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
 
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
-
-
-
 
         manager = Manager()
         ageList = manager.dict()
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
         for i in range(pNum):
-            if kwargs.get('date')!=None:
-                processDict[i+1] = Process(target=self.getKnowledgeAge, kwargs={'file_name':fileList[i],'articleAge': ageList, 'date':kwargs['date'], 'l': l})
+            if kwargs.get('date') != None:
+                processDict[i + 1] = Process(target=self.getKnowledgeAge,
+                                             kwargs={'file_name': fileList[i], 'articleAge': ageList,
+                                                     'date': kwargs['date'], 'l': l})
             else:
-                processDict[i+1] = Process(target=self.getKnowledgeAge, kwargs={'file_name':fileList[i],'articleAge': ageList, 'l': l})
+                processDict[i + 1] = Process(target=self.getKnowledgeAge,
+                                             kwargs={'file_name': fileList[i], 'articleAge': ageList, 'l': l})
 
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return ageList
-
 
     def __return_edit_stats(self, revision, prevTotalLinks, prevRevision, result):
         # revision, prevTotalLinks, prevRevision
@@ -1929,10 +1920,10 @@ class knol(object):
                         print('compressed false')
                         compressed = False
                     if 'Wiki' in line:
-                        wiki=True
+                        wiki = True
                         print('wiki true')
                     else:
-                        wiki=False
+                        wiki = False
                 if 'Instance' in line:
                     revlength += 1
 
@@ -1948,36 +1939,36 @@ class knol(object):
             'Hyperlink Deleted': 0,
             'Hyperlink Fixed': 0
         }
-        revlength = int(revlength/slab)
+        revlength = int(revlength / slab)
         prevRevision = ''
         prevTotalLinks = []
         count = 1
         slabNo = 1
         slabs = {}
 
-        if wiki==True and compressed==True:
+        if wiki == True and compressed == True:
             tree = ET.parse(file_name)
             root = tree.getroot()
             for child in root:
-                if('KnowledgeData' in child.tag):
+                if ('KnowledgeData' in child.tag):
                     root = child
 
             revisionList = knol.getAllRevisions(file_name)
             for rev in revisionList:
-                revisions = knol.wikiRetrieval(file_name,rev)
+                revisions = knol.wikiRetrieval(file_name, rev)
                 for revision in revisions:
                     result = self.__return_edit_stats(revision, prevTotalLinks, prevRevision, result)
-                    if count%revlength == 0:
-                        slabs['Slab'+str(slabNo)] = copy.deepcopy(result)
+                    if count % revlength == 0:
+                        slabs['Slab' + str(slabNo)] = copy.deepcopy(result)
                         slabNo += 1
 
                     count += 1
             return slabs
 
-        if wiki==True and compressed==False:
+        if wiki == True and compressed == False:
             print('inside this function')
             count = 1
-            context_wiki = ET.iterparse(file_name, events=("start","end"))
+            context_wiki = ET.iterparse(file_name, events=("start", "end"))
             # Turning it into an iterator
             context_wiki = iter(context_wiki)
             event_wiki, root_wiki = next(context_wiki)
@@ -1989,9 +1980,10 @@ class knol(object):
                                 for ch2 in ch1:
                                     if 'Text' in ch2.tag:
                                         revision = ch2.text
-                                        result = self.__return_edit_stats(revision, prevTotalLinks, prevRevision, result)
-                                        if count%revlength == 0:
-                                            slabs['Slab'+str(slabNo)] = copy.deepcopy(result)
+                                        result = self.__return_edit_stats(revision, prevTotalLinks, prevRevision,
+                                                                          result)
+                                        if count % revlength == 0:
+                                            slabs['Slab' + str(slabNo)] = copy.deepcopy(result)
                                             slabNo += 1
 
                                         count += 1
@@ -2002,7 +1994,7 @@ class knol(object):
                 print('error in file parsing')
             return slabs
 
-        if wiki==False:
+        if wiki == False:
             length = 0
             content = {}
             hyperlink = {}
@@ -2011,7 +2003,7 @@ class knol(object):
             totalLinks = 0
             slabs = {}
             if slab < length:
-                revlength = int(length/slab)
+                revlength = int(length / slab)
             else:
                 revlength = 1
             count = 0
@@ -2030,7 +2022,7 @@ class knol(object):
                                 if 'Text' in i.tag:
                                     s = re.findall(r'(http?://\S+)', i.text)
 
-                                    if len(s) != 0: #If Hyperlink is found
+                                    if len(s) != 0:  # If Hyperlink is found
                                         if revisionId in hyperlink:
                                             if len(hyperlink[revisionId]) < len(s):
                                                 result['Hyperlink Added'] += 1
@@ -2043,7 +2035,7 @@ class knol(object):
                                         hyperlink[revisionId] = s
 
                                     if revisionId in content:
-                                        #check if content is added or not
+                                        # check if content is added or not
                                         if len(content[revisionId]) < len(i.text):
                                             result['Content Added'] += 1
                                         elif len(content[revisionId]) > len(i.text):
@@ -2052,23 +2044,21 @@ class knol(object):
                                             result['Content Reorganised'] += 1
 
                                     else:
-                                        #content is added
+                                        # content is added
                                         result['Content Added'] += 1
 
                                     content[revisionId] = i.text
 
-                    if count%revlength == 0:
-                        slabs['Slab'+str(slabNo)] = copy.deepcopy(result)
+                    if count % revlength == 0:
+                        slabs['Slab' + str(slabNo)] = copy.deepcopy(result)
                         slabNo += 1
 
                 count += 1
 
             return slabs
 
-
-
     def get_revision_type(self, *args, **kwargs):
-        if kwargs.get('slab')!=None:
+        if kwargs.get('slab') != None:
             slab = kwargs['slab']
         else:
             slab = 1
@@ -2079,9 +2069,8 @@ class knol(object):
         elif kwargs.get('file_name') != None:
             file_name = kwargs['file_name']
             for f in file_name:
-                if(kwargs.get('RevisionEdits')!=None):
+                if (kwargs.get('RevisionEdits') != None):
                     kwargs['RevisionEdits'][f] = self.revisionEdits(f, slab)
-
 
     def get_revision_types(self, *args, **kwargs):
         all_var = knol.__get_multiprocessing(*args, **kwargs)
@@ -2100,21 +2089,23 @@ class knol(object):
         processDict = {}
 
         for i in range(pNum):
-            processDict[i+1] = Process(target=self.revisionTypes, kwargs={'file_name':fileList[i],'RevisionEdits': RevisionEdits, 'slab':slab, 'l': l})
+            processDict[i + 1] = Process(target=self.revisionTypes,
+                                         kwargs={'file_name': fileList[i], 'RevisionEdits': RevisionEdits, 'slab': slab,
+                                                 'l': l})
 
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return RevisionEdits
 
-    #yet to complete this method
+    # yet to complete this method
     def __text_stats(self, *args, **kwargs):
         if kwargs.get('file_name') != None:
             for f in kwargs['file_name']:
-                context_wiki = ET.iterparse(f, events=("start","end"))
+                context_wiki = ET.iterparse(f, events=("start", "end"))
                 # Turning it into an iterator
                 context_wiki = iter(context_wiki)
                 event_wiki, root_wiki = next(context_wiki)
@@ -2126,13 +2117,14 @@ class knol(object):
                                     text = ch1.text
                 except:
                     print('error in file parsing')
-    #not yet working for Wikipedia
-    #yet to complete this method
+
+    # not yet working for Wikipedia
+    # yet to complete this method
     def get_text_stats(self, *args, **kwargs):
-        if kwargs.get('sitename')==None:
+        if kwargs.get('sitename') == None:
             print('please provide the sitename as argument')
-        elif kwargs['sitename']=='stackexchange':
-            if kwargs.get('dir_path')==None:
+        elif kwargs['sitename'] == 'stackexchange':
+            if kwargs.get('dir_path') == None:
                 print('provide the directory path')
             else:
                 dir_path = kwargs['dir_path']
@@ -2145,41 +2137,40 @@ class knol(object):
                 processDict = {}
 
                 for i in range(pNum):
-                    processDict[i+1] = Process(target=self.__text_stats, kwargs={'file_name':fileList[i],'text_edits': text_edits, 'l': l})
+                    processDict[i + 1] = Process(target=self.__text_stats,
+                                                 kwargs={'file_name': fileList[i], 'text_edits': text_edits, 'l': l})
 
                 for i in range(pNum):
-                    processDict[i+1].start()
+                    processDict[i + 1].start()
 
                 for i in range(pNum):
-                    processDict[i+1].join()
+                    processDict[i + 1].join()
 
                 return text_edits
 
-
     def get_stack_posts(self, dir_path, post_type, *args, **kwargs):
-        if kwargs.get('order_by')!=None:
+        if kwargs.get('order_by') != None:
             order = kwargs['order_by']
             if order.lower() == 'recent':
-                if os.path.isdir(dir_path+'/Posts'):
-                    file_list = sorted(glob.glob(dir_path+'/Posts/*.knolml'), key=self.numericalSort)
+                if os.path.isdir(dir_path + '/Posts'):
+                    file_list = sorted(glob.glob(dir_path + '/Posts/*.knolml'), key=self.numericalSort)
                 else:
                     print("provide the path for stack exchange knolml dataset")
-
 
     @staticmethod
     def knowledgeByDate(file_name, first_date, *args, **kwargs):
 
-        if(kwargs.get('l')!=None):
+        if (kwargs.get('l') != None):
             l = kwargs['l']
 
         fe = 0
         d_f = "%Y-%m-%d"
         date_format = "%Y-%m-%dT%H:%M:%S.%f"
         first_date = datetime.strptime(first_date, d_f)
-        if(kwargs.get('end_date')!=None):
+        if (kwargs.get('end_date') != None):
             end_date = kwargs['end_date']
             end_date = datetime.strptime(end_date, d_f)
-            fe=1
+            fe = 1
 
         tree = ET.parse(file_name)
         root = tree.getroot()
@@ -2189,39 +2180,38 @@ class knol(object):
         flag = 0
         wikiFlag = 0
         for child in root:
-            if('KnowledgeData' in child.tag):
+            if ('KnowledgeData' in child.tag):
                 length = len(child.findall('Instance'))
-                if('Wiki' in child.attrib['Type']):
+                if ('Wiki' in child.attrib['Type']):
                     wikiFlag = 1
                 for ch1 in child:
-                    if('Instance' in ch1.tag):
+                    if ('Instance' in ch1.tag):
                         instanceId = ch1.attrib['Id']
                         for ch2 in ch1:
-                            if('TimeStamp' in ch2.tag):
+                            if ('TimeStamp' in ch2.tag):
                                 for ch3 in ch2:
-                                    if('CreationDate' in ch3.tag):
+                                    if ('CreationDate' in ch3.tag):
                                         firstDate = datetime.strptime(ch3.text, date_format)
-                                        if(firstDate >= first_date):
-                                            flag=1
+                                        if (firstDate >= first_date):
+                                            flag = 1
 
+                                        if (fe == 1 and firstDate > end_date):
+                                            flag = 0
 
-                                        if(fe==1 and firstDate>end_date):
-                                            flag=0
-
-                            if('Body' in ch2.tag):
+                            if ('Body' in ch2.tag):
                                 for ch4 in ch2:
-                                    if('Text' in ch4.tag and flag==1):
-                                        if(wikiFlag==1):
+                                    if ('Text' in ch4.tag and flag == 1):
+                                        if (wikiFlag == 1):
                                             dummyList.append(int(instanceId))
                                         else:
                                             revList.append(ch4.text)
 
-        if(wikiFlag==1):
+        if (wikiFlag == 1):
             k = int((math.log(length)) ** 2)
-            for i in range(k+1,(math.ceil(length/(k+1))-1)*(k+1)+1,(k+1)):
-                if(i in dummyList):
+            for i in range(k + 1, (math.ceil(length / (k + 1)) - 1) * (k + 1) + 1, (k + 1)):
+                if (i in dummyList):
                     revList.append(i)
-            if(length in dummyList):
+            if (length in dummyList):
                 revList.append(length)
         return revList
 
@@ -2229,10 +2219,10 @@ class knol(object):
     def getUrl(*args, **kwargs):
 
         href_regex = r'href=[\'"]?([^\'" >]+)'
-        if(kwargs.get('l')!=None):
+        if (kwargs.get('l') != None):
             l = kwargs['l']
 
-        if(kwargs.get('file_path')!=None):
+        if (kwargs.get('file_path') != None):
 
             file_name = kwargs['file_path']
             tree = ET.parse(file_name)
@@ -2240,10 +2230,10 @@ class knol(object):
 
             urlList = []
             for child in root:
-                if('KnowledgeData' in child.tag):
-                    if('Wiki' in child.attrib['Type'] and 'revision' in child.attrib['Type']):
+                if ('KnowledgeData' in child.tag):
+                    if ('Wiki' in child.attrib['Type'] and 'revision' in child.attrib['Type']):
                         length = len(child.findall('Instance'))
-                        revision = knol.getRevision(file_name,length)
+                        revision = knol.getRevision(file_name, length)
                         urls = re.findall(href_regex, revision)
                         for ur in urls:
                             urlList.append(ur)
@@ -2251,11 +2241,11 @@ class knol(object):
                         return urlList
 
                     for ch1 in child:
-                        if('Instance' in ch1.tag):
+                        if ('Instance' in ch1.tag):
                             for ch2 in ch1:
-                                if('Body' in ch2.tag):
+                                if ('Body' in ch2.tag):
                                     for ch3 in ch2:
-                                        if('Text' in ch3.tag):
+                                        if ('Text' in ch3.tag):
                                             urls = re.findall(href_regex, ch3.text)
 
                                             for ur in urls:
@@ -2263,63 +2253,62 @@ class knol(object):
 
             return urlList
 
-        elif(kwargs.get('file_name')!=None):
+        elif (kwargs.get('file_name') != None):
             file_name = kwargs['file_name']
             for f in file_name:
                 tree = ET.parse(f)
                 root = tree.getroot()
                 urlList = []
                 for child in root:
-                    if('KnowledgeData' in child.tag):
+                    if ('KnowledgeData' in child.tag):
                         for ch1 in child:
-                            if('Instance' in ch1.tag):
+                            if ('Instance' in ch1.tag):
                                 for ch2 in ch1:
-                                    if('Body' in ch2.tag):
+                                    if ('Body' in ch2.tag):
                                         for ch3 in ch2:
-                                            if('Text' in ch3.tag):
+                                            if ('Text' in ch3.tag):
                                                 urls = re.findall(href_regex, ch3.text)
 
                                                 for ur in urls:
                                                     urlList.append(ur)
-                if(kwargs.get('url_list')!=None):
+                if (kwargs.get('url_list') != None):
                     kwargs['url_list'][f] = urlList
-
 
     @staticmethod
     def countWords(*args, **kwargs):
-        #t1 = time.time()
-        if(kwargs.get('l')!=None):
+        # t1 = time.time()
+        if (kwargs.get('l') != None):
             l = kwargs['l']
-        if(kwargs.get('lastRev')!=None):
+        if (kwargs.get('lastRev') != None):
             lastRev = kwargs['lastRev']
         dummyDict = {}
-        if(kwargs.get('file_path')!=None):
+        if (kwargs.get('file_path') != None):
 
             file_name = kwargs['file_path']
             tree = ET.parse(file_name)
             root = tree.getroot()
             wordCount = []
             for child in root:
-                if('KnowledgeData' in child.tag):
-                    if('Wiki' in child.attrib['Type']):
-                        if('compressed' in child.attrib['Type']):
-                            if(lastRev):
+                if ('KnowledgeData' in child.tag):
+                    if ('Wiki' in child.attrib['Type']):
+                        if ('compressed' in child.attrib['Type']):
+                            if (lastRev):
                                 length = len(child.findall('Instance'))
-                                revision = knol.getRevision(file_name,length)
+                                revision = knol.getRevision(file_name, length)
                                 Text = knol.getCleanText(revision)
-                                wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                                wordNum = len(re.sub('[' + string.punctuation + ']', '', Text).split())
                                 wordCount.append(wordNum)
                             else:
                                 revisionList = knol.getAllRevisions(file_name)
                                 for rev in revisionList:
-                                    revisions = knol.wikiRetrieval(file_name,rev)
+                                    revisions = knol.wikiRetrieval(file_name, rev)
                                     for revision in revisions:
                                         Text = knol.getCleanText(revision)
-                                        wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                                        wordNum = len(re.sub('[' + string.punctuation + ']', '', Text).split())
                                         wordCount.append(wordNum)
 
                         else:
-                            context_wiki = ET.iterparse(file_name, events=("start","end"))
+                            context_wiki = ET.iterparse(file_name, events=("start", "end"))
                             # Turning it into an iterator
                             context_wiki = iter(context_wiki)
 
@@ -2329,33 +2318,31 @@ class knol(object):
                             for event, elem in context_wiki:
                                 if event == "end" and 'Instance' in elem.tag:
                                     for body in elem:
-                                        if('Body' in body.tag):
+                                        if ('Body' in body.tag):
                                             for textt in body:
-                                                if('Text' in textt.tag):
-                                                    wordNum = len(re.sub('['+string.punctuation+']', '', textt.text).split())
+                                                if ('Text' in textt.tag):
+                                                    wordNum = len(
+                                                        re.sub('[' + string.punctuation + ']', '', textt.text).split())
                                                     wordCount.append(wordNum)
                                     elem.clear()
                                     root_wiki.clear()
 
 
-                    elif('QA' in child.attrib['Type']):
+                    elif ('QA' in child.attrib['Type']):
                         print('yes')
-                        if(lastRev):
+                        if (lastRev):
                             for ch1 in child:
-                                if('Instance' in ch1.tag):
+                                if ('Instance' in ch1.tag):
                                     for ch2 in ch1:
-                                        if('Body' in ch2.tag):
+                                        if ('Body' in ch2.tag):
                                             for ch3 in ch2:
-                                                if('Text' in ch3.tag):
+                                                if ('Text' in ch3.tag):
                                                     Text = ch3.text
 
-
                         Text = knol.getCleanText(Text)
-                        wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                        wordNum = len(re.sub('[' + string.punctuation + ']', '', Text).split())
 
-
-
-            if(kwargs.get('wordCount')!=None):
+            if (kwargs.get('wordCount') != None):
                 kwargs['wordCount'][file_name] = wordCount
 
 
@@ -2363,35 +2350,35 @@ class knol(object):
 
 
 
-        elif(kwargs.get('file_name')!=None):
-            #print('yes')
+        elif (kwargs.get('file_name') != None):
+            # print('yes')
             file_name = kwargs['file_name']
-            #print('file name is: ',file_name)
+            # print('file name is: ',file_name)
             for f in file_name:
                 tree = ET.parse(f)
                 root = tree.getroot()
                 wordCount = []
                 for child in root:
-                    if('KnowledgeData' in child.tag):
-                        if('Wiki' in child.attrib['Type']):
-                            if('compressed' in child.attrib['Type']):
-                                if(lastRev):
+                    if ('KnowledgeData' in child.tag):
+                        if ('Wiki' in child.attrib['Type']):
+                            if ('compressed' in child.attrib['Type']):
+                                if (lastRev):
                                     length = len(child.findall('Instance'))
-                                    revision = knol.getRevision(f,length)
+                                    revision = knol.getRevision(f, length)
                                     Text = knol.getCleanText(revision)
-                                    wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                                    wordNum = len(re.sub('[' + string.punctuation + ']', '', Text).split())
                                     wordCount.append(wordNum)
                                 else:
                                     revisionList = knol.getAllRevisions(f)
                                     for rev in revisionList:
-                                        revisions = knol.wikiRetrieval(f,rev)
+                                        revisions = knol.wikiRetrieval(f, rev)
                                         for revision in revisions:
                                             Text = knol.getCleanText(revision)
-                                            wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                                            wordNum = len(re.sub('[' + string.punctuation + ']', '', Text).split())
                                             wordCount.append(wordNum)
 
                             else:
-                                context_wiki = ET.iterparse(f, events=("start","end"))
+                                context_wiki = ET.iterparse(f, events=("start", "end"))
                                 # Turning it into an iterator
                                 context_wiki = iter(context_wiki)
 
@@ -2401,106 +2388,100 @@ class knol(object):
                                 for event, elem in context_wiki:
                                     if event == "end" and 'Instance' in elem.tag:
                                         for body in elem:
-                                            if('Body' in body.tag):
+                                            if ('Body' in body.tag):
                                                 for textt in body:
-                                                    if('Text' in textt.tag):
-                                                        wordNum = len(re.sub('['+string.punctuation+']', '', textt.text).split())
+                                                    if ('Text' in textt.tag):
+                                                        wordNum = len(re.sub('[' + string.punctuation + ']', '',
+                                                                             textt.text).split())
                                                         wordCount.append(wordNum)
                                         elem.clear()
                                         root_wiki.clear()
 
 
-                        elif('QA' in child.attrib['Type']):
-                            if(lastRev):
+                        elif ('QA' in child.attrib['Type']):
+                            if (lastRev):
                                 for ch1 in child:
-                                    if('Instance' in ch1.tag):
+                                    if ('Instance' in ch1.tag):
                                         for ch2 in ch1:
-                                            if('Body' in ch2.tag):
+                                            if ('Body' in ch2.tag):
                                                 for ch3 in ch2:
-                                                    if('Text' in ch3.tag):
+                                                    if ('Text' in ch3.tag):
                                                         Text = ch3.text
 
-
                             Text = knol.getCleanText(Text)
-                            wordNum = len(re.sub('['+string.punctuation+']', '', Text).split())
+                            wordNum = len(re.sub('[' + string.punctuation + ']', '', Text).split())
 
-
-
-                if(kwargs.get('wordCount')!=None):
+                if (kwargs.get('wordCount') != None):
                     kwargs['wordCount'][f] = wordCount
                 else:
-                    #x = 0
+                    # x = 0
                     dummyDict[f] = wordCount
 
-
-            #t2 = time.time()
-            #print(t2-t1)
+            # t2 = time.time()
+            # print(t2-t1)
 
     @staticmethod
     def countAllWords(*args, **kwargs):
-        #t1 = time.time()
-        if(kwargs.get('file_list')!=None):
+        # t1 = time.time()
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
-        if(kwargs.get('last_rev')!=None):
-            if(kwargs['last_rev']==True):
+        if (kwargs.get('last_rev') != None):
+            if (kwargs['last_rev'] == True):
                 lastRev = True
         else:
             lastRev = False
 
         fileNum = len(file_list)
 
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
-        elif(fileNum<24):
-            cnum = fileNum+1           # Bydefault it is 24
+        elif (fileNum < 24):
+            cnum = fileNum + 1  # Bydefault it is 24
         else:
             cnum = 24
 
-
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
 
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
-
-
-
 
         manager = Manager()
         countList = manager.dict()
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=knol.countWords, kwargs={'file_name':fileList[i],'wordCount': countList, 'lastRev':lastRev,'l': l})
-            #processDict[i+1] = Process(target=self.countWords, kwargs={'file_name':fileList[i], 'lastRev':lastRev,'l': l})
+            processDict[i + 1] = Process(target=knol.countWords,
+                                         kwargs={'file_name': fileList[i], 'wordCount': countList, 'lastRev': lastRev,
+                                                 'l': l})
+            # processDict[i+1] = Process(target=self.countWords, kwargs={'file_name':fileList[i], 'lastRev':lastRev,'l': l})
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         '''
         t2 = time.time()
         print(t2-t1)
         '''
         return countList
-
 
     @staticmethod
     def Infobox(*args, **kwargs):
@@ -2510,7 +2491,7 @@ class knol(object):
             root = tree.getroot()
 
             for child in root:
-                if('KnowledgeData' in child.tag):
+                if ('KnowledgeData' in child.tag):
                     root = child
 
             try:
@@ -2533,7 +2514,7 @@ class knol(object):
                 root = tree.getroot()
 
                 for child in root:
-                    if('KnowledgeData' in child.tag):
+                    if ('KnowledgeData' in child.tag):
                         root = child
 
                 try:
@@ -2548,18 +2529,18 @@ class knol(object):
                 else:
                     check = 0
 
-                if(kwargs.get('Infobox')!=None):
+                if (kwargs.get('Infobox') != None):
                     kwargs['Infobox'][f] = check
 
     @staticmethod
     def __get_multiprocessing(*args, **kwargs):
-        if(kwargs.get('file_list')!=None):
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
         if kwargs.get('revision_id') != None:
             revisionId = kwargs['revision_id']
@@ -2568,24 +2549,24 @@ class knol(object):
 
         fileNum = len(file_list)
 
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
-        elif(fileNum<24):
-            cnum = fileNum+1           # Bydefault it is 24
+        elif (fileNum < 24):
+            cnum = fileNum + 1  # Bydefault it is 24
         else:
             cnum = 24
 
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
 
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
@@ -2610,16 +2591,17 @@ class knol(object):
         manager = Manager()
         Infobox = manager.dict()
         for i in range(pNum):
-            processDict[i+1] = Process(target=knol.Infobox, kwargs={'file_name':fileList[i],'Infobox': Infobox,'l': l, 'revision_id': revisionId})
+            processDict[i + 1] = Process(target=knol.Infobox,
+                                         kwargs={'file_name': fileList[i], 'Infobox': Infobox, 'l': l,
+                                                 'revision_id': revisionId})
 
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return Infobox
-
 
     @staticmethod
     def countImages(*args, **kwargs):
@@ -2629,7 +2611,7 @@ class knol(object):
             root = tree.getroot()
 
             for child in root:
-                if('KnowledgeData' in child.tag):
+                if ('KnowledgeData' in child.tag):
                     root = child
 
             try:
@@ -2640,7 +2622,7 @@ class knol(object):
             wikiText = knol.getRevision(file_name, revisionId)
 
             countImages = 0
-            imageFormates = ['.jpg','.jpeg','.svg','.gif','.png','.bmp','.tiff']
+            imageFormates = ['.jpg', '.jpeg', '.svg', '.gif', '.png', '.bmp', '.tiff']
             for image in imageFormates:
                 countImages += wikiText.count(image)
 
@@ -2650,13 +2632,13 @@ class knol(object):
         elif kwargs.get('file_name') != None:
             file_name = kwargs['file_name']
             count = 0
-            imageFormates = ['.jpg','.jpeg','.svg','.gif','.png','.bmp','.tiff']
+            imageFormates = ['.jpg', '.jpeg', '.svg', '.gif', '.png', '.bmp', '.tiff']
             for f in file_name:
                 tree = ET.parse(f)
                 root = tree.getroot()
 
                 for child in root:
-                    if('KnowledgeData' in child.tag):
+                    if ('KnowledgeData' in child.tag):
                         root = child
 
                 try:
@@ -2671,9 +2653,8 @@ class knol(object):
                 for image in imageFormates:
                     countImages += wikiText.count(image)
 
-                if(kwargs.get('images')!=None):
+                if (kwargs.get('images') != None):
                     kwargs['images'][f] = countImages
-
 
     @staticmethod
     def getNumberOfImages(*args, **kwargs):
@@ -2687,23 +2668,23 @@ class knol(object):
         fileList = all_var[1]
         pNum = all_var[2]
 
-
         manager = Manager()
         Images = manager.dict()
 
         l = Lock()
         processDict = {}
         for i in range(pNum):
-            processDict[i+1] = Process(target=knol.countImages, kwargs={'file_name':fileList[i],'images': Images,'l': l, 'revision_id': revisionId})
+            processDict[i + 1] = Process(target=knol.countImages,
+                                         kwargs={'file_name': fileList[i], 'images': Images, 'l': l,
+                                                 'revision_id': revisionId})
 
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return Images
-
 
     @staticmethod
     def gini(array):
@@ -2713,10 +2694,9 @@ class knol(object):
         for i in array:
             i += 0.0000001
         array = np.sort(array)
-        index = np.arange(1,array.shape[0]+1)
+        index = np.arange(1, array.shape[0] + 1)
         n = array.shape[0]
-        return ((np.sum((2 * index - n  - 1) * array)) / (n * np.sum(array)))
-
+        return ((np.sum((2 * index - n - 1) * array)) / (n * np.sum(array)))
 
     @staticmethod
     def getContributions(file_name):
@@ -2724,22 +2704,22 @@ class knol(object):
         root = tree.getroot()
 
         for child in root:
-            if('KnowledgeData' in child.tag):
+            if ('KnowledgeData' in child.tag):
                 root = child
 
         contributors = {}
-        #editor=''
+        # editor=''
         for child in root:
-            if('Instance' in child.tag):
+            if ('Instance' in child.tag):
                 for newch in child:
-                    if('Contributors' in newch.tag):
+                    if ('Contributors' in newch.tag):
                         for chi in newch:
-                            if('OwnerUserId' in chi.tag):
+                            if ('OwnerUserId' in chi.tag):
                                 editor = chi.text
 
-                    if('Body' in newch.tag):
+                    if ('Body' in newch.tag):
                         for chi in newch:
-                            if('Text' in chi.tag):
+                            if ('Text' in chi.tag):
                                 editLength = int(chi.attrib['Bytes'])
 
                 try:
@@ -2748,7 +2728,7 @@ class knol(object):
                     else:
                         contributors[editor] += editLength
                 except:
-                    #print(file_name)
+                    # print(file_name)
                     continue
 
         s = []
@@ -2756,7 +2736,6 @@ class knol(object):
             s.append(float(contributors[each]))
 
         return s
-
 
     @staticmethod
     def localGiniCoefficient(*args, **kwargs):
@@ -2770,14 +2749,13 @@ class knol(object):
             file_name = kwargs['file_name']
             for f in file_name:
                 p = np.array(knol.getContributions(f))
-                if(len(p)==0):
+                if (len(p) == 0):
                     giniValue = -1
                 else:
                     giniValue = knol.gini(p)
 
-                if(kwargs.get('GiniValues')!=None):
+                if (kwargs.get('GiniValues') != None):
                     kwargs['GiniValues'][f] = giniValue
-
 
     @staticmethod
     def getLocalGiniCoefficient(*args, **kwargs):
@@ -2788,32 +2766,31 @@ class knol(object):
         fileList = all_var[1]
         pNum = all_var[2]
 
-
         manager = Manager()
         GiniValues = manager.dict()
 
         l = Lock()
         processDict = {}
         for i in range(pNum):
-            processDict[i+1] = Process(target=knol.localGiniCoefficient, kwargs={'file_name':fileList[i],'GiniValues': GiniValues,'l': l})
+            processDict[i + 1] = Process(target=knol.localGiniCoefficient,
+                                         kwargs={'file_name': fileList[i], 'GiniValues': GiniValues, 'l': l})
 
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         return GiniValues
-
 
     def globalGini(self, *args, **kwargs):
         if kwargs.get('file_name') != None:
             file_name = kwargs['file_name']
 
-        if(kwargs.get('l')!=None):
+        if (kwargs.get('l') != None):
             l = kwargs['l']
 
-        if(kwargs.get('contributors')==None):
+        if (kwargs.get('contributors') == None):
             contributors = {}
 
         for f in file_name:
@@ -2821,38 +2798,38 @@ class knol(object):
             root = tree.getroot()
 
             for child in root:
-                if('KnowledgeData' in child.tag):
+                if ('KnowledgeData' in child.tag):
                     root = child
-            editor=''
+            editor = ''
             for child in root:
-                if('Instance' in child.tag):
+                if ('Instance' in child.tag):
                     for newch in child:
-                        if('Contributors' in newch.tag):
+                        if ('Contributors' in newch.tag):
                             for chi in newch:
-                                if('OwnerUserId' in chi.tag):
+                                if ('OwnerUserId' in chi.tag):
                                     editor = chi.text
-                                elif('LastEditorUserId' in chi.tag):
+                                elif ('LastEditorUserId' in chi.tag):
                                     editor = chi.text
 
-                        if('Body' in newch.tag):
+                        if ('Body' in newch.tag):
                             for chi in newch:
-                                if('Text' in chi.tag):
+                                if ('Text' in chi.tag):
                                     editLength = int(chi.attrib['Bytes'])
 
-                    if(kwargs.get('contributors')!=None):
-                        if kwargs['contributors'].get(editor)==None:
+                    if (kwargs.get('contributors') != None):
+                        if kwargs['contributors'].get(editor) == None:
                             l.acquire()
                             kwargs['contributors'][editor] = editLength
                             l.release()
-                            #x = 0
+                            # x = 0
                         else:
                             l.acquire()
                             kwargs['contributors'][editor] += editLength
                             l.release()
-                            #x=1
+                            # x=1
 
                     else:
-                        if contributors.get(editor)==None:
+                        if contributors.get(editor) == None:
                             l.acquire()
                             contributors[editor] = editLength
                             l.release()
@@ -2861,13 +2838,9 @@ class knol(object):
                             contributors[editor] += editLength
                             l.release()
 
+        # print(t2-t1)
 
-
-
-
-        #print(t2-t1)
-
-        if(kwargs.get('contributors')==None):
+        if (kwargs.get('contributors') == None):
             s = []
             for each in contributors:
                 s.append(float(contributors[each]))
@@ -2878,136 +2851,124 @@ class knol(object):
 
     def get_global_gini_coefficient(self, *args, **kwargs):
 
-        if(kwargs.get('file_list')!=None):
+        if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
-        elif(kwargs.get('dir_path')!=None):
+        elif (kwargs.get('dir_path') != None):
             dir_path = kwargs['dir_path']
 
-            file_list = glob.glob(dir_path+'/*.knolml')
+            file_list = glob.glob(dir_path + '/*.knolml')
 
         fileNum = len(file_list)
 
-        if(kwargs.get('c_num')!=None):
+        if (kwargs.get('c_num') != None):
             cnum = kwargs['c_num']
-        elif(fileNum<4):
-            cnum = fileNum+1           # Bydefault it is 4
+        elif (fileNum < 4):
+            cnum = fileNum + 1  # Bydefault it is 4
         else:
             cnum = 4
 
-
         fileList = []
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             for f in file_list:
                 fileList.append([f])
 
         else:
-            f = np.array_split(file_list,cnum)
+            f = np.array_split(file_list, cnum)
             for i in f:
                 fileList.append(i.tolist())
-
 
         manager = Manager()
         contributors = manager.dict()
 
         l = Lock()
         processDict = {}
-        if(fileNum<cnum):
+        if (fileNum < cnum):
             pNum = fileNum
         else:
             pNum = cnum
         for i in range(pNum):
-            processDict[i+1] = Process(target=self.globalGini, kwargs={'file_name':fileList[i],'contributors': contributors,'l': l})
+            processDict[i + 1] = Process(target=self.globalGini,
+                                         kwargs={'file_name': fileList[i], 'contributors': contributors, 'l': l})
 
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
-
-
+            processDict[i + 1].join()
 
         s = []
-        for key,items in contributors.items():
+        for key, items in contributors.items():
             s.append(float(contributors[key]))
 
         p = np.array(s)
         giniValue = knol.gini(p)
 
-
         return giniValue
-
 
     @staticmethod
     def findTags(*args, **kwargs):
-        #print(list_tags)
-        if(kwargs.get('list_tags')!=None):
+        # print(list_tags)
+        if (kwargs.get('list_tags') != None):
             list_tags = kwargs['list_tags']
 
-        if(kwargs.get('l')!=None):
+        if (kwargs.get('l') != None):
             lock = kwargs['l']
 
-
-        #print(list_tags)
-        if(kwargs.get('file_path')!=None):
+        # print(list_tags)
+        if (kwargs.get('file_path') != None):
             file_name = kwargs['file_path']
             tree = ET.parse(file_name)
             root = tree.getroot()
 
-
-
             uList = []
             for child in root:
-                if('KnowledgeData' in child.tag):
+                if ('KnowledgeData' in child.tag):
                     for ch in child:
-                        if('Instance' in ch.tag):
+                        if ('Instance' in ch.tag):
                             for newch in ch:
-                                if('Contributors' in newch.tag):
+                                if ('Contributors' in newch.tag):
                                     for chi in newch:
-                                        if('OwnerUserId' in chi.tag):
-                                            if(chi.text not in uList):
+                                        if ('OwnerUserId' in chi.tag):
+                                            if (chi.text not in uList):
                                                 uList.append(chi.text)
             return uList
 
-        elif(kwargs.get('file_name')!=None):
+        elif (kwargs.get('file_name') != None):
             file_name = kwargs['file_name']
             for f in file_name:
                 tree = ET.parse(f)
                 root = tree.getroot()
                 postList = []
                 for child in root:
-                    if('KnowledgeData' in child.tag):
+                    if ('KnowledgeData' in child.tag):
                         for ch in child:
-                            if('Instance' in ch.tag):
+                            if ('Instance' in ch.tag):
                                 for newch in ch:
-                                    if('Body' in newch.tag):
+                                    if ('Body' in newch.tag):
                                         for txt in newch:
-                                            if('Text' in txt.tag):
+                                            if ('Text' in txt.tag):
                                                 postList.append(txt.text)
 
-                                    if('Tags' in newch.tag):
+                                    if ('Tags' in newch.tag):
 
-                                        if(list_tags in newch.text):
-                                            print(f +': '+ list_tags)
-                                            if(kwargs.get('tagPosts')!=None):
+                                        if (list_tags in newch.text):
+                                            print(f + ': ' + list_tags)
+                                            if (kwargs.get('tagPosts') != None):
                                                 kwargs['tagPosts'][f] = []
                                             continue
                                         else:
                                             postList = []
 
-
-
-
-
-                if(kwargs.get('tagPosts')!=None):
+                if (kwargs.get('tagPosts') != None):
                     '''
                     if(kwargs['tagPosts'].get(f)!=None):
                         kwargs['tagPosts'][f] = postList
                     '''
-                    if(kwargs['tagPosts'].get(f)!=None):
+                    if (kwargs['tagPosts'].get(f) != None):
                         lock.acquire()
-                        with open(list_tags+'.txt', 'a') as newFile:
-                            newFile.write(f +': ')
+                        with open(list_tags + '.txt', 'a') as newFile:
+                            newFile.write(f + ': ')
                             newFile.write(str(postList))
                             newFile.write('\n')
                             postList = []
@@ -3018,9 +2979,8 @@ class knol(object):
             print("No arguments provided")
 
     @staticmethod
-    def findAllTags(list_tags,*args, **kwargs):
-        #t1 = time.time()
-
+    def findAllTags(list_tags, *args, **kwargs):
+        # t1 = time.time()
 
         all_var = knol.__get_multiprocessing(*args, **kwargs)
         # revisionId, file_list, pNum
@@ -3028,23 +2988,22 @@ class knol(object):
         fileList = all_var[1]
         pNum = all_var[2]
 
-
-
-
         manager = Manager()
         tagPosts = manager.dict()
 
         l = Lock()
         processDict = {}
         for i in range(pNum):
-            processDict[i+1] = Process(target=knol.findTags, kwargs={'list_tags':list_tags,'file_name':fileList[i],'tagPosts':tagPosts,'l': l})
+            processDict[i + 1] = Process(target=knol.findTags,
+                                         kwargs={'list_tags': list_tags, 'file_name': fileList[i], 'tagPosts': tagPosts,
+                                                 'l': l})
 
-            #processDict[i+1] = Process(target=self.countWords, kwargs={'file_name':fileList[i], 'lastRev':lastRev,'l': l})
+            # processDict[i+1] = Process(target=self.countWords, kwargs={'file_name':fileList[i], 'lastRev':lastRev,'l': l})
         for i in range(pNum):
-            processDict[i+1].start()
+            processDict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i+1].join()
+            processDict[i + 1].join()
 
         '''
         t2 = time.time()
