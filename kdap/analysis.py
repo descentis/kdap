@@ -212,19 +212,18 @@ class instances(object):
 
         if kwargs.get('clean') is not None:
             clean = kwargs['clean']
-        if clean:
-            di['text'] = getCleanText(di['text'])
-
-            '''
-            qe = QueryExecutor()
-            qe.setOutputFileDirectoryName('lol')
-            qe.setNumberOfProcesses(5)
-            qe.setNumberOfBytes(2000000000)
-            qe.setTextValue(di['text'])
-            qe.runQuery()
-            return qe.result()
-            '''
-
+            if clean:
+                di['text'] = getCleanText(di['text'])
+                
+                '''
+                qe = QueryExecutor()
+                qe.setOutputFileDirectoryName('lol')
+                qe.setNumberOfProcesses(5)
+                qe.setNumberOfBytes(2000000000)
+                qe.setTextValue(di['text'])
+                qe.runQuery()
+                return qe.result()
+                '''
         return di
 
     def get_bytes(self):
