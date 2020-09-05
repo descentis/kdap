@@ -381,7 +381,7 @@ class knol(object):
     # ******************methods related to frames ends here*****************************
 
     '''
-    Following methods are used to download the relavent dataset from archive in Knol-ML format
+    Following methods are used to download the relevant dataset from archive in Knol-ML format
     '''
 
     def extract_from_bzip(self, *args, **kwargs):
@@ -478,6 +478,8 @@ class knol(object):
             Name of portal to download from
         \*\*article_list : list[str]
             List of articles to download
+        \*\*category_list : list[str]
+            TODO
         \*\*destdir: str
             TODO
         \*\*wikipedia_dump: str
@@ -525,7 +527,11 @@ class knol(object):
                 article_list = kwargs['article_list']
                 key = 'article_list'
                 # articles = self.get_article_name(article_list)
-                self.download_from_dump(home, article_list, key)
+                if kwargs.get('wikipedia_dump') is None:
+                    for article in article_list:
+                        self.get_wiki_article(article, output_dir=kwargs['destdir'])
+                else:
+                    self.download_from_dump(home, article_list, key)
 
                 if convert:
                     if compress_bool:
@@ -534,10 +540,6 @@ class knol(object):
                     else:
                         print("conversion started")
                         wikiConverter.convertall(home + '/knolml_dataset/output/' + key, output_dir=destdir + '/' + key)
-
-                if not kwargs.get('wikipedia_dump'):
-                    for article in article_list:
-                        self.get_wiki_article(article, kwargs)
 
             if kwargs.get('download') is not None:
                 download_data = kwargs['download']
@@ -780,7 +782,7 @@ class knol(object):
 
             file_list = glob.glob(dir_path + '/*.knolml')
 
-        if (kwargs.get('c_num') != None):
+        if kwargs.get('c_num') is not None:
             cnum = kwargs['c_num']
         else:
             cnum = 4  # Bydefault it is 4
@@ -800,7 +802,7 @@ class knol(object):
         instance_date = manager.dict()
         l = Lock()
         processDict = {}
-        if (fileNum < cnum):
+        if fileNum < cnum:
             pNum = fileNum
         else:
             pNum = cnum
@@ -834,18 +836,17 @@ class knol(object):
             start = ''
             end = ''
             granularity = 'monthly'
-            if kwargs.get('article_name') != None:
+            if kwargs.get('article_name') is not None:
                 article_name = kwargs['article_name']
             article_name = self.get_article_name(article_name)
-            if kwargs.get('start') != None:
+            if kwargs.get('start') is not None:
                 start = kwargs['start'].replace('-', '')
 
-            if kwargs.get('end') != None:
+            if kwargs.get('end') is not None:
                 end = kwargs['end'].replace('-', '')
 
-            if kwargs.get('granularity') != None:
+            if kwargs.get('granularity') is not None:
                 granularity = kwargs['granularity']
-
             p = PageviewsClient(user_agent="<person@organization.org>")
 
             if start == '':
