@@ -489,7 +489,13 @@ class knol(object):
             A list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted
         \*\*portal : str
             stackexchange portal name. Provided when sitename='stackexchange'
-
+            
+        Returns
+        -------
+        \*\*final_category_list : list[str]
+            A list of wikipedia article names. Only when caregory_list is provided as argument
+        \*\*final_template_list : list[str]
+            A list of wikipedia article names. Only when template_list is provided as argument
         """
 
         if kwargs.get('sitename') is not None:
