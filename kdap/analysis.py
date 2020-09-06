@@ -474,23 +474,21 @@ class knol(object):
         Parameters
         ----------
         \*\*sitename : basestring
-            Name of portal to download from
+            Name of portal to download from e.g wikipedia, stackexchange
         \*\*article_list : list[str]
-            List of articles to download
-        \*\*category_list : list[str]
-            TODO
+            List of wikipedia articles to download in knol-ML format
         \*\*destdir: str
-            TODO
+            Path to destination folder where the dataset will be downloaded
         \*\*wikipedia_dump: str
-            TODO
-        \*\*download : str
-            TODO
+            Path to wikipedia full dump. When provided, the articles will be extract directly from the dump
+        \*\*download : bool
+            if true, the articles will be downloaded
         \*\*category_list : list[str]
-            TODO
+            A list of wikipedia categories. When this parameter is provided, all the articles under these lists will be extracted
         \*\*template_list : list[str]
-            TODO
+            A list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted
         \*\*portal : str
-            TODO
+            stackexchange portal name. Provided when sitename='stackexchange'
 
         """
 
