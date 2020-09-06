@@ -170,15 +170,22 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sitename</strong> (<em>basestring</em>) – Name of portal to download from</p></li>
-<li><p><strong>article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of articles to download</p></li>
-<li><p><strong>destdir</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>wikipedia_dump</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>download</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>category_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – TODO</p></li>
-<li><p><strong>template_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – TODO</p></li>
-<li><p><strong>portal</strong> (<em>str</em>) – TODO</p></li>
+<li><p><strong>**sitename</strong> (<em>basestring</em>) – Name of portal to download from e.g wikipedia, stackexchange</p></li>
+<li><p><strong>**article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of wikipedia articles to download in knol-ML format</p></li>
+<li><p><strong>**destdir</strong> (<em>str</em>) – Path to destination folder where the dataset will be downloaded</p></li>
+<li><p><strong>**wikipedia_dump</strong> (<em>str</em>) – Path to wikipedia full dump. When provided, the articles will be extract directly from the dump</p></li>
+<li><p><strong>**download</strong> (<em>bool</em>) – if true, the articles will be downloaded</p></li>
+<li><p><strong>**category_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of wikipedia categories. When this parameter is provided, all the articles under these lists will be extracted</p></li>
+<li><p><strong>**template_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted</p></li>
+<li><p><strong>**portal</strong> (<em>str</em>) – stackexchange portal name. Provided when sitename=’stackexchange’</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>**final_category_list</strong> (<em>list[str]</em>) – A list of wikipedia article names. Only when caregory_list is provided as argument</p></li>
+<li><p><strong>**final_template_list</strong> (<em>list[str]</em>) – A list of wikipedia article names. Only when template_list is provided as argument</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -223,8 +230,8 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dd><p>creating the instance of each object.
 The init function defined stores each instance’s attribute which can be analyzed separately</p>
 <dl class="py method">
-<dt id="kdap.analysis.instances.__count_words">
-<code class="sig-name descname">__count_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__count_words" title="Permalink to this definition">¶</a></dt>
+<dt id="kdap.analysis.instances._instances__count_words">
+<code class="sig-name descname">_instances__count_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__count_words" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns number of words in the text</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -234,8 +241,8 @@ The init function defined stores each instance’s attribute which can be analyz
 </dd></dl>
 
 <dl class="py method">
-<dt id="kdap.analysis.instances.__get_emailid">
-<code class="sig-name descname">__get_emailid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__get_emailid" title="Permalink to this definition">¶</a></dt>
+<dt id="kdap.analysis.instances._instances__get_emailid">
+<code class="sig-name descname">_instances__get_emailid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__get_emailid" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the email ids in the text</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -245,8 +252,8 @@ The init function defined stores each instance’s attribute which can be analyz
 </dd></dl>
 
 <dl class="py method">
-<dt id="kdap.analysis.instances.__get_url">
-<code class="sig-name descname">__get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__get_url" title="Permalink to this definition">¶</a></dt>
+<dt id="kdap.analysis.instances._instances__get_url">
+<code class="sig-name descname">_instances__get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__get_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns all the the urls in the text</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -399,78 +406,6 @@ Users can use one of these methods to create the wiki graph according to the req
 </dl>
 </dd></dl>
 
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_graph_by_wikiarticle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_name</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download*</span>
-
-<span class="sd">    This method takes an article name as an argument and creates the induced subgraph</span>
-<span class="sd">    among the articles present in there.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    article_name:</span>
-<span class="sd">        Type: String</span>
-<span class="sd">        The name of the article for which the interwiki graph has to be created.</span>
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle(&#39;India&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_list</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method takes a list of articles name as an argument and creates the induced subgraph</span>
-<span class="sd">    among the articles using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    article_list:</span>
-<span class="sd">        Type: List of strings</span>
-<span class="sd">        The list of articles name for which the interwiki graph has to be created.</span>
-<span class="sd">    file_name:</span>
-<span class="sd">        optional</span>
-<span class="sd">        file name by which you want to create the graph</span>
-
-<span class="sd">    eg. knol.get_graph_by_wikiarticle_list([&#39;India&#39;, &#39;Pakistan&#39;], file_name=&#39;relation&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_countries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method creates the induced subgraph among the articles of all the</span>
-<span class="sd">    wikipedia pages of all the countries using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    country_list:</span>
-<span class="sd">        optional</span>
-<span class="sd">        Type: List of strings</span>
-<span class="sd">        The list of countries name for which the interwiki graph has to be created.</span>
-<span class="sd">        When not set, the graph is created for all the countries</span>
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle_countries()</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_cities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">):</span>
-
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method creates the induced subgraph among the articles of all the</span>
-<span class="sd">    wikipedia pages of all the cities of a given country using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    country_name:</span>
-<span class="sd">        Type: string</span>
-<span class="sd">        The country name for which the city graph has to be created.</span>
-
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle_cities(&#39;United States&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-</pre></div>
-</div>
 </div>
 </div>
 
