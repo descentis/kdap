@@ -355,39 +355,6 @@ The following function is used to get the edits of each user</p>
 <dd><p>creating the instance of each object.
 The init function defined stores each instance’s attribute which can be analyzed separately</p>
 <dl class="py method">
-<dt id="kdap.analysis.instances._instances__count_words">
-<code class="sig-name descname">_instances__count_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__count_words" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns number of words in the text</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="kdap.analysis.instances._instances__get_emailid">
-<code class="sig-name descname">_instances__get_emailid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__get_emailid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the email ids in the text</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="kdap.analysis.instances._instances__get_url">
-<code class="sig-name descname">_instances__get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances._instances__get_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the the urls in the text</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="kdap.analysis.instances.get_bytes">
 <code class="sig-name descname">get_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_bytes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the bytes detail</p>
@@ -405,6 +372,14 @@ The init function defined stores each instance’s attribute which can be analyz
 <dt id="kdap.analysis.instances.get_editor">
 <code class="sig-name descname">get_editor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_editor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the edior details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**editor</strong> – Details related to the editor of this instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -426,6 +401,14 @@ The init function defined stores each instance’s attribute which can be analyz
 <code class="sig-name descname">get_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the tag details
 Works for QnA dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**tags</strong> – List of tags, if available</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -478,6 +461,14 @@ Works for QnA dataset</p>
 <dt id="kdap.analysis.instances.get_title">
 <code class="sig-name descname">get_title</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_title" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the title</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**title</strong> – Title of the Knowledge Data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -485,6 +476,14 @@ Works for QnA dataset</p>
 <code class="sig-name descname">is_answer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_answer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the instance is an answer
 Works with QnA based knolml dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**closed</strong> – Returns true if the post is an answer, if applicable</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -492,6 +491,14 @@ Works with QnA based knolml dataset</p>
 <code class="sig-name descname">is_closed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_closed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the qna thread is closed
 Works with QnA based knolml dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**closed</strong> – Returns true if the post is close, if applicable</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -499,6 +506,14 @@ Works with QnA based knolml dataset</p>
 <code class="sig-name descname">is_comment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_comment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the instance is a comment
 Works with QnA based knolml dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**closed</strong> – Returns true if the post is a comment, if applicable</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -506,6 +521,14 @@ Works with QnA based knolml dataset</p>
 <code class="sig-name descname">is_question</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_question" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the instance is a question
 Works with QnA based knolml dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**closed</strong> – Returns true if the post is a question , if applicable</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

@@ -32,7 +32,6 @@ The following methods are used to extract the knolml articles in frames and use 
 
 .. autoclass:: kdap.analysis.instances
    :members:
-   :private-members:
 
 Graph Methods
 =============

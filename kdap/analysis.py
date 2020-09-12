@@ -103,6 +103,11 @@ class instances(object):
         """
         Returns True if the instance is a question
         Works with QnA based knolml dataset
+
+        Returns
+        -------
+        \*\*closed : bool
+            Returns true if the post is a question , if applicable
         """
         if self.instanceType == 'Question':
             return True
@@ -111,6 +116,11 @@ class instances(object):
         """
         Returns True if the instance is an answer
         Works with QnA based knolml dataset
+
+        Returns
+        -------
+        \*\*closed : bool
+            Returns true if the post is an answer, if applicable
         """
         if self.instanceType == 'Answer':
             return True
@@ -119,6 +129,11 @@ class instances(object):
         """
         Returns True if the instance is a comment
         Works with QnA based knolml dataset
+        
+        Returns
+        -------
+        \*\*closed : bool
+            Returns true if the post is a comment, if applicable
         """
         if self.instanceType == 'Comments':
             return True
@@ -127,6 +142,11 @@ class instances(object):
         """
         Returns True if the qna thread is closed
         Works with QnA based knolml dataset
+        
+        Returns
+        -------
+        \*\*closed : bool
+            Returns true if the post is close, if applicable
         """
         if self.instance_attrib['TimeStamp'].get('ClosedDate') is None:
             return True
@@ -139,6 +159,11 @@ class instances(object):
     def get_editor(self):
         """
         Returns the edior details
+
+        Returns
+        -------
+        \*\*editor : dictionary
+            Details related to the editor of this instance
         """
         di = {}
         if self.instance_attrib['Contributors'].get('OwnerUserId') is not None:
@@ -152,6 +177,11 @@ class instances(object):
     def get_title(self):
         """
         Returns the title
+
+        Returns
+        -------
+        \*\*title : str
+            Title of the Knowledge Data
         """
         return self.instanceTitle
 
@@ -159,6 +189,11 @@ class instances(object):
         """
         Returns the tag details
         Works for QnA dataset
+        
+        Returns
+        -------
+        \*\*tags : list
+            List of tags, if available
         """
         if self.instance_attrib.get('Tags') is not None:
             return self.instance_attrib['Tags'].split('><')
