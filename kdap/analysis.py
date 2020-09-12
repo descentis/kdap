@@ -679,16 +679,15 @@ class knol(object):
         return displayList
 
     def get_wiki_article_by_class(self, *args, **kwargs):
-        """Query database to extract articles based on category name
-
-        Description
+        """
+        Query database to extract articles based on category or project name
 
         Parameters
         ----------
         \*\*wikiproject : str
-            TODO
+            Name of the wikiproject for which you want to extract the articles
         \*\*wiki_class : str
-            TODO
+            The Wikipedia quality class for which the articles has to be extracted
 
         """
         home = expanduser("~")
@@ -774,9 +773,24 @@ class knol(object):
                 kwargs['instance_date'][file_name] = date
 
     def get_instance_date(self, *args, **kwargs):
-        '''
-        This piece of code is to ensure the multiprocessing
-        '''
+        """
+        Retrieve the instance dates for a list of articles. Includes multiprocessing
+
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+
+        Returns
+        -------
+        \*\*instance_date : dictionary
+            A dictionary with keys as articles and values as dates
+
+        """
         if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
@@ -1097,10 +1111,29 @@ class knol(object):
                     kwargs['revisionLength'][file_name] = total_rev
 
     def get_num_instances(self, *args, **kwargs):
-        '''
-        This piece of code is to ensure the multiprocessing
-        Enter a date in YYYY-MM-DD format for start and end dates
-        '''
+
+        """Extract number of instances based on start and end dates
+
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+        \*\*granularity : str
+            Retrieve the instances monthly or yearly
+        \*\*start : str
+            Start date in YYYY-MM-DD format
+        \*\*end : str
+            End date in YYYY-MM-DD format            
+
+        Returns
+        -------
+        \*\*revisionLength : dictionary
+            A dictionary with keys as articles and values as instances
+        """
         if kwargs.get('instance_type') != None:
             instance_type = kwargs['instance_type']
         else:
@@ -1399,7 +1432,28 @@ class knol(object):
             print("No arguments provided")
 
     def get_editors(self, *args, **kwargs):
+        """Extract editors based on granularity. Includes parallel processing
 
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+        \*\*granularity : str
+            Retrieve the instances monthly or yearly
+        \*\*start : str
+            Start date in YYYY-MM-DD format
+        \*\*end : str
+            End date in YYYY-MM-DD format            
+
+        Returns
+        -------
+        \*\*userList : dictionary
+            A dictionary with keys as articles and values as editor ids
+        """
         if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
@@ -1534,6 +1588,11 @@ class knol(object):
             type of edit to be measured e.g. bytes, edits, sentences. bytes by default
         ordered_by : str
             means of ordering e.g. editor, questions, answers or article
+
+        Returns
+        -------
+        \*\*author_contrib : dictionary
+            A dictionary with keys as articles and values as author's contribution
         """
 
         all_wiki = False
