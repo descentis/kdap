@@ -168,6 +168,11 @@ class instances(object):
     def get_timestamp(self):
         """
         Returns the timestamp details
+        
+        Returns
+        -------
+        \*\*timestamp : dictionary
+            Timestamp details of this instance
         """
         di = {}
         if self.instance_attrib['TimeStamp'].get('CreationDate') is not None:
@@ -185,6 +190,11 @@ class instances(object):
     def get_score(self):
         """
         Returns the score details
+        
+        Returns
+        -------
+        \*\*score : dictionary
+            A dictionary of score values, if available
         """
         if self.instance_attrib.get('Credit') is None:
             return 'Score value is not available'
@@ -204,6 +214,15 @@ class instances(object):
     def get_text(self, *args, **kwargs):
         """
         Returns the text data
+        
+        Parameters
+        ----------
+        \*\*clean : bool, optional
+        
+        Returns
+        -------
+        \*\*text : str
+            actual text of the instance
         """
         di = {}
 
@@ -229,6 +248,11 @@ class instances(object):
     def get_bytes(self):
         """
         Returns the bytes detail
+        
+        Returns
+        -------
+        \*\*bytes : int
+            number of bytes given text has
         """
         if self.instance_attrib['Body']['Text'].get('#Bytes') is not None:
             return int(self.instance_attrib['Body']['Text']['#Bytes'])
