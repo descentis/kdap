@@ -12,4 +12,5 @@ prettytable
 bx-python
 pyunpack
 mwviews
+p7zip-full
 patool

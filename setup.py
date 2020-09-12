@@ -27,6 +27,7 @@ setuptools.setup(
                       'bx-python',
                       'pyunpack',
                       'mwviews',
+                      'p7zip-full',
                       'patool'],
     classifiers=[
         "Programming Language :: Python :: 3",
