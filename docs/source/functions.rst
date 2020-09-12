@@ -15,6 +15,12 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.
 
 .. autofunction:: download_dataset
 .. autofunction:: get_wiki_article
+.. autofunction:: get_wiki_article_by_class
+.. autofunction:: get_instance_date
+.. autofunction:: get_pageviews
+.. autofunction:: get_num_instances
+.. autofunction:: get_editors
+.. autofunction:: get_author_edits
 
 Frame Methods
 =============

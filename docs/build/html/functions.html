@@ -204,6 +204,131 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_wiki_article_by_class">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_wiki_article_by_class</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_article_by_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query database to extract articles based on category or project name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**wikiproject</strong> (<em>str</em>) – Name of the wikiproject for which you want to extract the articles</p></li>
+<li><p><strong>**wiki_class</strong> (<em>str</em>) – The Wikipedia quality class for which the articles has to be extracted</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_instance_date">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_instance_date</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_instance_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the instance dates for a list of articles. Includes multiprocessing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**instance_date</strong> – A dictionary with keys as articles and values as dates</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_pageviews">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_pageviews</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">site_name</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_pageviews" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get pageviews for a particular article</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>site_name</strong> (<em>str</em>) – Site to get pageviews from</p></li>
+<li><p><strong>granularity</strong> (<em>str</em>) – Granularity of pageviews data e.g. monthly</p></li>
+<li><p><strong>start</strong> (<em>str</em>) – Date to start counting pageviews from</p></li>
+<li><p><strong>end</strong> (<em>str</em>) – Date to count pageviews till</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_num_instances">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_num_instances</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_num_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract number of instances based on start and end dates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+<li><p><strong>**granularity</strong> (<em>str</em>) – Retrieve the instances monthly or yearly</p></li>
+<li><p><strong>**start</strong> (<em>str</em>) – Start date in YYYY-MM-DD format</p></li>
+<li><p><strong>**end</strong> (<em>str</em>) – End date in YYYY-MM-DD format</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**revisionLength</strong> – A dictionary with keys as articles and values as instances</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_editors">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_editors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_editors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract editors based on granularity. Includes parallel processing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+<li><p><strong>**granularity</strong> (<em>str</em>) – Retrieve the instances monthly or yearly</p></li>
+<li><p><strong>**start</strong> (<em>str</em>) – Start date in YYYY-MM-DD format</p></li>
+<li><p><strong>**end</strong> (<em>str</em>) – End date in YYYY-MM-DD format</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**userList</strong> – A dictionary with keys as articles and values as editor ids</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_author_edits">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_author_edits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_author_edits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the edits of particular users for articles</p>
+<p>get_author_edits(site_name,[article_list, dir_path, editor_list, all_wiki=False])
+The following function is used to get the edits of each user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>all_wiki</strong> (<em>str</em>) – if <cite>site_name</cite> = wikipedia then setting this variable True will get all the edits of the users of article</p></li>
+<li><p><strong>article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of file names (in knolml format)</p></li>
+<li><p><strong>dir_path</strong> (<em>str</em>) – path of the directory where all the files are present (in knolml format)</p></li>
+<li><p><strong>editor_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of editor usernames for which edits are required</p></li>
+<li><p><strong>type</strong> (<em>str</em>) – type of edit to be measured e.g. bytes, edits, sentences. bytes by default</p></li>
+<li><p><strong>ordered_by</strong> (<em>str</em>) – means of ordering e.g. editor, questions, answers or article</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**author_contrib</strong> – A dictionary with keys as articles and values as author’s contribution</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="frame-methods">
 <h2>Frame Methods<a class="headerlink" href="#frame-methods" title="Permalink to this headline">¶</a></h2>
