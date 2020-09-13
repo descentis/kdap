@@ -1133,7 +1133,7 @@ class knol(object):
                                     else:
                                         kwargs['revisionLength']['answers'] += 1
                                 l.release()
-
+    
                         total_rev += 1
                         for ch1 in elem:
                             if 'TimeStamp' in ch1.tag:
@@ -1152,12 +1152,14 @@ class knol(object):
                                                     else:
                                                         total_rev_dict[t.year][t.month] += 1
                                             if kwargs['granularity'].lower() == 'yearly':
+                                                t = datetime.strptime(t, date_format)
                                                 if t >= start:
                                                     if total_rev_dict.get(t.year) == None:
                                                         total_rev_dict[t.year] = 1
                                                     else:
                                                         total_rev_dict[t.year] += 1
-
+                                            #yet to include the daily edits
+    
                         elem.clear()
                         root_wiki.clear()
             except:

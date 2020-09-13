@@ -10,6 +10,6 @@ import kdap
 
 knol = kdap.knol()
 
-#knol.get_wiki_article('Indian Institute of Technology Ropar')
-fr = knol.frame(file_name='output/Indian_Institute_of_Technology_Ropar.knolml', get_bulk=False)
-#revisions = knol.get_num_instances(dir_path='/Users/Main/Documents/research/kdap/output', granularity='monthly', start='2015-07-01')
+#knol.download_dataset(sitename='wikipedia', article_list=['Vector', 'Derivative'], destdir='~/knolml_dataset/wikipedia_articles')
+
+num_instances = knol.get_num_instances(dir_path='~/knolml_dataset/wikipedia_articles', granularity='yearly', start='2015-01-01')
