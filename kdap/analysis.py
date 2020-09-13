@@ -1417,73 +1417,73 @@ class knol(object):
                 event_wiki, root_wiki = next(context_wiki)
                 uList = []
                 editor_dict = {}
-                editor_bool = 0
-                try:
-                    for event, elem in context_wiki:
-                        if event == "end" and 'Instance' in elem.tag:
-                            for newch in elem:
-                                if 'TimeStamp' in newch.tag:
-                                    for ch1 in newch:
-                                        if 'CreationDate' in ch1.tag:
-                                            date_format = "%Y-%m-%dT%H:%M:%S.%f"
-                                            t = datetime.strptime(ch1.text, date_format)
-                                            if kwargs.get('granularity') != None:
-                                                if kwargs.get('start') != None:
-                                                    s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
-                                                    if t > s:
-                                                        editor_bool = 1
-                                                if kwargs.get('end') != None:
-                                                    e = datetime.strptime(kwargs['end'], '%Y-%m-%d')
-                                                    if t > e:
-                                                        editor_bool = 0
-                                                        continue
-                                                if kwargs['granularity'].lower() == 'monthly':
-                                                    if editor_dict.get(t.year) == None:
-                                                        editor_dict[t.year] = {}
-                                                        editor_dict[t.year][t.month] = []
-                                                    elif editor_dict[t.year].get(t.month) == None:
-                                                        editor_dict[t.year][t.month] = []
-                                                elif kwargs['granularity'].lower() == 'yearly':
-                                                    if editor_dict.get(t.year) == None:
-                                                        editor_dict[t.year] = []
-                                                elif kwargs['granularity'].lower() == 'daily':
-                                                    if editor_dict.get(t.year) == None:
-                                                        editor_dict[t.year] = {}
-                                                        editor_dict[t.year][t.month] = {}
-                                                        editor_dict[t.year][t.month][t.day] = []
-                                                    elif editor_dict[t.year].get(t.month) == None:
-                                                        editor_dict[t.year][t.month] = {}
-                                                        editor_dict[t.year][t.month][t.day] = []
-                                                    elif editor_dict[t.year][t.month].get(t.day) == None:
-                                                        editor_dict[t.year][t.month][t.day] = []
+                editor_bool = 1
+                #try:
+                for event, elem in context_wiki:
+                    if event == "end" and 'Instance' in elem.tag:
+                        for newch in elem:
+                            if 'TimeStamp' in newch.tag:
+                                for ch1 in newch:
+                                    if 'CreationDate' in ch1.tag:
+                                        date_format = "%Y-%m-%dT%H:%M:%S.%f"
+                                        t = datetime.strptime(ch1.text, date_format)
+                                        if kwargs.get('granularity') != None:
+                                            if kwargs['start'] != '':
+                                                s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
+                                                if t > s:
+                                                    editor_bool = 1
+                                            if kwargs['end'] != '':
+                                                e = datetime.strptime(kwargs['end'], '%Y-%m-%d')
+                                                if t > e:
+                                                    editor_bool = 0
+                                                    continue
+                                            if kwargs['granularity'].lower() == 'monthly':
+                                                if editor_dict.get(t.year) == None:
+                                                    editor_dict[t.year] = {}
+                                                    editor_dict[t.year][t.month] = []
+                                                elif editor_dict[t.year].get(t.month) == None:
+                                                    editor_dict[t.year][t.month] = []
+                                            elif kwargs['granularity'].lower() == 'yearly':
+                                                if editor_dict.get(t.year) == None:
+                                                    editor_dict[t.year] = []
+                                            elif kwargs['granularity'].lower() == 'daily':
+                                                if editor_dict.get(t.year) == None:
+                                                    editor_dict[t.year] = {}
+                                                    editor_dict[t.year][t.month] = {}
+                                                    editor_dict[t.year][t.month][t.day] = []
+                                                elif editor_dict[t.year].get(t.month) == None:
+                                                    editor_dict[t.year][t.month] = {}
+                                                    editor_dict[t.year][t.month][t.day] = []
+                                                elif editor_dict[t.year][t.month].get(t.day) == None:
+                                                    editor_dict[t.year][t.month][t.day] = []
 
-                                if ('Contributors' in newch.tag):
-                                    for chi in newch:
-                                        if ('OwnerUserName' in chi.tag):
-                                            U = chi.text
+                            if ('Contributors' in newch.tag):
+                                for chi in newch:
+                                    if ('OwnerUserName' in chi.tag):
+                                        U = chi.text
 
-                                        if editor_bool:
+                                    if editor_bool:
 
-                                            if kwargs['granularity'].lower() != None:
-                                                if kwargs['granularity'].lower() == 'monthly':
+                                        if kwargs['granularity'].lower() != None:
+                                            if kwargs['granularity'].lower() == 'monthly':
 
-                                                    if U not in editor_dict[t.year][t.month]:
-                                                        editor_dict[t.year][t.month].append(U)
+                                                if U not in editor_dict[t.year][t.month]:
+                                                    editor_dict[t.year][t.month].append(U)
 
-                                                elif kwargs['granularity'].lower() == 'daily':
-                                                    if U not in editor_dict[t.year][t.month][t.day]:
-                                                        editor_dict[t.year][t.month][t.day].append(U)
+                                            elif kwargs['granularity'].lower() == 'daily':
+                                                if U not in editor_dict[t.year][t.month][t.day]:
+                                                    editor_dict[t.year][t.month][t.day].append(U)
 
-                                                elif kwargs['granularity'].lower() == 'yearly':
-                                                    if U not in editor_dict[t.year]:
-                                                        editor_dict[t.year].append(U)
-                                        else:
-                                            if (U not in uList):
-                                                uList.append(U)
-                            elem.clear()
-                            root_wiki.clear()
-                except:
-                    print('problem with file parsing: ' + f)
+                                            elif kwargs['granularity'].lower() == 'yearly':
+                                                if U not in editor_dict[t.year]:
+                                                    editor_dict[t.year].append(U)
+                                    else:
+                                        if (U not in uList):
+                                            uList.append(U)
+                        elem.clear()
+                        root_wiki.clear()
+                #except:
+                    #print('problem with file parsing: ' + f)
                 if (kwargs.get('users') != None):
                     if kwargs.get('dir_path') != None:
                         f = f.replace(kwargs['dir_path'] + '/', '')
@@ -1558,8 +1558,14 @@ class knol(object):
         for i in range(pNum):
             if kwargs.get('granularity') != None:
                 granularity = kwargs['granularity']
-                start = kwargs['start']
-                end = kwargs['end']
+                if kwargs.get('start') != None:
+                    start = kwargs['start']
+                else:
+                    start = ''
+                if kwargs.get('end') != None:
+                    end = kwargs['end']
+                else:
+                    end = ''
                 processDict[i + 1] = Process(target=self.__get_editor,
                                              kwargs={'file_name': fileList[i], 'users': usersList,
                                                      'granularity': granularity, 'start': start, 'end': end,
