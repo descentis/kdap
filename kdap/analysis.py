@@ -748,6 +748,11 @@ class knol(object):
         \*\*wiki_class : str
             The Wikipedia quality class for which the articles has to be extracted
 
+        Returns
+        -------
+        \*\*articles : list[str]
+            A list of wikipedia article names.
+
         """
         home = expanduser("~")
         if not os.path.exists(home + '/knolml_dataset/articleDescdb.db'):
@@ -772,7 +777,7 @@ class knol(object):
                 articles = self.display_data(
                     "select article_nm from article_desc where article_id in " + article_id + ";", conn)
             else:
-                articles = self.download_dataset('wikipedia', category_list=['WikiProject Mathematics articles'],
+                articles = self.download_dataset(sitename='wikipedia', category_list=['WikiProject Mathematics articles'],
                                                  download=False)
 
         if kwargs.get('wiki_class') is not None:
