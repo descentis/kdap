@@ -47,9 +47,6 @@ Graph Methods
 The following methods are used to create the wiki graph using the wikilinks of the articles.
 Users can use one of these methods to create the wiki graph according to the requirement.
 
-.. autofunction:: kdap.wiki_graph.graph_creater.get_graphi_by_list
-.. autofunction:: kdap.wiki_graph.graph_creater.get_graph_by_name
-.. autofunction:: kdap.wiki_graph.graph_creater.get_inter_graph
-.. autofunction:: kdap.wiki_graph.graph_creater.all_countries_graph
-.. autofunction:: kdap.wiki_graph.graph_creater.cities_by_country_graph
-.. autofunction:: kdap.wiki_graph.graph_creater.get_cities_by_country
+.. autofunction:: get_induced_graph_by_articles
+.. autofunction:: get_induced_graph_by_article
+.. autofunction:: get_city_graph_by_country

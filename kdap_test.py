@@ -20,4 +20,4 @@ knol = kdap.knol()
 
 #local_gini = knol.get_local_gini_coefficient(dir_path='/home/descentis/knolml_dataset/wikipedia_articles')
 
-
+adj_list = knol.get_induced_graph_by_articles(['Vector', 'Derivative'])

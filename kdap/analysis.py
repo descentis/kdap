@@ -30,6 +30,7 @@ from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
 from kdap.converter.wiki_clean import getCleanText
 from collections import Counter
+from kdap.wiki_graph import graph_creater as gp
 
 
 class instances(object):
@@ -3218,3 +3219,57 @@ class knol(object):
         print(t2-t1)
         '''
         return tagPosts
+
+# Graph Methods for wikipedia articles
+    
+    def get_induced_graph_by_articles(self, article_names):
+        ''' Given a list of Wikipedia article names, the function returns the adjacency list of inter-wiki links
+
+        Parameters
+        ----------
+        \*\*article_names : list[str]
+            List of Wikipedia article names
+
+        Returns
+        -------
+        \*\*adj_list : list
+            An adjacency list of inter-wiki graph
+        '''
+        adj_list = gp.get_inter_graph(article_names)
+        
+        return adj_list
+    
+    def get_induced_graph_by_article(self, article_name):
+        ''' Given a Wikipedia article name, the function returns the adjacency list of inter-wiki links present in that article
+
+        Parameters
+        ----------
+        \*\*article_name : str
+            Wikipedia article name
+
+        Returns
+        -------
+        \*\*adj_list : list
+            An adjacency list of inter-wiki graph
+        '''
+        
+        adj_list = gp.get_graph_by_name(article_name)
+        
+        return adj_list
+    
+    def get_city_graph_by_country(self, country_name):
+        ''' Given a country name, the function returns the adjacency list of inter-wiki links for the cities in that country
+
+        Parameters
+        ----------
+        \*\*country_name : str
+            Country name for which cities graph has to be created
+
+        Returns
+        -------
+        \*\*adj_list : list
+            An adjacency list of inter-wiki graph
+        '''        
+        adj_list = gp.get_cities_by_country(country_name)
+        
+        return adj_list

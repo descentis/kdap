@@ -615,52 +615,52 @@ Works with QnA based knolml dataset</p>
 <p>The following methods are used to create the wiki graph using the wikilinks of the articles.
 Users can use one of these methods to create the wiki graph according to the requirement.</p>
 <dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.get_graphi_by_list">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_graphi_by_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_graphi_by_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create induced subgraph based on list of articles provided in the parameters</p>
+<dt id="kdap.analysis.knol.get_induced_graph_by_articles">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_induced_graph_by_articles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">article_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_induced_graph_by_articles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of Wikipedia article names, the function returns the adjacency list of inter-wiki links</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>article_names</strong> (<em>list</em>) – list of articles for which the induced subgraph has to be created</p>
+<dd class="field-odd"><p><strong>**article_names</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Wikipedia article names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**adj_list</strong> – An adjacency list of inter-wiki graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.get_graph_by_name">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_graph_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_graph_by_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.get_inter_graph">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_inter_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_list</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_inter_graph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the induced subgraph of wikiarticles provided in the ‘article_list’</p>
+<dt id="kdap.analysis.knol.get_induced_graph_by_article">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_induced_graph_by_article</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">article_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_induced_graph_by_article" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a Wikipedia article name, the function returns the adjacency list of inter-wiki links present in that article</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of Wikipedia article names e.g [‘India’, ‘United States’]</p></li>
-<li><p><strong>file_name</strong> (<em>str</em><em>, </em><em>optional</em>) – name of the file by which you want to save the graph e.g file_name=’sample’</p></li>
-</ul>
+<dd class="field-odd"><p><strong>**article_name</strong> (<em>str</em>) – Wikipedia article name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**adj_list</strong> – An adjacency list of inter-wiki graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.all_countries_graph">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">all_countries_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.all_countries_graph" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.cities_by_country_graph">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">cities_by_country_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.cities_by_country_graph" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.get_cities_by_country">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_cities_by_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_cities_by_country" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a graph of city wikiarticles in the provided country name</p>
+<dt id="kdap.analysis.knol.get_city_graph_by_country">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_city_graph_by_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">country_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_city_graph_by_country" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a country name, the function returns the adjacency list of inter-wiki links for the cities in that country</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country_name</strong> (<em>str</em>) – Name of the country for which you want to create the graph e.g “India”</p>
+<dd class="field-odd"><p><strong>**country_name</strong> (<em>str</em>) – Country name for which cities graph has to be created</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**adj_list</strong> – An adjacency list of inter-wiki graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
