@@ -18,4 +18,6 @@ knol = kdap.knol()
 
 #edits = knol.get_author_edits(dir_path='/home/descentis/knolml_dataset/wikipedia_articles', editor_list=['212.219.142.201', 'Redvers', 'Septegram', '87.10.191.84', '72.90.235.102', 'ItsProgrammable'])
 
-local_gini = knol.get_local_gini_coefficient(dir_path='/home/descentis/knolml_dataset/wikipedia_articles')
+#local_gini = knol.get_local_gini_coefficient(dir_path='/home/descentis/knolml_dataset/wikipedia_articles')
+
+

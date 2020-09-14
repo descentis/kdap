@@ -34,7 +34,7 @@ The following methods are used to extract the knolml articles in frames and use 
    :members:
 
 Analysis Methods
-==================
+================
 The following functions analysses the knol-ML dataset. For most of these methods, the dataset has to be provided in the argument.
 
 
