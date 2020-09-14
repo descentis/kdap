@@ -1595,6 +1595,21 @@ class knol(object):
             return bot_list
 
     def get_author_similarity(self, editors, *args, **kwargs):
+        """This method finds the similarity between the set of editors for a set of articles.
+            Works on the returned dictionary by get_editors() method
+
+        Parameters
+        ----------
+        \*\*editors : dictionary
+            A dictionary of editors returned by get_editors() method, granularity='daily'
+        \*\*similarity : str
+            Similarity measure to be measured, e.g Jaccard
+
+        Returns
+        -------
+        \*\*similarity : dictionary
+            A dictionary with keys as years, months, and days and values as the similarity measures
+        """
         if kwargs.get('similarity') != None:
             similar = kwargs['similarity']
 
@@ -2893,19 +2908,61 @@ class knol(object):
                     kwargs['GiniValues'][f] = giniValue
 
     @staticmethod
-    def getLocalGiniCoefficient(*args, **kwargs):
+    def get_local_gini_coefficient(*args, **kwargs):
+        """This method finds the gini coefficient for each article/file provided in the argument.
 
-        all_var = knol.__get_multiprocessing(*args, **kwargs)
-        # revisionId, file_list, pNum
-        revisionId = all_var[0]
-        fileList = all_var[1]
-        pNum = all_var[2]
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+
+        Returns
+        -------
+        \*\*local_gini : dictionary
+            A dictionary with keys as articles and values as the gini coefficients
+        """
+
+        if (kwargs.get('file_list') != None):
+            file_list = kwargs['file_list']
+
+        elif (kwargs.get('dir_path') != None):
+            dir_path = kwargs['dir_path']
+
+            file_list = glob.glob(dir_path + '/*.knolml')
+
+        fileNum = len(file_list)
+
+        if (kwargs.get('c_num') != None):
+            cnum = kwargs['c_num']
+        elif (fileNum < 4):
+            cnum = fileNum + 1  # Bydefault it is 4
+        else:
+            cnum = 4
+
+        fileList = []
+        if (fileNum < cnum):
+            for f in file_list:
+                fileList.append([f])
+
+        else:
+            f = np.array_split(file_list, cnum)
+            for i in f:
+                fileList.append(i.tolist())
 
         manager = Manager()
         GiniValues = manager.dict()
 
         l = Lock()
         processDict = {}
+        
+        if (fileNum < cnum):
+            pNum = fileNum
+        else:
+            pNum = cnum
         for i in range(pNum):
             processDict[i + 1] = Process(target=knol.localGiniCoefficient,
                                          kwargs={'file_name': fileList[i], 'GiniValues': GiniValues, 'l': l})
@@ -2985,6 +3042,22 @@ class knol(object):
             return giniValue
 
     def get_global_gini_coefficient(self, *args, **kwargs):
+        """This method finds the global gini coefficient for a set of articles/files provided in the argument.
+
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+
+        Returns
+        -------
+        \*\*global_gini : int
+            A gini value for the given articles
+        """
 
         if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']

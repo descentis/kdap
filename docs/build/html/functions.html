@@ -87,6 +87,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functions Overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#extraction-methods">Extraction Methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#frame-methods">Frame Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis-methods">Analysis Methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graph-methods">Graph Methods</a></li>
 </ul>
 </li>
@@ -214,6 +215,12 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <li><p><strong>**wikiproject</strong> (<em>str</em>) – Name of the wikiproject for which you want to extract the articles</p></li>
 <li><p><strong>**wiki_class</strong> (<em>str</em>) – The Wikipedia quality class for which the articles has to be extracted</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**articles</strong> – A list of wikipedia article names.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list[str]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -531,6 +538,75 @@ Works with QnA based knolml dataset</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="analysis-methods">
+<h2>Analysis Methods<a class="headerlink" href="#analysis-methods" title="Permalink to this headline">¶</a></h2>
+<p>The following functions analysses the knol-ML dataset. For most of these methods, the dataset has to be provided in the argument.</p>
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_author_similarity">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_author_similarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">editors</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_author_similarity" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>This method finds the similarity between the set of editors for a set of articles.</dt><dd><p>Works on the returned dictionary by get_editors() method</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**editors</strong> (<em>dictionary</em>) – A dictionary of editors returned by get_editors() method, granularity=’daily’</p></li>
+<li><p><strong>**similarity</strong> (<em>str</em>) – Similarity measure to be measured, e.g Jaccard</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**similarity</strong> – A dictionary with keys as years, months, and days and values as the similarity measures</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_local_gini_coefficient">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_local_gini_coefficient</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_local_gini_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method finds the gini coefficient for each article/file provided in the argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**local_gini</strong> – A dictionary with keys as articles and values as the gini coefficients</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_global_gini_coefficient">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_global_gini_coefficient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_global_gini_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method finds the global gini coefficient for a set of articles/files provided in the argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**global_gini</strong> – A gini value for the given articles</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

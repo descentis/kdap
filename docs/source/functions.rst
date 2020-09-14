@@ -33,6 +33,15 @@ The following methods are used to extract the knolml articles in frames and use 
 .. autoclass:: kdap.analysis.instances
    :members:
 
+Analysis Methods
+==================
+The following functions analysses the knol-ML dataset. For most of these methods, the dataset has to be provided in the argument.
+
+
+.. autofunction:: get_author_similarity
+.. autofunction:: get_local_gini_coefficient
+.. autofunction:: get_global_gini_coefficient
+
 Graph Methods
 =============
 The following methods are used to create the wiki graph using the wikilinks of the articles.
