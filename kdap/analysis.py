@@ -209,7 +209,7 @@ class instances(object):
 
         if self.instance_attrib['Body']['Text'].get('text') is not None:
             di['text'] = self.instance_attrib['Body']['Text']['text']
-
+        clean = False
         if kwargs.get('clean') is not None:
             clean = kwargs['clean']
         if clean:
