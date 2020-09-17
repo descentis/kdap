@@ -10,10 +10,10 @@ Requirements
 ============
 
 * `Python`_ 3.4 or newer
-* `Git`_
+* `p7zip-full`_
 
 .. _Python: https://www.python.org
-.. _Git: https://git-scm.com/
+.. _p7zip-full: https://itsfoss.com/use-7zip-ubuntu-linux/
 
 Installing kdap
 ===============

@@ -30,6 +30,7 @@ from kdap.converter.qaConverter import qaConverter
 from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
 from kdap.converter.wiki_clean import getCleanText
 from collections import Counter
+from kdap.wiki_graph import graph_creater as gp
 
 
 class instances(object):
@@ -103,6 +104,11 @@ class instances(object):
         """
         Returns True if the instance is a question
         Works with QnA based knolml dataset
+
+        Returns
+        -------
+        \*\*closed : bool
+            Returns true if the post is a question , if applicable
         """
         if self.instanceType == 'Question':
             return True
@@ -111,6 +117,11 @@ class instances(object):
         """
         Returns True if the instance is an answer
         Works with QnA based knolml dataset
+
+        Returns
+        -------
+        \*\*closed : bool
+            Returns true if the post is an answer, if applicable
         """
         if self.instanceType == 'Answer':
             return True
@@ -119,6 +130,11 @@ class instances(object):
         """
         Returns True if the instance is a comment
         Works with QnA based knolml dataset
+        
+        Returns
+        -------
+        \*\*closed : bool
+            Returns true if the post is a comment, if applicable
         """
         if self.instanceType == 'Comments':
             return True
@@ -127,6 +143,11 @@ class instances(object):
         """
         Returns True if the qna thread is closed
         Works with QnA based knolml dataset
+        
+        Returns
+        -------
+        \*\*closed : bool
+            Returns true if the post is close, if applicable
         """
         if self.instance_attrib['TimeStamp'].get('ClosedDate') is None:
             return True
@@ -139,6 +160,11 @@ class instances(object):
     def get_editor(self):
         """
         Returns the edior details
+
+        Returns
+        -------
+        \*\*editor : dictionary
+            Details related to the editor of this instance
         """
         di = {}
         if self.instance_attrib['Contributors'].get('OwnerUserId') is not None:
@@ -152,6 +178,11 @@ class instances(object):
     def get_title(self):
         """
         Returns the title
+
+        Returns
+        -------
+        \*\*title : str
+            Title of the Knowledge Data
         """
         return self.instanceTitle
 
@@ -159,6 +190,11 @@ class instances(object):
         """
         Returns the tag details
         Works for QnA dataset
+        
+        Returns
+        -------
+        \*\*tags : list
+            List of tags, if available
         """
         if self.instance_attrib.get('Tags') is not None:
             return self.instance_attrib['Tags'].split('><')
@@ -168,6 +204,11 @@ class instances(object):
     def get_timestamp(self):
         """
         Returns the timestamp details
+        
+        Returns
+        -------
+        \*\*timestamp : dictionary
+            Timestamp details of this instance
         """
         di = {}
         if self.instance_attrib['TimeStamp'].get('CreationDate') is not None:
@@ -185,6 +226,11 @@ class instances(object):
     def get_score(self):
         """
         Returns the score details
+        
+        Returns
+        -------
+        \*\*score : dictionary
+            A dictionary of score values, if available
         """
         if self.instance_attrib.get('Credit') is None:
             return 'Score value is not available'
@@ -204,6 +250,15 @@ class instances(object):
     def get_text(self, *args, **kwargs):
         """
         Returns the text data
+        
+        Parameters
+        ----------
+        \*\*clean : bool, optional
+        
+        Returns
+        -------
+        \*\*text : str
+            actual text of the instance
         """
         di = {}
 
@@ -212,24 +267,28 @@ class instances(object):
         clean = False
         if kwargs.get('clean') is not None:
             clean = kwargs['clean']
-        if clean:
-            di['text'] = getCleanText(di['text'])
-
-            '''
-            qe = QueryExecutor()
-            qe.setOutputFileDirectoryName('lol')
-            qe.setNumberOfProcesses(5)
-            qe.setNumberOfBytes(2000000000)
-            qe.setTextValue(di['text'])
-            qe.runQuery()
-            return qe.result()
-            '''
-
+            if clean:
+                di['text'] = getCleanText(di['text'])
+                
+                '''
+                qe = QueryExecutor()
+                qe.setOutputFileDirectoryName('lol')
+                qe.setNumberOfProcesses(5)
+                qe.setNumberOfBytes(2000000000)
+                qe.setTextValue(di['text'])
+                qe.runQuery()
+                return qe.result()
+                '''
         return di
 
     def get_bytes(self):
         """
         Returns the bytes detail
+        
+        Returns
+        -------
+        \*\*bytes : int
+            number of bytes given text has
         """
         if self.instance_attrib['Body']['Text'].get('#Bytes') is not None:
             return int(self.instance_attrib['Body']['Text']['#Bytes'])
@@ -475,24 +534,28 @@ class knol(object):
         Parameters
         ----------
         \*\*sitename : basestring
-            Name of portal to download from
+            Name of portal to download from e.g wikipedia, stackexchange
         \*\*article_list : list[str]
-            List of articles to download
-        \*\*category_list : list[str]
-            TODO
+            List of wikipedia articles to download in knol-ML format
         \*\*destdir: str
-            TODO
+            Path to destination folder where the dataset will be downloaded
         \*\*wikipedia_dump: str
-            TODO
-        \*\*download : str
-            TODO
+            Path to wikipedia full dump. When provided, the articles will be extract directly from the dump
+        \*\*download : bool
+            if true, the articles will be downloaded
         \*\*category_list : list[str]
-            TODO
+            A list of wikipedia categories. When this parameter is provided, all the articles under these lists will be extracted
         \*\*template_list : list[str]
-            TODO
+            A list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted
         \*\*portal : str
-            TODO
-
+            stackexchange portal name. Provided when sitename='stackexchange'
+            
+        Returns
+        -------
+        \*\*final_category_list : list[str]
+            A list of wikipedia article names. Only when caregory_list is provided as argument
+        \*\*final_template_list : list[str]
+            A list of wikipedia article names. Only when template_list is provided as argument
         """
 
         if kwargs.get('sitename') is not None:
@@ -676,16 +739,20 @@ class knol(object):
         return displayList
 
     def get_wiki_article_by_class(self, *args, **kwargs):
-        """Query database to extract articles based on category name
-
-        Description
+        """
+        Query database to extract articles based on category or project name
 
         Parameters
         ----------
         \*\*wikiproject : str
-            TODO
+            Name of the wikiproject for which you want to extract the articles
         \*\*wiki_class : str
-            TODO
+            The Wikipedia quality class for which the articles has to be extracted
+
+        Returns
+        -------
+        \*\*articles : list[str]
+            A list of wikipedia article names.
 
         """
         home = expanduser("~")
@@ -711,7 +778,7 @@ class knol(object):
                 articles = self.display_data(
                     "select article_nm from article_desc where article_id in " + article_id + ";", conn)
             else:
-                articles = self.download_dataset('wikipedia', category_list=['WikiProject Mathematics articles'],
+                articles = self.download_dataset(sitename='wikipedia', category_list=['WikiProject Mathematics articles'],
                                                  download=False)
 
         if kwargs.get('wiki_class') is not None:
@@ -771,9 +838,24 @@ class knol(object):
                 kwargs['instance_date'][file_name] = date
 
     def get_instance_date(self, *args, **kwargs):
-        '''
-        This piece of code is to ensure the multiprocessing
-        '''
+        """
+        Retrieve the instance dates for a list of articles. Includes multiprocessing
+
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+
+        Returns
+        -------
+        \*\*instance_date : dictionary
+            A dictionary with keys as articles and values as dates
+
+        """
         if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
@@ -1052,7 +1134,7 @@ class knol(object):
                                     else:
                                         kwargs['revisionLength']['answers'] += 1
                                 l.release()
-
+    
                         total_rev += 1
                         for ch1 in elem:
                             if 'TimeStamp' in ch1.tag:
@@ -1071,12 +1153,14 @@ class knol(object):
                                                     else:
                                                         total_rev_dict[t.year][t.month] += 1
                                             if kwargs['granularity'].lower() == 'yearly':
+                                                t = datetime.strptime(t, date_format)
                                                 if t >= start:
                                                     if total_rev_dict.get(t.year) == None:
                                                         total_rev_dict[t.year] = 1
                                                     else:
                                                         total_rev_dict[t.year] += 1
-
+                                            #yet to include the daily edits
+    
                         elem.clear()
                         root_wiki.clear()
             except:
@@ -1094,10 +1178,29 @@ class knol(object):
                     kwargs['revisionLength'][file_name] = total_rev
 
     def get_num_instances(self, *args, **kwargs):
-        '''
-        This piece of code is to ensure the multiprocessing
-        Enter a date in YYYY-MM-DD format for start and end dates
-        '''
+
+        """Extract number of instances based on start and end dates
+
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+        \*\*granularity : str
+            Retrieve the instances monthly or yearly
+        \*\*start : str
+            Start date in YYYY-MM-DD format
+        \*\*end : str
+            End date in YYYY-MM-DD format            
+
+        Returns
+        -------
+        \*\*revisionLength : dictionary
+            A dictionary with keys as articles and values as instances
+        """
         if kwargs.get('instance_type') != None:
             instance_type = kwargs['instance_type']
         else:
@@ -1315,73 +1418,73 @@ class knol(object):
                 event_wiki, root_wiki = next(context_wiki)
                 uList = []
                 editor_dict = {}
-                editor_bool = 0
-                try:
-                    for event, elem in context_wiki:
-                        if event == "end" and 'Instance' in elem.tag:
-                            for newch in elem:
-                                if 'TimeStamp' in newch.tag:
-                                    for ch1 in newch:
-                                        if 'CreationDate' in ch1.tag:
-                                            date_format = "%Y-%m-%dT%H:%M:%S.%f"
-                                            t = datetime.strptime(ch1.text, date_format)
-                                            if kwargs.get('granularity') != None:
-                                                if kwargs.get('start') != None:
-                                                    s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
-                                                    if t > s:
-                                                        editor_bool = 1
-                                                if kwargs.get('end') != None:
-                                                    e = datetime.strptime(kwargs['end'], '%Y-%m-%d')
-                                                    if t > e:
-                                                        editor_bool = 0
-                                                        continue
-                                                if kwargs['granularity'].lower() == 'monthly':
-                                                    if editor_dict.get(t.year) == None:
-                                                        editor_dict[t.year] = {}
-                                                        editor_dict[t.year][t.month] = []
-                                                    elif editor_dict[t.year].get(t.month) == None:
-                                                        editor_dict[t.year][t.month] = []
-                                                elif kwargs['granularity'].lower() == 'yearly':
-                                                    if editor_dict.get(t.year) == None:
-                                                        editor_dict[t.year] = []
-                                                elif kwargs['granularity'].lower() == 'daily':
-                                                    if editor_dict.get(t.year) == None:
-                                                        editor_dict[t.year] = {}
-                                                        editor_dict[t.year][t.month] = {}
-                                                        editor_dict[t.year][t.month][t.day] = []
-                                                    elif editor_dict[t.year].get(t.month) == None:
-                                                        editor_dict[t.year][t.month] = {}
-                                                        editor_dict[t.year][t.month][t.day] = []
-                                                    elif editor_dict[t.year][t.month].get(t.day) == None:
-                                                        editor_dict[t.year][t.month][t.day] = []
+                editor_bool = 1
+                #try:
+                for event, elem in context_wiki:
+                    if event == "end" and 'Instance' in elem.tag:
+                        for newch in elem:
+                            if 'TimeStamp' in newch.tag:
+                                for ch1 in newch:
+                                    if 'CreationDate' in ch1.tag:
+                                        date_format = "%Y-%m-%dT%H:%M:%S.%f"
+                                        t = datetime.strptime(ch1.text, date_format)
+                                        if kwargs.get('granularity') != None:
+                                            if kwargs['start'] != '':
+                                                s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
+                                                if t > s:
+                                                    editor_bool = 1
+                                            if kwargs['end'] != '':
+                                                e = datetime.strptime(kwargs['end'], '%Y-%m-%d')
+                                                if t > e:
+                                                    editor_bool = 0
+                                                    continue
+                                            if kwargs['granularity'].lower() == 'monthly':
+                                                if editor_dict.get(t.year) == None:
+                                                    editor_dict[t.year] = {}
+                                                    editor_dict[t.year][t.month] = []
+                                                elif editor_dict[t.year].get(t.month) == None:
+                                                    editor_dict[t.year][t.month] = []
+                                            elif kwargs['granularity'].lower() == 'yearly':
+                                                if editor_dict.get(t.year) == None:
+                                                    editor_dict[t.year] = []
+                                            elif kwargs['granularity'].lower() == 'daily':
+                                                if editor_dict.get(t.year) == None:
+                                                    editor_dict[t.year] = {}
+                                                    editor_dict[t.year][t.month] = {}
+                                                    editor_dict[t.year][t.month][t.day] = []
+                                                elif editor_dict[t.year].get(t.month) == None:
+                                                    editor_dict[t.year][t.month] = {}
+                                                    editor_dict[t.year][t.month][t.day] = []
+                                                elif editor_dict[t.year][t.month].get(t.day) == None:
+                                                    editor_dict[t.year][t.month][t.day] = []
 
-                                if ('Contributors' in newch.tag):
-                                    for chi in newch:
-                                        if ('OwnerUserName' in chi.tag):
-                                            U = chi.text
+                            if ('Contributors' in newch.tag):
+                                for chi in newch:
+                                    if ('OwnerUserName' in chi.tag):
+                                        U = chi.text
 
-                                        if editor_bool:
+                                    if editor_bool:
 
-                                            if kwargs['granularity'].lower() != None:
-                                                if kwargs['granularity'].lower() == 'monthly':
+                                        if kwargs['granularity'].lower() != None:
+                                            if kwargs['granularity'].lower() == 'monthly':
 
-                                                    if U not in editor_dict[t.year][t.month]:
-                                                        editor_dict[t.year][t.month].append(U)
+                                                if U not in editor_dict[t.year][t.month]:
+                                                    editor_dict[t.year][t.month].append(U)
 
-                                                elif kwargs['granularity'].lower() == 'daily':
-                                                    if U not in editor_dict[t.year][t.month][t.day]:
-                                                        editor_dict[t.year][t.month][t.day].append(U)
+                                            elif kwargs['granularity'].lower() == 'daily':
+                                                if U not in editor_dict[t.year][t.month][t.day]:
+                                                    editor_dict[t.year][t.month][t.day].append(U)
 
-                                                elif kwargs['granularity'].lower() == 'yearly':
-                                                    if U not in editor_dict[t.year]:
-                                                        editor_dict[t.year].append(U)
-                                        else:
-                                            if (U not in uList):
-                                                uList.append(U)
-                            elem.clear()
-                            root_wiki.clear()
-                except:
-                    print('problem with file parsing: ' + f)
+                                            elif kwargs['granularity'].lower() == 'yearly':
+                                                if U not in editor_dict[t.year]:
+                                                    editor_dict[t.year].append(U)
+                                    else:
+                                        if (U not in uList):
+                                            uList.append(U)
+                        elem.clear()
+                        root_wiki.clear()
+                #except:
+                    #print('problem with file parsing: ' + f)
                 if (kwargs.get('users') != None):
                     if kwargs.get('dir_path') != None:
                         f = f.replace(kwargs['dir_path'] + '/', '')
@@ -1396,7 +1499,28 @@ class knol(object):
             print("No arguments provided")
 
     def get_editors(self, *args, **kwargs):
+        """Extract editors based on granularity. Includes parallel processing
 
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+        \*\*granularity : str
+            Retrieve the instances monthly or yearly
+        \*\*start : str
+            Start date in YYYY-MM-DD format
+        \*\*end : str
+            End date in YYYY-MM-DD format            
+
+        Returns
+        -------
+        \*\*userList : dictionary
+            A dictionary with keys as articles and values as editor ids
+        """
         if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
 
@@ -1435,8 +1559,14 @@ class knol(object):
         for i in range(pNum):
             if kwargs.get('granularity') != None:
                 granularity = kwargs['granularity']
-                start = kwargs['start']
-                end = kwargs['end']
+                if kwargs.get('start') != None:
+                    start = kwargs['start']
+                else:
+                    start = ''
+                if kwargs.get('end') != None:
+                    end = kwargs['end']
+                else:
+                    end = ''
                 processDict[i + 1] = Process(target=self.__get_editor,
                                              kwargs={'file_name': fileList[i], 'users': usersList,
                                                      'granularity': granularity, 'start': start, 'end': end,
@@ -1466,6 +1596,21 @@ class knol(object):
             return bot_list
 
     def get_author_similarity(self, editors, *args, **kwargs):
+        """This method finds the similarity between the set of editors for a set of articles.
+            Works on the returned dictionary by get_editors() method
+
+        Parameters
+        ----------
+        \*\*editors : dictionary
+            A dictionary of editors returned by get_editors() method, granularity='daily'
+        \*\*similarity : str
+            Similarity measure to be measured, e.g Jaccard
+
+        Returns
+        -------
+        \*\*similarity : dictionary
+            A dictionary with keys as years, months, and days and values as the similarity measures
+        """
         if kwargs.get('similarity') != None:
             similar = kwargs['similarity']
 
@@ -1531,6 +1676,11 @@ class knol(object):
             type of edit to be measured e.g. bytes, edits, sentences. bytes by default
         ordered_by : str
             means of ordering e.g. editor, questions, answers or article
+
+        Returns
+        -------
+        \*\*author_contrib : dictionary
+            A dictionary with keys as articles and values as author's contribution
         """
 
         all_wiki = False
@@ -2759,19 +2909,61 @@ class knol(object):
                     kwargs['GiniValues'][f] = giniValue
 
     @staticmethod
-    def getLocalGiniCoefficient(*args, **kwargs):
+    def get_local_gini_coefficient(*args, **kwargs):
+        """This method finds the gini coefficient for each article/file provided in the argument.
 
-        all_var = knol.__get_multiprocessing(*args, **kwargs)
-        # revisionId, file_list, pNum
-        revisionId = all_var[0]
-        fileList = all_var[1]
-        pNum = all_var[2]
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+
+        Returns
+        -------
+        \*\*local_gini : dictionary
+            A dictionary with keys as articles and values as the gini coefficients
+        """
+
+        if (kwargs.get('file_list') != None):
+            file_list = kwargs['file_list']
+
+        elif (kwargs.get('dir_path') != None):
+            dir_path = kwargs['dir_path']
+
+            file_list = glob.glob(dir_path + '/*.knolml')
+
+        fileNum = len(file_list)
+
+        if (kwargs.get('c_num') != None):
+            cnum = kwargs['c_num']
+        elif (fileNum < 4):
+            cnum = fileNum + 1  # Bydefault it is 4
+        else:
+            cnum = 4
+
+        fileList = []
+        if (fileNum < cnum):
+            for f in file_list:
+                fileList.append([f])
+
+        else:
+            f = np.array_split(file_list, cnum)
+            for i in f:
+                fileList.append(i.tolist())
 
         manager = Manager()
         GiniValues = manager.dict()
 
         l = Lock()
         processDict = {}
+        
+        if (fileNum < cnum):
+            pNum = fileNum
+        else:
+            pNum = cnum
         for i in range(pNum):
             processDict[i + 1] = Process(target=knol.localGiniCoefficient,
                                          kwargs={'file_name': fileList[i], 'GiniValues': GiniValues, 'l': l})
@@ -2851,6 +3043,22 @@ class knol(object):
             return giniValue
 
     def get_global_gini_coefficient(self, *args, **kwargs):
+        """This method finds the global gini coefficient for a set of articles/files provided in the argument.
+
+        Parameters
+        ----------
+        \*\*file_list : list[str]
+            List of Knol-Ml articles' path
+        \*\*dir_path : str
+            Path of the directory which contains desired knol-Ml files
+        \*\*c_num : int
+            Number of parallel threads you want
+
+        Returns
+        -------
+        \*\*global_gini : int
+            A gini value for the given articles
+        """
 
         if (kwargs.get('file_list') != None):
             file_list = kwargs['file_list']
@@ -3011,3 +3219,57 @@ class knol(object):
         print(t2-t1)
         '''
         return tagPosts
+
+# Graph Methods for wikipedia articles
+    
+    def get_induced_graph_by_articles(self, article_names):
+        ''' Given a list of Wikipedia article names, the function returns the adjacency list of inter-wiki links
+
+        Parameters
+        ----------
+        \*\*article_names : list[str]
+            List of Wikipedia article names
+
+        Returns
+        -------
+        \*\*adj_list : list
+            An adjacency list of inter-wiki graph
+        '''
+        adj_list = gp.get_inter_graph(article_names)
+        
+        return adj_list
+    
+    def get_induced_graph_by_article(self, article_name):
+        ''' Given a Wikipedia article name, the function returns the adjacency list of inter-wiki links present in that article
+
+        Parameters
+        ----------
+        \*\*article_name : str
+            Wikipedia article name
+
+        Returns
+        -------
+        \*\*adj_list : list
+            An adjacency list of inter-wiki graph
+        '''
+        
+        adj_list = gp.get_graph_by_name(article_name)
+        
+        return adj_list
+    
+    def get_city_graph_by_country(self, country_name):
+        ''' Given a country name, the function returns the adjacency list of inter-wiki links for the cities in that country
+
+        Parameters
+        ----------
+        \*\*country_name : str
+            Country name for which cities graph has to be created
+
+        Returns
+        -------
+        \*\*adj_list : list
+            An adjacency list of inter-wiki graph
+        '''        
+        adj_list = gp.get_cities_by_country(country_name)
+        
+        return adj_list
