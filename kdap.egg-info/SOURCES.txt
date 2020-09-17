@@ -20,4 +20,5 @@ kdap/wikiextract/knolml_wikiextractor.py
 kdap/wikiextract/sampleExtractdb.py
 kdap/wikiextract/wikiExtract.py
 tests/__init__.py
+tests/test_analysis.py
 tests/test_wikiExtract.py

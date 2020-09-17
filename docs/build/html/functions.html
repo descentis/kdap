@@ -87,6 +87,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Functions Overview</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#extraction-methods">Extraction Methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#frame-methods">Frame Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis-methods">Analysis Methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#graph-methods">Graph Methods</a></li>
 </ul>
 </li>
@@ -170,15 +171,22 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sitename</strong> (<em>basestring</em>) – Name of portal to download from</p></li>
-<li><p><strong>article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of articles to download</p></li>
-<li><p><strong>destdir</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>wikipedia_dump</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>download</strong> (<em>str</em>) – TODO</p></li>
-<li><p><strong>category_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – TODO</p></li>
-<li><p><strong>template_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – TODO</p></li>
-<li><p><strong>portal</strong> (<em>str</em>) – TODO</p></li>
+<li><p><strong>**sitename</strong> (<em>basestring</em>) – Name of portal to download from e.g wikipedia, stackexchange</p></li>
+<li><p><strong>**article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of wikipedia articles to download in knol-ML format</p></li>
+<li><p><strong>**destdir</strong> (<em>str</em>) – Path to destination folder where the dataset will be downloaded</p></li>
+<li><p><strong>**wikipedia_dump</strong> (<em>str</em>) – Path to wikipedia full dump. When provided, the articles will be extract directly from the dump</p></li>
+<li><p><strong>**download</strong> (<em>bool</em>) – if true, the articles will be downloaded</p></li>
+<li><p><strong>**category_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of wikipedia categories. When this parameter is provided, all the articles under these lists will be extracted</p></li>
+<li><p><strong>**template_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – A list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted</p></li>
+<li><p><strong>**portal</strong> (<em>str</em>) – stackexchange portal name. Provided when sitename=’stackexchange’</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>**final_category_list</strong> (<em>list[str]</em>) – A list of wikipedia article names. Only when caregory_list is provided as argument</p></li>
+<li><p><strong>**final_template_list</strong> (<em>list[str]</em>) – A list of wikipedia article names. Only when template_list is provided as argument</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -193,6 +201,137 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <li><p><strong>article_name</strong> (<em>str</em>) – Name of the article to download revision history for</p></li>
 <li><p><strong>**output_dir</strong> (<em>str</em><em>, </em><em>optional</em>) – Output directory for generated knol-ML file</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_wiki_article_by_class">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_wiki_article_by_class</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_wiki_article_by_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query database to extract articles based on category or project name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**wikiproject</strong> (<em>str</em>) – Name of the wikiproject for which you want to extract the articles</p></li>
+<li><p><strong>**wiki_class</strong> (<em>str</em>) – The Wikipedia quality class for which the articles has to be extracted</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**articles</strong> – A list of wikipedia article names.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list[str]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_instance_date">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_instance_date</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_instance_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve the instance dates for a list of articles. Includes multiprocessing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**instance_date</strong> – A dictionary with keys as articles and values as dates</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_pageviews">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_pageviews</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">site_name</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_pageviews" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get pageviews for a particular article</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>site_name</strong> (<em>str</em>) – Site to get pageviews from</p></li>
+<li><p><strong>granularity</strong> (<em>str</em>) – Granularity of pageviews data e.g. monthly</p></li>
+<li><p><strong>start</strong> (<em>str</em>) – Date to start counting pageviews from</p></li>
+<li><p><strong>end</strong> (<em>str</em>) – Date to count pageviews till</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_num_instances">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_num_instances</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_num_instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract number of instances based on start and end dates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+<li><p><strong>**granularity</strong> (<em>str</em>) – Retrieve the instances monthly or yearly</p></li>
+<li><p><strong>**start</strong> (<em>str</em>) – Start date in YYYY-MM-DD format</p></li>
+<li><p><strong>**end</strong> (<em>str</em>) – End date in YYYY-MM-DD format</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**revisionLength</strong> – A dictionary with keys as articles and values as instances</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_editors">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_editors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_editors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract editors based on granularity. Includes parallel processing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+<li><p><strong>**granularity</strong> (<em>str</em>) – Retrieve the instances monthly or yearly</p></li>
+<li><p><strong>**start</strong> (<em>str</em>) – Start date in YYYY-MM-DD format</p></li>
+<li><p><strong>**end</strong> (<em>str</em>) – End date in YYYY-MM-DD format</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**userList</strong> – A dictionary with keys as articles and values as editor ids</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_author_edits">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_author_edits</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_author_edits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the edits of particular users for articles</p>
+<p>get_author_edits(site_name,[article_list, dir_path, editor_list, all_wiki=False])
+The following function is used to get the edits of each user</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>all_wiki</strong> (<em>str</em>) – if <cite>site_name</cite> = wikipedia then setting this variable True will get all the edits of the users of article</p></li>
+<li><p><strong>article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of file names (in knolml format)</p></li>
+<li><p><strong>dir_path</strong> (<em>str</em>) – path of the directory where all the files are present (in knolml format)</p></li>
+<li><p><strong>editor_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of editor usernames for which edits are required</p></li>
+<li><p><strong>type</strong> (<em>str</em>) – type of edit to be measured e.g. bytes, edits, sentences. bytes by default</p></li>
+<li><p><strong>ordered_by</strong> (<em>str</em>) – means of ordering e.g. editor, questions, answers or article</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**author_contrib</strong> – A dictionary with keys as articles and values as author’s contribution</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
 </dd>
 </dl>
 </dd></dl>
@@ -223,54 +362,45 @@ the extraction and analysis of portals such as GitHub, Reddit, and Quora.</p>
 <dd><p>creating the instance of each object.
 The init function defined stores each instance’s attribute which can be analyzed separately</p>
 <dl class="py method">
-<dt id="kdap.analysis.instances.__count_words">
-<code class="sig-name descname">__count_words</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__count_words" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns number of words in the text</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="kdap.analysis.instances.__get_emailid">
-<code class="sig-name descname">__get_emailid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__get_emailid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the email ids in the text</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="kdap.analysis.instances.__get_url">
-<code class="sig-name descname">__get_url</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">text</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.__get_url" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns all the the urls in the text</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<em>str</em>) – TODO</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="kdap.analysis.instances.get_bytes">
 <code class="sig-name descname">get_bytes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_bytes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the bytes detail</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**bytes</strong> – number of bytes given text has</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_editor">
 <code class="sig-name descname">get_editor</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_editor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the edior details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**editor</strong> – Details related to the editor of this instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_score">
 <code class="sig-name descname">get_score</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_score" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the score details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**score</strong> – A dictionary of score values, if available</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -278,12 +408,31 @@ The init function defined stores each instance’s attribute which can be analyz
 <code class="sig-name descname">get_tags</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_tags" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the tag details
 Works for QnA dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**tags</strong> – List of tags, if available</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_text">
 <code class="sig-name descname">get_text</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_text" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the text data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**clean</strong> (<em>bool</em><em>, </em><em>optional</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**text</strong> – actual text of the instance</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -305,12 +454,28 @@ Works for QnA dataset</p>
 <dt id="kdap.analysis.instances.get_timestamp">
 <code class="sig-name descname">get_timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_timestamp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the timestamp details</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**timestamp</strong> – Timestamp details of this instance</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>dictionary</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="kdap.analysis.instances.get_title">
 <code class="sig-name descname">get_title</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.get_title" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the title</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**title</strong> – Title of the Knowledge Data</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -318,6 +483,14 @@ Works for QnA dataset</p>
 <code class="sig-name descname">is_answer</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_answer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the instance is an answer
 Works with QnA based knolml dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**closed</strong> – Returns true if the post is an answer, if applicable</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -325,6 +498,14 @@ Works with QnA based knolml dataset</p>
 <code class="sig-name descname">is_closed</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_closed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the qna thread is closed
 Works with QnA based knolml dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**closed</strong> – Returns true if the post is close, if applicable</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -332,6 +513,14 @@ Works with QnA based knolml dataset</p>
 <code class="sig-name descname">is_comment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_comment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the instance is a comment
 Works with QnA based knolml dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**closed</strong> – Returns true if the post is a comment, if applicable</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -339,8 +528,85 @@ Works with QnA based knolml dataset</p>
 <code class="sig-name descname">is_question</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.instances.is_question" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if the instance is a question
 Works with QnA based knolml dataset</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><strong>**closed</strong> – Returns true if the post is a question , if applicable</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="analysis-methods">
+<h2>Analysis Methods<a class="headerlink" href="#analysis-methods" title="Permalink to this headline">¶</a></h2>
+<p>The following functions analysses the knol-ML dataset. For most of these methods, the dataset has to be provided in the argument.</p>
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_author_similarity">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_author_similarity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">editors</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_author_similarity" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>This method finds the similarity between the set of editors for a set of articles.</dt><dd><p>Works on the returned dictionary by get_editors() method</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**editors</strong> (<em>dictionary</em>) – A dictionary of editors returned by get_editors() method, granularity=’daily’</p></li>
+<li><p><strong>**similarity</strong> (<em>str</em>) – Similarity measure to be measured, e.g Jaccard</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**similarity</strong> – A dictionary with keys as years, months, and days and values as the similarity measures</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_local_gini_coefficient">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_local_gini_coefficient</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_local_gini_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method finds the gini coefficient for each article/file provided in the argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**local_gini</strong> – A dictionary with keys as articles and values as the gini coefficients</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dictionary</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="kdap.analysis.knol.get_global_gini_coefficient">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_global_gini_coefficient</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_global_gini_coefficient" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method finds the global gini coefficient for a set of articles/files provided in the argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>**file_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Knol-Ml articles’ path</p></li>
+<li><p><strong>**dir_path</strong> (<em>str</em>) – Path of the directory which contains desired knol-Ml files</p></li>
+<li><p><strong>**c_num</strong> (<em>int</em>) – Number of parallel threads you want</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**global_gini</strong> – A gini value for the given articles</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -349,128 +615,56 @@ Works with QnA based knolml dataset</p>
 <p>The following methods are used to create the wiki graph using the wikilinks of the articles.
 Users can use one of these methods to create the wiki graph according to the requirement.</p>
 <dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.get_graphi_by_list">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_graphi_by_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_graphi_by_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create induced subgraph based on list of articles provided in the parameters</p>
+<dt id="kdap.analysis.knol.get_induced_graph_by_articles">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_induced_graph_by_articles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">article_names</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_induced_graph_by_articles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a list of Wikipedia article names, the function returns the adjacency list of inter-wiki links</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>article_names</strong> (<em>list</em>) – list of articles for which the induced subgraph has to be created</p>
+<dd class="field-odd"><p><strong>**article_names</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of Wikipedia article names</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**adj_list</strong> – An adjacency list of inter-wiki graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.get_graph_by_name">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_graph_by_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_graph_by_name" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.get_inter_graph">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_inter_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">article_list</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_inter_graph" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the induced subgraph of wikiarticles provided in the ‘article_list’</p>
+<dt id="kdap.analysis.knol.get_induced_graph_by_article">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_induced_graph_by_article</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">article_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_induced_graph_by_article" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a Wikipedia article name, the function returns the adjacency list of inter-wiki links present in that article</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>article_list</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – list of Wikipedia article names e.g [‘India’, ‘United States’]</p></li>
-<li><p><strong>file_name</strong> (<em>str</em><em>, </em><em>optional</em>) – name of the file by which you want to save the graph e.g file_name=’sample’</p></li>
-</ul>
+<dd class="field-odd"><p><strong>**article_name</strong> (<em>str</em>) – Wikipedia article name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**adj_list</strong> – An adjacency list of inter-wiki graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.all_countries_graph">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">all_countries_graph</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.all_countries_graph" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.cities_by_country_graph">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">cities_by_country_graph</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.cities_by_country_graph" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py function">
-<dt id="kdap.wiki_graph.graph_creater.get_cities_by_country">
-<code class="sig-prename descclassname">kdap.wiki_graph.graph_creater.</code><code class="sig-name descname">get_cities_by_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">country_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.wiki_graph.graph_creater.get_cities_by_country" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates a graph of city wikiarticles in the provided country name</p>
+<dt id="kdap.analysis.knol.get_city_graph_by_country">
+<code class="sig-prename descclassname">kdap.analysis.knol.</code><code class="sig-name descname">get_city_graph_by_country</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span></em>, <em class="sig-param"><span class="n">country_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#kdap.analysis.knol.get_city_graph_by_country" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a country name, the function returns the adjacency list of inter-wiki links for the cities in that country</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>country_name</strong> (<em>str</em>) – Name of the country for which you want to create the graph e.g “India”</p>
+<dd class="field-odd"><p><strong>**country_name</strong> (<em>str</em>) – Country name for which cities graph has to be created</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>**adj_list</strong> – An adjacency list of inter-wiki graph</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
 </dd>
 </dl>
 </dd></dl>
 
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">get_graph_by_wikiarticle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_name</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download*</span>
-
-<span class="sd">    This method takes an article name as an argument and creates the induced subgraph</span>
-<span class="sd">    among the articles present in there.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    article_name:</span>
-<span class="sd">        Type: String</span>
-<span class="sd">        The name of the article for which the interwiki graph has to be created.</span>
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle(&#39;India&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">article_list</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method takes a list of articles name as an argument and creates the induced subgraph</span>
-<span class="sd">    among the articles using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    article_list:</span>
-<span class="sd">        Type: List of strings</span>
-<span class="sd">        The list of articles name for which the interwiki graph has to be created.</span>
-<span class="sd">    file_name:</span>
-<span class="sd">        optional</span>
-<span class="sd">        file name by which you want to create the graph</span>
-
-<span class="sd">    eg. knol.get_graph_by_wikiarticle_list([&#39;India&#39;, &#39;Pakistan&#39;], file_name=&#39;relation&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_countries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method creates the induced subgraph among the articles of all the</span>
-<span class="sd">    wikipedia pages of all the countries using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    country_list:</span>
-<span class="sd">        optional</span>
-<span class="sd">        Type: List of strings</span>
-<span class="sd">        The list of countries name for which the interwiki graph has to be created.</span>
-<span class="sd">        When not set, the graph is created for all the countries</span>
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle_countries()</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-<span class="k">def</span> <span class="nf">get_graph_by_wikiarticle_cities</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">country_name</span><span class="p">):</span>
-
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    **Does not require dataset download**</span>
-
-<span class="sd">    This method creates the induced subgraph among the articles of all the</span>
-<span class="sd">    wikipedia pages of all the cities of a given country using the wikilinks.</span>
-
-<span class="sd">    *Arguments*</span>
-
-<span class="sd">    country_name:</span>
-<span class="sd">        Type: string</span>
-<span class="sd">        The country name for which the city graph has to be created.</span>
-
-
-<span class="sd">    e.g knol.get_graph_by_wikiarticle_cities(&#39;United States&#39;)</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-</pre></div>
-</div>
 </div>
 </div>
 
