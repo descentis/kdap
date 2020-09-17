@@ -5,32 +5,33 @@ Created on Tue Mar  5 11:56:26 2019
 
 @author: descentis
 """
-import xml.etree.ElementTree as ET
-import math
-import glob
-import numpy as np
-from multiprocessing import Process, Lock, Manager
-from datetime import datetime
-import re
-import string
-import os
-import mwparserfromhell
-from nltk.tokenize import word_tokenize
 import copy
-from kdap.converter.wikiConverter import wikiConverter
-import wikipedia
+import glob
+import math
+import os
+import re
 import sqlite3
+import string
+import xml.etree.ElementTree as ET
+from collections import Counter
+from datetime import datetime
+from multiprocessing import Process, Lock, Manager
+from os.path import expanduser
+
+import mwparserfromhell
+import numpy as np
+import wikipedia
 from bx.misc.seekbzip2 import SeekableBzip2File
 from internetarchive import download
-from pyunpack import Archive
-from os.path import expanduser
-from kdap.wikiextract.wikiExtract import wikiExtract
 from mwviews.api import PageviewsClient
+from nltk.tokenize import word_tokenize
+from pyunpack import Archive
+
 from kdap.converter.qaConverter import qaConverter
-from kdap.wikiextract.knolml_wikiextractor import QueryExecutor
+from kdap.converter.wikiConverter import wikiConverter
 from kdap.converter.wiki_clean import getCleanText
-from collections import Counter
 from kdap.wiki_graph import graph_creater as gp
+from kdap.wikiextract.wikiExtract import wikiExtract
 
 
 class instances(object):
@@ -269,7 +270,7 @@ class instances(object):
             clean = kwargs['clean']
             if clean:
                 di['text'] = getCleanText(di['text'])
-                
+
                 '''
                 qe = QueryExecutor()
                 qe.setOutputFileDirectoryName('lol')
@@ -778,7 +779,8 @@ class knol(object):
                 articles = self.display_data(
                     "select article_nm from article_desc where article_id in " + article_id + ";", conn)
             else:
-                articles = self.download_dataset(sitename='wikipedia', category_list=['WikiProject Mathematics articles'],
+                articles = self.download_dataset(sitename='wikipedia',
+                                                 category_list=['WikiProject Mathematics articles'],
                                                  download=False)
 
         if kwargs.get('wiki_class') is not None:
@@ -1134,7 +1136,7 @@ class knol(object):
                                     else:
                                         kwargs['revisionLength']['answers'] += 1
                                 l.release()
-    
+
                         total_rev += 1
                         for ch1 in elem:
                             if 'TimeStamp' in ch1.tag:
@@ -1159,8 +1161,8 @@ class knol(object):
                                                         total_rev_dict[t.year] = 1
                                                     else:
                                                         total_rev_dict[t.year] += 1
-                                            #yet to include the daily edits
-    
+                                            # yet to include the daily edits
+
                         elem.clear()
                         root_wiki.clear()
             except:
@@ -1419,7 +1421,7 @@ class knol(object):
                 uList = []
                 editor_dict = {}
                 editor_bool = 1
-                #try:
+                # try:
                 for event, elem in context_wiki:
                     if event == "end" and 'Instance' in elem.tag:
                         for newch in elem:
@@ -1483,8 +1485,8 @@ class knol(object):
                                             uList.append(U)
                         elem.clear()
                         root_wiki.clear()
-                #except:
-                    #print('problem with file parsing: ' + f)
+                # except:
+                # print('problem with file parsing: ' + f)
                 if (kwargs.get('users') != None):
                     if kwargs.get('dir_path') != None:
                         f = f.replace(kwargs['dir_path'] + '/', '')
@@ -2959,7 +2961,7 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        
+
         if (fileNum < cnum):
             pNum = fileNum
         else:
@@ -3220,8 +3222,8 @@ class knol(object):
         '''
         return tagPosts
 
-# Graph Methods for wikipedia articles
-    
+    # Graph Methods for wikipedia articles
+
     def get_induced_graph_by_articles(self, article_names):
         ''' Given a list of Wikipedia article names, the function returns the adjacency list of inter-wiki links
 
@@ -3236,9 +3238,9 @@ class knol(object):
             An adjacency list of inter-wiki graph
         '''
         adj_list = gp.get_inter_graph(article_names)
-        
+
         return adj_list
-    
+
     def get_induced_graph_by_article(self, article_name):
         ''' Given a Wikipedia article name, the function returns the adjacency list of inter-wiki links present in that article
 
@@ -3252,11 +3254,11 @@ class knol(object):
         \*\*adj_list : list
             An adjacency list of inter-wiki graph
         '''
-        
+
         adj_list = gp.get_graph_by_name(article_name)
-        
+
         return adj_list
-    
+
     def get_city_graph_by_country(self, country_name):
         ''' Given a country name, the function returns the adjacency list of inter-wiki links for the cities in that country
 
@@ -3269,7 +3271,7 @@ class knol(object):
         -------
         \*\*adj_list : list
             An adjacency list of inter-wiki graph
-        '''        
+        '''
         adj_list = gp.get_cities_by_country(country_name)
-        
+
         return adj_list
