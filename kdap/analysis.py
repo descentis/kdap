@@ -909,11 +909,13 @@ class knol(object):
         ----------
         site_name : str
             Site to get pageviews from
-        granularity : str
+        \*\*article_name : str
+            Article to get pageviews for
+        \*\*granularity : str
             Granularity of pageviews data e.g. monthly
-        start : str
+        \*\*start : str
             Date to start counting pageviews from
-        end : str
+        \*\*end : str
             Date to count pageviews till
         """
         if site_name.lower() == 'wikipedia':
