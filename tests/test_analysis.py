@@ -73,7 +73,3 @@ class TestAnalysis(unittest.TestCase):
             shutil.rmtree(self.test_dir)
         if os.path.exists('outputD/'):
             shutil.rmtree('outputD/')
-
-
-k = analysis.knol().get_pageviews(site_name='wikipedia', article_name='Zinc', granularity='daily', start='20200828', end='20200917')
-print(k)
