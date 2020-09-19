@@ -536,18 +536,18 @@ class knol(object):
         ----------
         \*\*sitename : basestring
             Name of portal to download from e.g wikipedia, stackexchange
-        \*\*article_list : list[str]
-            List of wikipedia articles to download in knol-ML format
+        \*\*article_list : str or list[str]
+            Wikipedia article(s) to download in knol-ML format
         \*\*destdir: str
             Path to destination folder where the dataset will be downloaded
         \*\*wikipedia_dump: str
             Path to wikipedia full dump. When provided, the articles will be extract directly from the dump
         \*\*download : bool
             if true, the articles will be downloaded
-        \*\*category_list : list[str]
-            A list of wikipedia categories. When this parameter is provided, all the articles under these lists will be extracted
-        \*\*template_list : list[str]
-            A list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted
+        \*\*category_list : str or list[str]
+            Single/list of wikipedia categories. When this parameter is provided, all the articles under these lists will be extracted
+        \*\*template_list : str or list[str]
+            Single/list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted
         \*\*portal : str
             stackexchange portal name. Provided when sitename='stackexchange'
             
@@ -589,6 +589,8 @@ class knol(object):
         if sitename == 'wikipedia':
             if kwargs.get('article_list') is not None:
                 article_list = kwargs['article_list']
+                if type(article_list) is not list:
+                    article_list = [article_list]
                 key = 'article_list'
                 # articles = self.get_article_name(article_list)
                 if kwargs.get('wikipedia_dump') is None:
@@ -610,6 +612,8 @@ class knol(object):
 
             if kwargs.get('category_list') is not None:
                 category_list = kwargs['category_list']
+                if type(category_list) is not list:
+                    category_list = [category_list]
                 final_category_list = []
                 final_category = {}
                 sub_category = {}
@@ -646,6 +650,8 @@ class knol(object):
 
             if kwargs.get('template_list') is not None:
                 template_list = kwargs['template_list']
+                if type(template_list) is not list:
+                    template_list = [template_list]
                 final_template_list = []
                 final_template = {}
                 sub_template = {}
@@ -845,8 +851,8 @@ class knol(object):
 
         Parameters
         ----------
-        \*\*file_list : list[str]
-            List of Knol-Ml articles' path
+        \*\*file_list : list[str] or str
+            String or List of Knol-Ml article(s)' path
         \*\*dir_path : str
             Path of the directory which contains desired knol-Ml files
         \*\*c_num : int
@@ -858,47 +864,49 @@ class knol(object):
             A dictionary with keys as articles and values as dates
 
         """
-        if (kwargs.get('file_list') != None):
+        if kwargs.get('file_list') is not None:
             file_list = kwargs['file_list']
+            if type(file_list) is not list:
+                file_list = [file_list]
 
-        elif (kwargs.get('dir_path') != None):
+        elif kwargs.get('dir_path') is not None:
             dir_path = kwargs['dir_path']
 
             file_list = glob.glob(dir_path + '/*.knolml')
 
         if kwargs.get('c_num') is not None:
-            cnum = kwargs['c_num']
+            c_num = kwargs['c_num']
         else:
-            cnum = 4  # Bydefault it is 4
+            c_num = 4  # Bydefault it is 4
 
-        fileNum = len(file_list)
+        file_num = len(file_list)
         fileList = []
-        if (fileNum < cnum):
+        if file_num < c_num:
             for f in file_list:
                 fileList.append([f])
 
         else:
 
-            f = np.array_split(file_list, cnum)
+            f = np.array_split(file_list, c_num)
             for i in f:
                 fileList.append(i.tolist())
         manager = Manager()
         instance_date = manager.dict()
         l = Lock()
-        processDict = {}
-        if fileNum < cnum:
-            pNum = fileNum
+        process_dict = {}
+        if file_num < c_num:
+            pNum = file_num
         else:
-            pNum = cnum
+            pNum = c_num
         for i in range(pNum):
-            processDict[i + 1] = Process(target=self.__instance_date,
-                                         kwargs={'file_list': fileList[i], 'instance_date': instance_date, 'l': l})
+            process_dict[i + 1] = Process(target=self.__instance_date,
+                                          kwargs={'file_list': fileList[i], 'instance_date': instance_date, 'l': l})
 
         for i in range(pNum):
-            processDict[i + 1].start()
+            process_dict[i + 1].start()
 
         for i in range(pNum):
-            processDict[i + 1].join()
+            process_dict[i + 1].join()
 
         return instance_date
 

@@ -67,7 +67,7 @@ class TestAnalysis(unittest.TestCase):
         self.assertTrue(all(article in self.class_data for article in class_articles))
 
     def get_instance_date_test(self):
-        dates = self.k.get_instance_date(file_list=[self.test_dir+self.ropar_filename]).values()[0]
+        dates = self.k.get_instance_date(file_list=self.test_dir+self.ropar_filename).values()[0]
         self.assertLessEqual(len(dates), len(self.instance_dates))
         print(dates)
         print(self.instance_dates)
