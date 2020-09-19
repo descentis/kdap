@@ -800,11 +800,14 @@ class knol(object):
                 c = 'Start'
             elif c == 'stub':
                 c = 'Stub'
+            else:
+                raise ValueError(f'Invalid value fpr wiki_class, {c} is not recognized as a valid value')
 
             articles = self.display_data("select article_id, article_nm from article_desc where class ='" + c + "';",
                                          conn)
         else:
-            raise TypeError('get_wiki_articles_by_class() requires one of wikiproject or wiki_class parameters to be specified')
+            raise TypeError('get_wiki_articles_by_class() requires one of wikiproject or wiki_class parameters to be\
+                            specified')
         return articles
 
     # All the analysis functions are written after this
@@ -1017,7 +1020,7 @@ class knol(object):
         r = tree.getroot()
         revisionsDict = {}
         for child in r:
-            if ('KnowledgeData' in child.tag):
+            if 'KnowledgeData' in child.tag:
                 root = child
         length = len(root.findall('Instance'))
         for each in root.iter('Instance'):
@@ -1061,14 +1064,14 @@ class knol(object):
         root = tree.getroot()
 
         for child in root:
-            if ('KnowledgeData' in child.tag):
+            if 'KnowledgeData' in child.tag:
                 # print(child.attrib['Type'])
-                if ('Wiki' in child.attrib['Type']):
-                    revisionsList = cls.allRevisions(cls, file_name, root, tree)
-                elif ('QA' in child.attrib['Type']):
-                    revisionsList = child
+                if 'Wiki' in child.attrib['Type']:
+                    revisions_list = cls.allRevisions(cls, file_name, root, tree)
+                elif 'QA' in child.attrib['Type']:
+                    revisions_list = child
 
-        return revisionsList
+        return revisions_list
 
     '''
     This is dummy function to refer how to get all the revisions of wiki    
@@ -1100,9 +1103,9 @@ class knol(object):
     # Yet to add the function
 
     def __countRev(self, *args, **kwargs):
-        if kwargs.get('file_list') != None:
+        if kwargs.get('file_list') is not None:
             file_list = kwargs['file_list']
-        if kwargs.get('l') != None:
+        if kwargs.get('l') is not None:
             l = kwargs['l']
         for file_name in file_list:
             context_wiki = ET.iterparse(file_name, events=("start", "end"))
@@ -1185,7 +1188,7 @@ class knol(object):
                 else:
                     kwargs['revisionLength'][file_name] = total_rev
 
-    def get_num_instances(self, *args, **kwargs):
+    def get_num_instances(self, **kwargs):
 
         """Extract number of instances based on start and end dates
 
@@ -1231,7 +1234,7 @@ class knol(object):
         fileNum = len(file_list)
 
         fileList = []
-        if (fileNum < cnum):
+        if fileNum < cnum:
             for f in file_list:
                 fileList.append([f])
 
@@ -1251,7 +1254,7 @@ class knol(object):
         else:
             pNum = cnum
         for i in range(pNum):
-            if kwargs.get('granularity') != None:
+            if kwargs.get('granularity') is not None:
                 granularity = kwargs['granularity']
                 start = kwargs['start']
                 if kwargs.get('end') != None:
@@ -1281,7 +1284,7 @@ class knol(object):
                 if '<KnowledgeData' in line and 'QA' in line:
                     return True
 
-    def get_instance_id(self, *args, **kwargs):
+    def get_instance_id(self, **kwargs):
         if kwargs.get('file_path') != None:
             file_name = kwargs['file_path']
             f = file_name.split('/')[-1]
@@ -1301,7 +1304,7 @@ class knol(object):
                     elem.clear()
                     root_wiki.clear()
             return instance
-        if kwargs.get('dir_path') != None:
+        if kwargs.get('dir_path') is not None:
             dir_path = kwargs['dir_path']
 
             file_list = glob.glob(dir_path + '/*.knolml')
@@ -1315,11 +1318,11 @@ class knol(object):
                     event_wiki, root_wiki = next(context_wiki)
                     for event, elem in context_wiki:
                         if event == "end" and 'Instance' in elem.tag:
-                            if kwargs.get('type') == None:
+                            if kwargs.get('type') is None:
                                 instance[f] = []
                                 instance[f].append(elem['Id'])
                             elif kwargs['type'] == 'accepted answer':
-                                if elem.attrib.get('AcceptedAnswerId') != None:
+                                if elem.attrib.get('AcceptedAnswerId') is not None:
                                     instance[f] = []
                                     instance[f].append(elem.attrib['Id'])
                             elem.clear()
@@ -1327,38 +1330,38 @@ class knol(object):
 
             return instance
 
-    def get_wiki_talk_instance(self, *args, **kwargs):
-        if kwargs.get('file_path') != None:
+    def get_wiki_talk_instance(self, **kwargs):
+        if kwargs.get('file_path') is not None:
             file_name = kwargs['file_path']
             rev = wikiExtract.get_wiki_revision(file_name)
             revisions = {}
             revisions[file_name.split('/')[-1]] = rev
 
-        if kwargs.get('file_list') != None:
+        if kwargs.get('file_list') is not None:
             for file_name in kwargs['file_list']:
                 rev = wikiExtract.get_wiki_revision(file_name)
 
-                if (kwargs.get('revisions') != None):
-                    if kwargs.get('dir_path') != None:
+                if kwargs.get('revisions') is not None:
+                    if kwargs.get('dir_path') is not None:
                         file_name = file_name.replace(kwargs['dir_path'] + '/', '')
                     file_name = file_name[:-7].replace('_', ' ')
                     file_name = file_name.replace('__', '/')
                     kwargs['revisions'][file_name] = rev
 
-    def get_wiki_talk_instances(self, *args, **kwargs):
-        '''
+    def get_wiki_talk_instances(self, **kwargs):
+        """
         This piece of code is to ensure the multiprocessing
         Enter a date in YYYY-MM-DD format for start and end dates
-        '''
-        if (kwargs.get('file_list') != None):
+        """
+        if kwargs.get('file_list') is not None:
             file_list = kwargs['file_list']
 
-        elif (kwargs.get('dir_path') != None):
+        elif kwargs.get('dir_path') is not None:
             dir_path = kwargs['dir_path']
 
             file_list = glob.glob(dir_path + '/*.knolml')
 
-        if (kwargs.get('c_num') != None):
+        if kwargs.get('c_num') is not None:
             cnum = kwargs['c_num']
         else:
             cnum = 4  # Bydefault it is 4
@@ -1366,7 +1369,7 @@ class knol(object):
         fileNum = len(file_list)
 
         fileList = []
-        if (fileNum < cnum):
+        if fileNum < cnum:
             for f in file_list:
                 fileList.append([f])
 
@@ -1381,7 +1384,7 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        if (fileNum < cnum):
+        if fileNum < cnum:
             pNum = fileNum
         else:
             pNum = cnum
@@ -1399,25 +1402,25 @@ class knol(object):
 
     def __get_editor(self, *args, **kwargs):
         # print(file_name)
-        if (kwargs.get('file_path') != None):
+        if kwargs.get('file_path') is not None:
             file_name = kwargs['file_path']
             tree = ET.parse(file_name)
             root = tree.getroot()
 
             uList = []
             for child in root:
-                if ('KnowledgeData' in child.tag):
+                if 'KnowledgeData' in child.tag:
                     for ch in child:
-                        if ('Instance' in ch.tag):
+                        if 'Instance' in ch.tag:
                             for newch in ch:
-                                if ('Contributors' in newch.tag):
+                                if 'Contributors' in newch.tag:
                                     for chi in newch:
-                                        if ('OwnerUserId' in chi.tag):
-                                            if (chi.text not in uList):
+                                        if 'OwnerUserId' in chi.tag:
+                                            if chi.text not in uList:
                                                 uList.append(chi.text)
             return uList
 
-        elif (kwargs.get('file_name') != None):
+        elif kwargs.get('file_name') is not None:
             file_name = kwargs['file_name']
             for f in file_name:
                 context_wiki = ET.iterparse(f, events=("start", "end"))
@@ -1436,7 +1439,7 @@ class knol(object):
                                     if 'CreationDate' in ch1.tag:
                                         date_format = "%Y-%m-%dT%H:%M:%S.%f"
                                         t = datetime.strptime(ch1.text, date_format)
-                                        if kwargs.get('granularity') != None:
+                                        if kwargs.get('granularity') is not None:
                                             if kwargs['start'] != '':
                                                 s = datetime.strptime(kwargs['start'], '%Y-%m-%d')
                                                 if t > s:
@@ -1447,33 +1450,33 @@ class knol(object):
                                                     editor_bool = 0
                                                     continue
                                             if kwargs['granularity'].lower() == 'monthly':
-                                                if editor_dict.get(t.year) == None:
+                                                if editor_dict.get(t.year) is None:
                                                     editor_dict[t.year] = {}
                                                     editor_dict[t.year][t.month] = []
-                                                elif editor_dict[t.year].get(t.month) == None:
+                                                elif editor_dict[t.year].get(t.month) is None:
                                                     editor_dict[t.year][t.month] = []
                                             elif kwargs['granularity'].lower() == 'yearly':
-                                                if editor_dict.get(t.year) == None:
+                                                if editor_dict.get(t.year) is None:
                                                     editor_dict[t.year] = []
                                             elif kwargs['granularity'].lower() == 'daily':
-                                                if editor_dict.get(t.year) == None:
+                                                if editor_dict.get(t.year) is None:
                                                     editor_dict[t.year] = {}
                                                     editor_dict[t.year][t.month] = {}
                                                     editor_dict[t.year][t.month][t.day] = []
-                                                elif editor_dict[t.year].get(t.month) == None:
+                                                elif editor_dict[t.year].get(t.month) is None:
                                                     editor_dict[t.year][t.month] = {}
                                                     editor_dict[t.year][t.month][t.day] = []
-                                                elif editor_dict[t.year][t.month].get(t.day) == None:
+                                                elif editor_dict[t.year][t.month].get(t.day) is None:
                                                     editor_dict[t.year][t.month][t.day] = []
 
-                            if ('Contributors' in newch.tag):
+                            if 'Contributors' in newch.tag:
                                 for chi in newch:
-                                    if ('OwnerUserName' in chi.tag):
+                                    if 'OwnerUserName' in chi.tag:
                                         U = chi.text
 
                                     if editor_bool:
 
-                                        if kwargs['granularity'].lower() != None:
+                                        if kwargs['granularity'].lower() is not None:
                                             if kwargs['granularity'].lower() == 'monthly':
 
                                                 if U not in editor_dict[t.year][t.month]:
@@ -1493,12 +1496,12 @@ class knol(object):
                         root_wiki.clear()
                 # except:
                 # print('problem with file parsing: ' + f)
-                if (kwargs.get('users') != None):
-                    if kwargs.get('dir_path') != None:
+                if kwargs.get('users') is not None:
+                    if kwargs.get('dir_path') is not None:
                         f = f.replace(kwargs['dir_path'] + '/', '')
                     f = f[:-7].replace('_', ' ')
                     f = f.replace('__', '/')
-                    if kwargs.get('granularity') == None:
+                    if kwargs.get('granularity') is None:
                         kwargs['users'][f] = uList
                     else:
                         kwargs['users'][f] = editor_dict
@@ -1506,7 +1509,7 @@ class knol(object):
         else:
             print("No arguments provided")
 
-    def get_editors(self, *args, **kwargs):
+    def get_editors(self, **kwargs):
         """Extract editors based on granularity. Includes parallel processing
 
         Parameters
@@ -1529,15 +1532,15 @@ class knol(object):
         \*\*userList : dictionary
             A dictionary with keys as articles and values as editor ids
         """
-        if (kwargs.get('file_list') != None):
+        if kwargs.get('file_list') is not None:
             file_list = kwargs['file_list']
 
-        elif (kwargs.get('dir_path') != None):
+        elif kwargs.get('dir_path') is not None:
             dir_path = kwargs['dir_path']
 
             file_list = glob.glob(dir_path + '/*.knolml')
 
-        if (kwargs.get('c_num') != None):
+        if kwargs.get('c_num') is not None:
             cnum = kwargs['c_num']
         else:
             cnum = 24  # Bydefault it is 24
@@ -1545,7 +1548,7 @@ class knol(object):
         fileNum = len(file_list)
 
         fileList = []
-        if (fileNum < cnum):
+        if fileNum < cnum:
             for f in file_list:
                 fileList.append([f])
 
@@ -1560,18 +1563,18 @@ class knol(object):
 
         l = Lock()
         processDict = {}
-        if (fileNum < cnum):
+        if fileNum < cnum:
             pNum = fileNum
         else:
             pNum = cnum
         for i in range(pNum):
-            if kwargs.get('granularity') != None:
+            if kwargs.get('granularity') is not None:
                 granularity = kwargs['granularity']
-                if kwargs.get('start') != None:
+                if kwargs.get('start') is not None:
                     start = kwargs['start']
                 else:
                     start = ''
-                if kwargs.get('end') != None:
+                if kwargs.get('end') is not None:
                     end = kwargs['end']
                 else:
                     end = ''
@@ -1603,7 +1606,7 @@ class knol(object):
                 bot_list.append(i['title'].replace('User:', ''))
             return bot_list
 
-    def get_author_similarity(self, editors, *args, **kwargs):
+    def get_author_similarity(self, editors, **kwargs):
         """This method finds the similarity between the set of editors for a set of articles.
             Works on the returned dictionary by get_editors() method
 
@@ -1664,7 +1667,7 @@ class knol(object):
         n = max(1, n)
         return (l[i:i + n] for i in range(0, len(l), n))
 
-    def get_author_edits(self, *args, **kwargs):
+    def get_author_edits(self, **kwargs):
         """Get the edits of particular users for articles
 
         get_author_edits(site_name,[article_list, dir_path, editor_list, all_wiki=False])
@@ -1672,40 +1675,40 @@ class knol(object):
 
         Parameters
         ----------
-        all_wiki : str
+        \*\*all_wiki : str
             if `site_name` = wikipedia then setting this variable True will get all the edits of the users of article
-        article_list : list[str]
+        \*\*article_list : list[str]
             list of file names (in knolml format)
-        dir_path : str
+        \*\*dir_path : str
             path of the directory where all the files are present (in knolml format)
-        editor_list : list[str]
+        \*\*editor_list : list[str]
             list of editor usernames for which edits are required
-        type : str
+        \*\*type : str
             type of edit to be measured e.g. bytes, edits, sentences. bytes by default
-        ordered_by : str
+        \*\*ordered_by : str
             means of ordering e.g. editor, questions, answers or article
 
         Returns
         -------
-        \*\*author_contrib : dictionary
+        author_contrib : dict
             A dictionary with keys as articles and values as author's contribution
         """
 
         all_wiki = False
-        if kwargs.get('article_list') != None:
+        if kwargs.get('article_list') is not None:
             article_list = kwargs['article_list']
-        elif kwargs.get('dir_path') != None:
+        elif kwargs.get('dir_path') is not None:
             article_list = glob.glob(kwargs['dir_path'] + '/*.knolml')
-        elif kwargs.get('editor_list') != None:
+        elif kwargs.get('editor_list') is not None:
             editor_list = kwargs['editor_list']
             all_wiki = True
         author_contrib = {}
-        if kwargs.get('type') != None:
-            type = kwargs['type']
+        if kwargs.get('type') is not None:
+            edit_type = kwargs['type']
         else:
-            type = 'bytes'
+            edit_type = 'bytes'
 
-        if kwargs.get('ordered_by') != None:
+        if kwargs.get('ordered_by') is not None:
             order = kwargs['ordered_by']
         else:
             order = 'editor'
@@ -1717,7 +1720,7 @@ class knol(object):
                 event_wiki, root_wiki = next(context_wiki)
                 edit_bytes = 0
                 editor = ''
-                if kwargs.get('dir_path') != None:
+                if kwargs.get('dir_path') is not None:
                     article_key = article.replace(kwargs['dir_path'], '')
                     article_key = article_key.replace('/', '')
                 else:
@@ -1737,7 +1740,7 @@ class knol(object):
                                         author = ch2.text
                                         if order == 'editor':
                                             editor_flag = 1
-                                            if author_contrib.get(author) == None:
+                                            if author_contrib.get(author) is None:
                                                 author_contrib[author] = {}
                                                 author_contrib[author][article_key] = 0
                                             elif author_contrib[author].get(article_key) == None:
@@ -1745,22 +1748,22 @@ class knol(object):
 
                                         elif order == 'questions' and elem.attrib['InstanceType'] == 'Question':
                                             editor_flag = 1
-                                            if author_contrib.get(author) == None:
+                                            if author_contrib.get(author) is None:
                                                 author_contrib[author] = 1
 
                                         elif order == 'answers' and elem.attrib['InstanceType'] == 'Answer':
                                             editor_flag = 1
-                                            if author_contrib.get(author) == None:
+                                            if author_contrib.get(author) is None:
                                                 author_contrib[author] = 1
 
                                         elif order == 'article':
                                             editor_flag = 1
-                                            if author_contrib[article_key].get(author) == None:
+                                            if author_contrib[article_key].get(author) is None:
                                                 author_contrib[article_key][author] = 0
                                         editor = author
 
                             if 'Body' in ch1.tag and editor_flag == 1:
-                                if type == 'bytes':
+                                if edit_type == 'bytes':
                                     for ch2 in ch1:
                                         if 'Text' in ch2.tag:
                                             diff = int(ch2.attrib['Bytes']) - edit_bytes
@@ -1773,7 +1776,7 @@ class knol(object):
                                             elif order == 'article':
                                                 author_contrib[article_key][editor] += diff
                                             edit_bytes = int(ch2.attrib['Bytes'])
-                                elif type == 'edits':
+                                elif edit_type == 'edits':
                                     if order == 'editor':
                                         author_contrib[editor][article_key] += 1
                                     elif order == 'questions':
