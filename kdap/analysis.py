@@ -739,11 +739,11 @@ class knol(object):
             TODO
         """
         cursor = conn.execute(query)
-        displayList = []
+        display_list = []
         for row in cursor:
-            displayList.append(row)
+            display_list.append(row)
 
-        return displayList
+        return display_list
 
     def get_wiki_article_by_class(self, *args, **kwargs):
         """
@@ -836,8 +836,8 @@ class knol(object):
             except:
                 print('problem with file parsing: ' + file_name)
 
-            if (kwargs.get('instance_date') != None):
-                if kwargs.get('dir_path') != None:
+            if kwargs.get('instance_date') is not None:
+                if kwargs.get('dir_path') is not None:
                     file_name = file_name.replace(kwargs['dir_path'] + '/', '')
                 else:
                     file_name = file_name.split('/')[-1]
