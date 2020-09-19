@@ -529,25 +529,25 @@ class knol(object):
                             # file, art, index, home, key
                             self.extract_from_bzip(file=l[1], art=l[0], index=int(l[2]), home=home, key=key)
 
-    def download_dataset(self, *args, **kwargs):
+    def download_dataset(self, sitename, *args, **kwargs):
         """Download dataset from site
 
         Parameters
         ----------
-        \*\*sitename : basestring
+        sitename : basestring
             Name of portal to download from e.g wikipedia, stackexchange
         \*\*article_list : str or list[str]
             Wikipedia article(s) to download in knol-ML format
+        \*\*category_list : str or list[str]
+            Single/list of wikipedia categories. When this parameter is provided, all the articles under these lists will be extracted
+        \*\*template_list : str or list[str]
+            Single/list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted
         \*\*destdir: str
             Path to destination folder where the dataset will be downloaded
         \*\*wikipedia_dump: str
             Path to wikipedia full dump. When provided, the articles will be extract directly from the dump
         \*\*download : bool
             if true, the articles will be downloaded
-        \*\*category_list : str or list[str]
-            Single/list of wikipedia categories. When this parameter is provided, all the articles under these lists will be extracted
-        \*\*template_list : str or list[str]
-            Single/list of wikipedia templates. When this parameter is provided, all the articles under these lists will be extracted
         \*\*portal : str
             stackexchange portal name. Provided when sitename='stackexchange'
             
@@ -558,16 +558,11 @@ class knol(object):
         \*\*final_template_list : list[str]
             A list of wikipedia article names. Only when template_list is provided as argument
         """
+        if kwargs['article_list'] is None and kwargs['catgory_list'] is None and kwargs['template_list'] is None:
+            raise TypeError('download_dataset() requires at least one of article_list, category_list or template_list\
+                            arguments to be specified')
 
-        if kwargs.get('sitename') is not None:
-            sitename = kwargs['sitename'].lower()
-        else:
-            print('add sitename')
-            return
-        try:
-            compress_bool = kwargs['compress']
-        except:
-            compress_bool = False
+        compress_bool = bool(kwargs['compress'])
         sitename = sitename.lower()
         home = expanduser("~")
         download_data = True
@@ -789,7 +784,7 @@ class knol(object):
                                                  category_list=['WikiProject Mathematics articles'],
                                                  download=False)
 
-        if kwargs.get('wiki_class') is not None:
+        elif kwargs.get('wiki_class') is not None:
             c = kwargs['wiki_class'].lower()
             if c == 'fa':
                 c = 'FA'
@@ -808,6 +803,8 @@ class knol(object):
 
             articles = self.display_data("select article_id, article_nm from article_desc where class ='" + c + "';",
                                          conn)
+        else:
+            raise TypeError('get_wiki_articles_by_class() requires one of wikiproject or wiki_class parameters to be specified')
         return articles
 
     # All the analysis functions are written after this
@@ -868,28 +865,27 @@ class knol(object):
             file_list = kwargs['file_list']
             if type(file_list) is not list:
                 file_list = [file_list]
-
         elif kwargs.get('dir_path') is not None:
             dir_path = kwargs['dir_path']
-
             file_list = glob.glob(dir_path + '/*.knolml')
+        else:
+            raise TypeError('get_instance_date() requires one of file_list or dir_path arguments to be specified')
 
         if kwargs.get('c_num') is not None:
             c_num = kwargs['c_num']
         else:
-            c_num = 4  # Bydefault it is 4
+            c_num = 4  # By default it is 4
 
         file_num = len(file_list)
         fileList = []
         if file_num < c_num:
             for f in file_list:
                 fileList.append([f])
-
         else:
-
             f = np.array_split(file_list, c_num)
             for i in f:
                 fileList.append(i.tolist())
+
         manager = Manager()
         instance_date = manager.dict()
         l = Lock()
