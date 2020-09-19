@@ -17,6 +17,8 @@ class TestAnalysis(unittest.TestCase):
             self.class_data = infile.readlines()
         with open('pageviews_data.json', 'r') as infile:
             self.views_data = json.loads(infile.read())[0]
+        with open('test_instance_dates.txt', 'r') as infile:
+            self.instance_dates = infile.read().split(',')
 
     def get_wiki_article(self):
         article_name = 'IIT Ropar'
@@ -28,9 +30,8 @@ class TestAnalysis(unittest.TestCase):
         self.assertTrue(os.path.exists(self.test_dir + self.ropar_filename))
         self.assertTrue(os.path.exists(self.test_dir + self.zinc_filename))
         self.frame_test()
+        self.get_instance_date_test()
 
-    # tests are run in alphabetical order, so download_dataset will always run
-    # before, ensuring this has the necessary knolml file
     def frame_test(self):
         test_data = {
             'id': [],
@@ -53,13 +54,6 @@ class TestAnalysis(unittest.TestCase):
         for key in self.frames_data.keys():
             self.assertTrue(all(x in self.frames_data[key] for x in test_data[key]))
 
-    def test_wiki_article_by_class(self):
-        class_articles = self.k.get_wiki_article_by_class(wikiproject='wikipedia', wiki_class='FL')
-        self.assertTrue(all(article in self.class_data for article in class_articles))
-
-    def test_get_instance_date(self):
-        pass
-
     def test_get_pageviews(self):
         views = self.k.get_pageviews(site_name='wikipedia', article_name='Zinc', granularity='daily', start='20200828',
                                      end='20200917')
@@ -67,6 +61,17 @@ class TestAnalysis(unittest.TestCase):
             str_date = date.strftime('%Y-%m-%d')
             self.assertIn(str_date, self.views_data.keys())
             self.assertEqual(views[date]['Zinc'], self.views_data[str_date])
+
+    def test_wiki_article_by_class(self):
+        class_articles = self.k.get_wiki_article_by_class(wikiproject='wikipedia', wiki_class='FL')
+        self.assertTrue(all(article in self.class_data for article in class_articles))
+
+    def get_instance_date_test(self):
+        dates = self.k.get_instance_date(file_list=[self.test_dir+self.ropar_filename]).values()[0]
+        self.assertLessEqual(len(dates), len(self.instance_dates))
+        print(dates)
+        print(self.instance_dates)
+        self.assertTrue(all(date in self.instance_dates for date in dates))
 
     def tearDown(self):
         if os.path.exists(self.test_dir):
