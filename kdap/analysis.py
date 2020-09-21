@@ -767,7 +767,7 @@ class knol(object):
 
         """
         # This is logical XNOR. The condition is only true when either both parameters are None, or both are specified
-        if not ((kwargs.get('wikiproject') is not None) ^ (kwargs.get('wiki_class' is not None))):
+        if not ((kwargs.get('wikiproject') is not None) ^ (kwargs.get('wiki_class') is not None)):
             raise TypeError('Exactly one of wikiproject or wiki_class parameters should be specified')
 
         home = expanduser("~")
@@ -1224,7 +1224,7 @@ class knol(object):
 
         Returns
         -------
-        \*\*revisionLength : dictionary
+        revisionLength : dict
             A dictionary with keys as articles and values as instances
         """
         if kwargs.get('instance_type') is not None:
