@@ -64,6 +64,8 @@ class TestAnalysis(unittest.TestCase):
 
     def test_wiki_article_by_class(self):
         class_articles = self.k.get_wiki_article_by_class(wikiproject='wikipedia', wiki_class='FL')
+        print(class_articles)
+        print(self.class_data)
         self.assertTrue(all(article in self.class_data for article in class_articles))
 
     def get_instance_date_test(self):
