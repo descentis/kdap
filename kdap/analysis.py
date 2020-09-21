@@ -376,8 +376,12 @@ class knol(object):
         self.object_list = []
         self.file_name = ''
         self.dump_directory = ''
+        self.numbers = None
+        self.file_count = 0
+        self.file_list = []
+        self.elem_counter = 0
 
-    def frame(self, *args, **kwargs):
+    def frame(self, **kwargs):
         """This method takes file names as an argument and returns the list of frame objects
 
         Parameters
@@ -402,22 +406,22 @@ class knol(object):
             self.numbers = re.compile(r'(\d+)')
             self.file_count = 0
             if os.path.isdir(dir_path + '/Posts'):
-                self.file_list = sorted(glob.glob(dir_path + '/Posts/*.knolml'), key=self.numericalSort)
+                self.file_list = sorted(glob.glob(dir_path + '/Posts/*.knolml'), key=self.numerical_sort)
             else:
-                self.file_list = sorted(glob.glob(dir_path + '/*.knolml'), key=self.numericalSort)
+                self.file_list = sorted(glob.glob(dir_path + '/*.knolml'), key=self.numerical_sort)
 
         self.elem_counter = 0
         if kwargs.get('get_bulk') is None or not kwargs.get('get_bulk'):
-            return iter(self.Next())
+            return iter(self.next_frame())
         else:
-            return list(self.Next())
+            return list(self.next_frame())
 
-    def numericalSort(self, value):
+    def numerical_sort(self, value):
         parts = self.numbers.split(value)
         parts[1::2] = map(int, parts[1::2])
         return parts
 
-    def Next(self):
+    def next_frame(self):
         if self.dir == 1:
             for file_name in self.file_list:
                 title = ''
@@ -444,7 +448,7 @@ class knol(object):
     Following methods are used to download the relevant dataset from archive in Knol-ML format
     '''
 
-    def extract_from_bzip(self, *args, **kwargs):
+    def extract_from_bzip(self, **kwargs):
         # file, art, index, home, key
         file = kwargs['file']
         art = kwargs['art']
@@ -456,23 +460,23 @@ class knol(object):
         try:
             f = SeekableBzip2File(self.dump_directory + '/' + file, filet)
             f.seek(int(index))
-            strData = f.read(chunk).decode("utf-8")
-            artName = art.replace(" ", "_")
-            artName = artName.replace("/", "__")
+            str_data = f.read(chunk).decode("utf-8")
+            art_name = art.replace(" ", "_")
+            art_name = art_name.replace("/", "__")
             if not os.path.isdir(home + '/knolml_dataset/output/' + key):
                 os.makedirs(home + '/knolml_dataset/output/' + key)
-            if not os.path.exists(home + '/knolml_dataset/output/' + key + '/' + artName + ".xml"):
-                article = open(home + '/knolml_dataset/output/' + key + '/' + artName + ".xml", 'w+')
+            if not os.path.exists(home + '/knolml_dataset/output/' + key + '/' + art_name + ".xml"):
+                article = open(home + '/knolml_dataset/output/' + key + '/' + art_name + ".xml", 'w+')
                 article.write('<mediawiki>\n')
                 article.write('<page>\n')
                 article.write('\t\t<title>' + art + '</title>\n')
                 # article.write(strData)
-                while '</page>' not in strData:
-                    article.write(strData)
-                    strData = f.read(chunk).decode("utf-8", errors="ignore")
+                while '</page>' not in str_data:
+                    article.write(str_data)
+                    str_data = f.read(chunk).decode("utf-8", errors="ignore")
 
-                end = strData.find('</page>')
-                article.write(strData[:end])
+                end = str_data.find('</page>')
+                article.write(str_data[:end])
                 article.write("\n")
                 article.write('</page>\n')
                 article.write('</mediawiki>')
@@ -518,8 +522,8 @@ class knol(object):
         if not os.path.isdir(home + '/knolml_dataset/bz2t'):
             download('knolml_dataset', verbose=True, glob_pattern='bz2t.7z', destdir=home)
             Archive('~/knolml_dataset/bz2t.7z').extractall(home + '/knolml_dataset')
-        fileList = glob.glob(home + '/knolml_dataset/phase_details/*.txt')
-        for files in fileList:
+        file_list = glob.glob(home + '/knolml_dataset/phase_details/*.txt')
+        for files in file_list:
             if 'phase' in files:
                 with open(files, 'r') as myFile:
                     for line in myFile:
@@ -529,7 +533,7 @@ class knol(object):
                             # file, art, index, home, key
                             self.extract_from_bzip(file=l[1], art=l[0], index=int(l[2]), home=home, key=key)
 
-    def download_dataset(self, sitename, *args, **kwargs):
+    def download_dataset(self, sitename, **kwargs):
         """Download dataset from site
 
         Parameters
@@ -690,7 +694,7 @@ class knol(object):
                 portal = kwargs['portal']
                 qaConverter.convert(name=portal, download=True, post=True)
 
-    def get_wiki_article(self, article_name, *args, **kwargs):
+    def get_wiki_article(self, article_name, **kwargs):
         """Downloads the full revision history of an article in knol-ML format
 
         Parameters
@@ -744,7 +748,7 @@ class knol(object):
 
         return display_list
 
-    def get_wiki_article_by_class(self, *args, **kwargs):
+    def get_wiki_article_by_class(self, **kwargs):
         """
         Query database to extract articles based on category or project name
 
@@ -796,18 +800,24 @@ class knol(object):
             c = kwargs['wiki_class'].lower()
             if c == 'fa':
                 c = 'FA'
-            elif c == 'ga':
-                c = 'GA'
-            elif c == 'c':
-                c = 'C'
-            elif c == 'b':
-                c = 'B'
+            elif c == 'fl':
+                c = 'FL'
+            elif c == 'fm':
+                c = 'FM'
             elif c == 'a':
                 c = 'A'
+            elif c == 'ga':
+                c = 'GA'
+            elif c == 'b':
+                c = 'B'
+            elif c == 'c':
+                c = 'C'
             elif c == 'start':
                 c = 'Start'
             elif c == 'stub':
                 c = 'Stub'
+            elif c == 'list':
+                c = 'List'
             else:
                 raise ValueError(f'Invalid value fpr wiki_class, {c} is not recognized as a valid value')
 
@@ -816,7 +826,7 @@ class knol(object):
         return articles
 
     # All the analysis functions are written after this
-    def __instance_date(self, *args, **kwargs):
+    def __instance_date(self, **kwargs):
         if kwargs.get('file_list') is not None:
             file_list = kwargs['file_list']
         for file_name in file_list:
@@ -2320,7 +2330,7 @@ class knol(object):
             order = kwargs['order_by']
             if order.lower() == 'recent':
                 if os.path.isdir(dir_path + '/Posts'):
-                    file_list = sorted(glob.glob(dir_path + '/Posts/*.knolml'), key=self.numericalSort)
+                    file_list = sorted(glob.glob(dir_path + '/Posts/*.knolml'), key=self.numerical_sort)
                 else:
                     print("provide the path for stack exchange knolml dataset")
 
