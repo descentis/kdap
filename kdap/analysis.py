@@ -562,7 +562,11 @@ class knol(object):
             raise TypeError('download_dataset() requires at least one of article_list, category_list or template_list\
                             arguments to be specified')
 
-        compress_bool = bool(kwargs['compress'])
+        try:
+            compress_bool = kwargs['compress']
+        except:
+            compress_bool = False
+
         sitename = sitename.lower()
         home = expanduser("~")
         download_data = True
@@ -676,7 +680,7 @@ class knol(object):
                                 template_list.append(el['title'].replace('Category:', ''))
                                 li.append(el['title'].replace('Category:', ''))
 
-                            sub_template[category_name] = li
+                            sub_template[template_name] = li
                 final_template_list.append(final_template)
                 final_template_list.append(sub_template)
 
@@ -747,9 +751,10 @@ class knol(object):
         Parameters
         ----------
         \*\*wikiproject : str
-            Name of the wikiproject for which you want to extract the articles
+            Name of the wikiproject for which you want to extract the articles. Should not be specified with wiki_class
         \*\*wiki_class : str
-            The Wikipedia quality class for which the articles has to be extracted
+            The Wikipedia quality class for which the articles has to be extracted. Should not be specified with
+            wikiproject
 
         Returns
         -------
@@ -757,6 +762,10 @@ class knol(object):
             A list of wikipedia article names.
 
         """
+        # This is logical XNOR. The condition is only true when either both parameters are None, or both are specified
+        if not ((kwargs.get('wikiproject') is not None) ^ (kwargs.get('wiki_class' is not None))):
+            raise TypeError('Exactly one of wikiproject or wiki_class parameters should be specified')
+
         home = expanduser("~")
         if not os.path.exists(home + '/knolml_dataset/articleDescdb.db'):
             download('knolml_dataset', verbose=True, glob_pattern='articleDescdb.db', destdir=home)
@@ -783,8 +792,7 @@ class knol(object):
                 articles = self.download_dataset(sitename='wikipedia',
                                                  category_list=['WikiProject Mathematics articles'],
                                                  download=False)
-
-        elif kwargs.get('wiki_class') is not None:
+        else:
             c = kwargs['wiki_class'].lower()
             if c == 'fa':
                 c = 'FA'
@@ -805,9 +813,6 @@ class knol(object):
 
             articles = self.display_data("select article_id, article_nm from article_desc where class ='" + c + "';",
                                          conn)
-        else:
-            raise TypeError('get_wiki_articles_by_class() requires one of wikiproject or wiki_class parameters to be\
-                            specified')
         return articles
 
     # All the analysis functions are written after this
