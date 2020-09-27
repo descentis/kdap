@@ -1716,10 +1716,14 @@ class knol(object):
         all_wiki = False
         if kwargs.get('article_list') is not None:
             article_list = kwargs['article_list']
+            if type(article_list) is not list:
+                article_list = [article_list]
         elif kwargs.get('dir_path') is not None:
             article_list = glob.glob(kwargs['dir_path'] + '/*.knolml')
         elif kwargs.get('editor_list') is not None:
             editor_list = kwargs['editor_list']
+            if type(editor_list) is not list:
+                editor_list = [editor_list]
             all_wiki = True
         author_contrib = {}
         if kwargs.get('type') is not None:
