@@ -7,19 +7,19 @@ import json
 
 class TestAnalysis(unittest.TestCase):
     def setUp(self):
-        self.test_dir = 'testOutput/'
+        self.test_dir = os.path.join(os.path.dirname(__file__), 'testOutput/')
         self.ropar_filename = 'Indian_Institute_of_Technology_Ropar.knolml'
         self.zinc_filename = 'Zinc.knolml'
         self.k = analysis.knol()
-        with open('test_data.txt', 'r') as infile:
+        with open(os.path.dirname(__file__)+'/test_data.txt', 'r') as infile:
             self.frames_data = json.loads(infile.read())
-        with open('FL_Class.txt', 'r') as infile:
+        with open(os.path.dirname(__file__)+'/FL_Class.txt', 'r') as infile:
             self.class_data = infile.readlines()
-        with open('pageviews_data.json', 'r') as infile:
+        with open(os.path.dirname(__file__)+'/pageviews_data.json', 'r') as infile:
             self.views_data = json.loads(infile.read())[0]
-        with open('test_instance_dates.txt', 'r') as infile:
+        with open(os.path.dirname(__file__)+'/test_instance_dates.txt', 'r') as infile:
             self.instance_dates = infile.read().split(',')
-        with open('author_edits.txt', 'r') as infile:
+        with open(os.path.dirname(__file__)+'/author_edits.txt', 'r') as infile:
             self.author_edits = json.load(infile)
 
     def get_wiki_article(self):
@@ -65,7 +65,7 @@ class TestAnalysis(unittest.TestCase):
             self.assertEqual(views[date]['Zinc'], self.views_data[str_date])
 
     def test_wiki_article_by_class(self):
-        class_articles = self.k.get_wiki_article_by_class(wikiproject='wikipedia', wiki_class='FL')
+        class_articles = self.k.get_wiki_article_by_class(wiki_class='FL')
         self.assertTrue(all(article in self.class_data for article in class_articles))
 
     def get_instance_date_test(self):
