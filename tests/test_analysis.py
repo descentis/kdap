@@ -11,10 +11,13 @@ class TestAnalysis(unittest.TestCase):
         self.ropar_filename = 'Indian_Institute_of_Technology_Ropar.knolml'
         self.zinc_filename = 'Zinc.knolml'
         self.k = analysis.knol()
+        self.wiki_classes = ['fa', 'fl', 'fm', 'a', 'ga', 'b', 'c', 'start', 'stub', 'list']
         with open(os.path.dirname(__file__)+'/test_data.txt', 'r') as infile:
             self.frames_data = json.loads(infile.read())
-        with open(os.path.dirname(__file__)+'/FL_Class.txt', 'r') as infile:
-            self.class_data = infile.readlines()
+        self.class_data = {}
+        for wclass in self.wiki_classes:
+            with open(os.path.dirname(__file__)+'/wiki_class_data/'+wclass+'.txt', 'r') as infile:
+                self.class_data[wclass] = {(int(x.split('!@!')[0]), x.split('!@!')[1][:-1]) for x in infile.readlines()}
         with open(os.path.dirname(__file__)+'/pageviews_data.json', 'r') as infile:
             self.views_data = json.loads(infile.read())[0]
         with open(os.path.dirname(__file__)+'/test_instance_dates.txt', 'r') as infile:
@@ -65,8 +68,9 @@ class TestAnalysis(unittest.TestCase):
             self.assertEqual(views[date]['Zinc'], self.views_data[str_date])
 
     def test_wiki_article_by_class(self):
-        class_articles = self.k.get_wiki_article_by_class(wiki_class='FL')
-        self.assertTrue(all(article in self.class_data for article in class_articles))
+        for wclass in self.wiki_classes:
+            articles = self.k.get_wiki_article_by_class(wiki_class=wclass)
+            self.assertTrue(all(article in self.class_data[wclass] for article in articles))
 
     def get_instance_date_test(self):
         dates = self.k.get_instance_date(file_list=self.test_dir+self.ropar_filename).values()[0]
