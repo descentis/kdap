@@ -819,7 +819,7 @@ class knol(object):
             elif c == 'list':
                 c = 'List'
             else:
-                raise ValueError(f'Invalid value fpr wiki_class, {c} is not recognized as a valid value')
+                raise ValueError(f'Invalid value for wiki_class, {c} is not recognized as a valid value')
 
             articles = self.display_data("select article_id, article_nm from article_desc where class ='" + c + "';",
                                          conn)
@@ -1766,7 +1766,7 @@ class knol(object):
                                             if author_contrib.get(author) is None:
                                                 author_contrib[author] = {}
                                                 author_contrib[author][article_key] = 0
-                                            elif author_contrib[author].get(article_key) == None:
+                                            elif author_contrib[author].get(article_key) is None:
                                                 author_contrib[author][article_key] = 0
 
                                         elif order == 'questions' and elem.attrib['InstanceType'] == 'Question':
